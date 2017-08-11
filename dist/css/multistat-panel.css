@@ -1,0 +1,93 @@
+.XXXmichaeldmoore-multistat-panel-w4 {
+  width: 3.75rem;
+  height: 37px;
+  margin-right: .25rem;
+  margin-bottom: 0px;
+}
+
+.XXXmichaeldmoore-multistat-panel-w5 {
+  width: 4.75rem;
+  height: 37px;
+  margin-right: .25rem;
+  margin-bottom: 0px;
+}
+
+.XXXmichaeldmoore-multistat-panel-w6 {
+  width: 5.75rem;
+  height: 37px;
+  margin-right: .25rem;
+  margin-bottom: 0px;
+}
+
+.XXXmichaeldmoore-multistat-panel-w7 {
+  width: 6.75rem;
+  height: 37px;
+  margin-right: .25rem;
+  margin-bottom: 0px;
+}
+
+.XXXmichaeldmoore-multistat-panel-w9 {
+  width: 8.75rem;
+  height: 37px;
+  margin-right: .25rem;
+  margin-bottom: 0px;
+}
+
+.XXXmichaeldmoore-multistat-panel-w19 {
+  width: 19.00rem;
+  height: 37px;
+  margin-right: .25rem;
+  margin-bottom: 0px;
+}
+
+.XXXmichaeldmoore-multistat-panel-container {
+  position: relative;
+  display: table;
+  width: 100%;
+}
+
+.XXXmichaeldmoore-multistat-panel-value-container {
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+  position: relative;
+  font-size: 3em;
+  font-weight: bold;
+}
+
+.XXXmichaeldmoore-multistat-panel-prefix {
+  padding: 20px;
+}
+
+.XXXmichaeldmoore-multistat-panel-value {
+}
+
+.XXXmichaeldmoore-multistat-panel-postfix {
+  padding-left: 20px;
+}
+
+.XXXmichaeldmoore-multistat-panel-limits-container {
+  font-size: 3em;
+}
+
+.XXXmichaeldmoore-multistat-panel-lower-limit {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
+
+.XXXmichaeldmoore-multistat-panel-upper-limit {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+}
+
+.XXXmichaeldmoore-multistat-flash {
+  animation: michaeldmoore-multistat-flash 1s infinite;
+}
+
+@keyframes michaeldmoore-multistat-flash {
+  0% { font-weight: bold; }
+  50% { font-weight: normal; }
+  100% { font-weight: bold; } 
+}

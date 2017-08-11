@@ -1,0 +1,22 @@
+<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
+ <g>
+  <title>background</title>
+  <rect fill="#333333" id="canvas_background" height="102" width="102" y="-1" x="-1"/>
+ </g>
+ <g>
+  <title>Layer 1</title>
+  <line stroke-linecap="undefined" stroke-linejoin="undefined" id="svg_1" y2="56.74999" x2="22.91668" y1="25.41668" x1="7.58336" stroke-width="3" stroke="white" fill="white"/>
+  <line stroke-linecap="undefined" stroke-linejoin="undefined" id="svg_2" y2="56.74999" x2="22.91668" y1="35.58334" x1="32.58334" stroke-width="3" stroke="white" fill="white"/>
+  <line stroke-linecap="undefined" stroke-linejoin="undefined" id="svg_3" y2="35.58334" x2="32.58334" y1="61.58332" x1="46.25" stroke-width="3" stroke="white" fill="white"/>
+  <line stroke-linecap="undefined" stroke-linejoin="undefined" id="svg_4" y2="61.58332" x2="46.25" y1="21.25002" x1="63.08333" stroke-width="3" stroke="white" fill="white"/>
+  <line stroke-linecap="undefined" stroke-linejoin="undefined" id="svg_5" y2="21.25002" x2="63.08333" y1="9.91669" x1="88.74998" stroke-width="3" stroke="white" fill="white"/>
+  <text font-weight="bold" xml:space="preserve" text-anchor="start" font-family="Helvetica, Arial, sans-serif" font-size="24" id="svg_8" y="80" x="10" stroke-width="0" stroke="white" fill="#00ff48">99.99%
+  <animate
+                attributeType="XML"
+                attributeName="font-weight"
+                values="bold;normal;bold"
+                dur="1.0s"
+                repeatCount="indefinite"/>
+	</text>			
+ </g>
+</svg>

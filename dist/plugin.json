@@ -1,0 +1,49 @@
+{  
+   "type":"panel",
+   "name":"Multistat",
+   "id":"michaeldmoore-multistat-panel",
+   "info":{  
+      "description":"Enhanced version of built-in SingleStat panel, for queries involving multi-valued recordsets",
+      "author":{  
+         "name":"Michael Moore<mdmoore@gmail.com>",
+         "url":"https://github.com/michaeldmoore"
+      },
+      "keywords":[  
+         "multistat",
+         "singlestat",
+         "panel"
+      ],
+      "version":"1.0.0",
+      "updated":"2017-08-10",
+      "logos":{  
+         "small":"img/michaeldmoore-multistat-panel.svg",
+         "large":"img/michaeldmoore-multistat-panel.svg"
+      },
+      "links":[  
+         {  
+            "name":"Project site",
+            "url":"https://github.com/michaeldmoore/michaeldmoore-multistat-panel"
+         },
+         {  
+            "name":"MIT License",
+            "url":"https://github.com/michaeldmoore/michaeldmoore-multistat-panel/LICENSE"
+         }
+      ],
+      "screenshots":[  
+         {  
+            "name":"Showcase",
+            "path":"img/Showcase.gif"
+         },
+         {  
+            "name":"Options",
+            "path":"img/Options.png"
+         }
+      ]
+   },
+   "dependencies":{  
+      "grafanaVersion":"3.x.x",
+      "plugins":[  
+
+      ]
+   }
+}
