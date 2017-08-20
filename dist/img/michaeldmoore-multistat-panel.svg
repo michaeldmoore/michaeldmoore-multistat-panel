@@ -1,22 +1,18 @@
-<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
- <g>
+<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect id="backgroundrect" width="100%" height="100%" x="0" y="0" fill="none" stroke="none"/>
+ <g style="" class="currentLayer">
   <title>background</title>
-  <rect fill="#333333" id="canvas_background" height="102" width="102" y="-1" x="-1"/>
- </g>
- <g>
-  <title>Layer 1</title>
-  <line stroke-linecap="undefined" stroke-linejoin="undefined" id="svg_1" y2="56.74999" x2="22.91668" y1="25.41668" x1="7.58336" stroke-width="3" stroke="white" fill="white"/>
-  <line stroke-linecap="undefined" stroke-linejoin="undefined" id="svg_2" y2="56.74999" x2="22.91668" y1="35.58334" x1="32.58334" stroke-width="3" stroke="white" fill="white"/>
-  <line stroke-linecap="undefined" stroke-linejoin="undefined" id="svg_3" y2="35.58334" x2="32.58334" y1="61.58332" x1="46.25" stroke-width="3" stroke="white" fill="white"/>
-  <line stroke-linecap="undefined" stroke-linejoin="undefined" id="svg_4" y2="61.58332" x2="46.25" y1="21.25002" x1="63.08333" stroke-width="3" stroke="white" fill="white"/>
-  <line stroke-linecap="undefined" stroke-linejoin="undefined" id="svg_5" y2="21.25002" x2="63.08333" y1="9.91669" x1="88.74998" stroke-width="3" stroke="white" fill="white"/>
-  <text font-weight="bold" xml:space="preserve" text-anchor="start" font-family="Helvetica, Arial, sans-serif" font-size="24" id="svg_8" y="80" x="10" stroke-width="0" stroke="white" fill="#00ff48">99.99%
-  <animate
-                attributeType="XML"
-                attributeName="font-weight"
-                values="bold;normal;bold"
-                dur="1.0s"
-                repeatCount="indefinite"/>
-	</text>			
+  <rect fill="#333333" id="canvas_background" height="102" width="102" y="-1" x="-1" class=""/>
+  <rect fill="#e84141" stroke-dashoffset="" fill-rule="nonzero" id="svg_1" x="6" y="33" height="6" style="color: rgb(0, 0, 0);">
+   <animate attributeType="XML" attributeName="width" dur="2.0s" repeatCount="indefinite" values="51;60;66;72;80;85;89;80;65;50;45;48"/></rect>
+  <rect fill="#ebeb1a" stroke-dashoffset="" fill-rule="nonzero" id="svg_3" x="6" y="44" width="26" height="6" style="color: rgb(0, 0, 0);">
+   <animate attributeType="XML" attributeName="width" dur="3.1s" repeatCount="indefinite" values="51;60;66;72;80;85;89;80;65;50;45;48"/></rect>
+  <rect fill="#1aeb1a" stroke-dashoffset="" fill-rule="nonzero" id="svg_5" x="6" y="54" width="66" height="6" style="color: rgb(0, 0, 0);">
+   <animate attributeType="XML" attributeName="width" dur="5.5s" repeatCount="indefinite" values="51;60;66;72;80;85;89;80;65;50;45;48"/></rect>
+  <rect fill="#d50b0b" stroke-dashoffset="" fill-rule="nonzero" id="svg_7" x="6" y="65" width="81" height="6" style="color: rgb(0, 0, 0);">
+   <animate attributeType="XML" attributeName="width" dur="1.1s" repeatCount="indefinite" values="51;60;66;72;80;85;89;80;65;50;45;48"/></rect>
+  <rect fill="#0b0bd5" stroke-dashoffset="" fill-rule="nonzero" id="svg_9" x="6" y="76" width="86" height="6" style="color: rgb(0, 0, 0);">
+   <animate attributeType="XML" attributeName="width" dur="0.9s" repeatCount="indefinite" values="51;60;66;72;80;85;89;80;65;50;45;48"/></rect>
+  <rect fill="#04b804" stroke-dashoffset="" fill-rule="nonzero" id="svg_11" x="6" y="87" width="72" height="6" style="color: rgb(0, 0, 0);">
+   <animate attributeType="XML" attributeName="width" dur="2.4s" repeatCount="indefinite" values="51;60;66;72;80;85;89;80;65;50;45;48"/></rect>
  </g>
 </svg>

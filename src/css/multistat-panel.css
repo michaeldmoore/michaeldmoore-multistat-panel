@@ -6,6 +6,43 @@
   font-size: .875rem;
 }
 
+.michaeldmoore-multistat-maxDate {
+  margin-right: 4em;
+  float:right;
+}
+
+.michaeldmoore-multistat-rows-topleft {
+  background-color: red;
+}
+
+.michaeldmoore-multistat-rows-topright {
+  width: 100%;
+  vertical-align: middle;
+  background-color: yellow;
+}
+
+.michaeldmoore-multistat-rows-middleleft {
+  height: 100%;
+  padding-right: 5px;
+  background-color: green;
+}
+
+.michaeldmoore-multistat-rows-middleright {
+  height: 100%;
+  width: 100%;
+  background-color: blue;
+}
+
+.michaeldmoore-multistat-rows-bottomleft {
+  background-color: orange;
+}
+
+.michaeldmoore-multistat-rows-bottomright {
+  width: 100%;
+  background-color: grey;
+}
+
+
 .XXXmichaeldmoore-multistat-panel-w4 {
   width: 3.75rem;
   height: 37px;

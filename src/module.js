@@ -21,7 +21,11 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
         this.alertSrv = alertSrv;
 
         var panelDefaults = {
-
+			"ShowDate": true,
+			"ShowTopScale": false,
+			"ShowBottomScale": true,
+			"MinValue": "",
+			"MaxValue": "",
             "Metric": {
                 "Name": "current",
                 "Format": "percent",
@@ -71,7 +75,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
         this.render();
     }
 
-    buildHtml() {
+    buildFrameHtml() {
         var html = "<div class='michaeldmoore-multistat-panel-container' style='height:" + this.ctrl.height + "px;'>";
 		this.buildDateHtml();
 //        if (this.data != null && this.data.value != null) {
@@ -82,30 +86,117 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 //        } else
 //            this.alertSrv.set('Multistat Data Warning', 'Last data point is null', 'info', 1000);
 //
+
+		html += this.buildFrameRowsHtml();
+
         html += "</div>";
 
         this.elem.html(html);
     }
 
 	buildDateHtml(){
-		var maxDate = this.rows[0][this.time_col];
+		var $title = this.elem.closest('.panel-container').find('.panel-title.drag-handle.pointer');
+		var $maxDate = $title.find('span.michaeldmoore-multistat-maxDate');
 
+		if($maxDate.length == 0)
+			$maxDate = $title.append('<span class="michaeldmoore-multistat-maxDate"/>').children().last();
+
+		if (this.panel.ShowDate) {
+			var maxDate = this.rows[0][this.time_col];
+
+			for(var i = 1; i < this.rows.length; i++){
+				if (maxDate < this.rows[0][this.time_col])
+					maxDate = this.rows[0][this.time_col];
+			}
+			
+			$maxDate.text(maxDate).show();
+		}
+		else
+			$maxDate.hide();			
+	}
+
+	buildFrameRowsHtml(){
+		var minValue = this.rows[0][this.value_col];
+		var maxValue = minValue;
 		for(var i = 1; i < this.rows.length; i++){
-			if (maxDate < this.rows[0][this.time_col])
-				maxDate = this.rows[0][this.time_col];
+			var value = this.rows[i][this.value_col]; 
+			if (minValue > value)
+				minValue = value;
+			if (maxValue < value)
+				maxValue = value;
 		}
 		
-		var pc = this.elem.closest('.panel-container');
-		var title = pc.find('.panel-title.drag-handle.pointer');
-		title.css('background-color:red');
+		if ($.isNumeric(this.panel.MinValue))
+			minValue = this.panel.MinValue;
 		
-		var xxx = pc.find('.panel-title-text.drag-handle');
-		xxx.css('background-color:yellow');
+		if ($.isNumeric(this.panel.MaxValue))
+			maxValue = this.panel.MaxValue;
 		
+//		var range = maxValue - minValue;
+		
+		var html = '<table width="100%" height="100%"><tbody>';
+		if (this.panel.ShowTopScale) {
+			html += '<tr><td class="michaeldmoore-multistat-rows-topleft"/>';
+			html += '<td class="michaeldmoore-multistat-rows-topright">bbb</td></tr>';
+		}
+		
+		html += '<tr height="100%"><td class="michaeldmoore-multistat-rows-middleleft"/>';
+		html += '<td class="michaeldmoore-multistat-rows-middleright"/></tr>';
+		
+		if (this.panel.ShowBottomScale) {
+			html += '<tr><td class="michaeldmoore-multistat-rows-bottomleft"/>';
+			html += '<td class="michaeldmoore-multistat-rows-bottomright">fff</td></tr>';
+		}
+
+		html += '</tbody></table>';
+		return html;
+	}
+
+	buildRowsHtml() {
+		var minValue = this.rows[0][this.value_col];
+		var maxValue = minValue;
+		for(var i = 1; i < this.rows.length; i++){
+			var value = this.rows[i][this.value_col]; 
+			if (minValue > value)
+				minValue = value;
+			if (maxValue < value)
+				maxValue = value;
+		}
+		
+		if ($.isNumeric(this.panel.MinValue))
+			minValue = this.panel.MinValue;
+		
+		if ($.isNumeric(this.panel.MaxValue))
+			maxValue = this.panel.MaxValue;
+
+		var $middleLeft = this.elem.find('.michaeldmoore-multistat-rows-middleleft');
+		var dy = $middleLeft.height() / this.rows.length;
+		var html = '';
+		for(var i = 0; i < this.rows.length; i++){
+			html += '<div style="line-height:' + dy + 'px;">' + this.rows[i][this.metric_col] + '</div>';
+		}
+        $middleLeft.html(html);
+
+		var $middleRight = this.elem.find('.michaeldmoore-multistat-rows-middleright');
+		html = '';
+		//var gap = 0;
+		//var barTop = gap;
+		//var barHeight = dy - 2 * gap;
+		for(var i = 0; i < this.rows.length; i++){
+			var value = this.rows[i][this.value_col]; 
+			var percent = (value - minValue) / (maxValue - minValue);
+			var barWidth = percent * $middleRight.width();
+			//html += '<div style="position:relative;left:0px;top:0px;background-color:black;height:' + dy + 'px;width:' + barWidth + 'px;"/>';
+			//html += '<div style="position:relative;left:10px;top:0px;">' + value + '</div>';
+			html += '<div style="line-height:' + dy + 'px;">' + value + '</div>';
+			//barTop += gap * 2;
+		}
+        $middleRight.html(html);
 	}
 	
     onRender() {
-        this.buildHtml();
+        this.buildFrameHtml();
+        this.buildRowsHtml();
         this.ctrl.renderingCompleted();
     }
 
