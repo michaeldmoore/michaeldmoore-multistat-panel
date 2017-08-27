@@ -12,7 +12,7 @@ module.exports = (grunt) => {
       src_to_dist: {
         cwd: 'src',
         expand: true,
-        src: ['**/*', '!**/*.js', '!**/*.scss', '!img/**/*'],
+        src: ['**/*', '!**/external/*', '!**/*.js', '**/external/*.js', '!**/*.scss', '!img/**/*'],
         dest: 'dist'
       },
       pluginDef: {

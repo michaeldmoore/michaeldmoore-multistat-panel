@@ -52,23 +52,23 @@
     </div>
 	  
     <div class="gf-form">
-      <gf-form-switch class="gf-form" label-class="width-10" label="Show Top Scale" checked="ctrl.panel.ShowTopScale" on-change="ctrl.render()"></gf-form-switch>
+      <gf-form-switch class="gf-form" label-class="width-10" label="Show Left Axis" checked="ctrl.panel.ShowLeftAxis" on-change="ctrl.render()"></gf-form-switch>
     </div>
 	  
     <div class="gf-form">
-      <gf-form-switch class="gf-form" label-class="width-10" label="Show Bottom Scale" checked="ctrl.panel.ShowBottomScale" on-change="ctrl.render()"></gf-form-switch>
+      <gf-form-switch class="gf-form" label-class="width-10" label="Show Right Axis" checked="ctrl.panel.ShowRightAxis" on-change="ctrl.render()"></gf-form-switch>
     </div>
 	  
     <div class="gf-form">
 	  <label class="gf-form-label width-9">Min Value</label>
 	  <input type="number" class="gf-form-input width-10" placeholder="auto" data-placement="right" 
-		bs-tooltip="'Override automatic minimum scale value'" ng-model="ctrl.panel.MinValue" ng-change="ctrl.refresh()" ng-model-onblur>
+		bs-tooltip="'Override automatic minimum scale value'" ng-model="ctrl.panel.MinValue" ng-change="ctrl.render()" ng-model-onblur>
 	</div>
 	  
 	<div class="gf-form">
 	  <label class="gf-form-label width-9">Max Value</label>
 	  <input type="number" class="gf-form-input width-10" placeholder="auto" data-placement="right" 
-	    bs-tooltip="'Override automatic maximum scale value'" ng-model="ctrl.panel.MaxValue" ng-change="ctrl.refresh()" ng-model-onblur>
+	    bs-tooltip="'Override automatic maximum scale value'" ng-model="ctrl.panel.MaxValue" ng-change="ctrl.render()" ng-model-onblur>
 	</div>
   </div>
   

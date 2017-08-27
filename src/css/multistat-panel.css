@@ -6,9 +6,27 @@
   font-size: .875rem;
 }
 
-.michaeldmoore-multistat-maxDate {
+.michaeldmoore-multistat-panel-maxDate {
   margin-right: 4em;
   float:right;
+}
+
+.michaeldmoore-multistat-panel-bar {
+    display: inline-block;
+	margin-right: 2px;
+    background-color: teal;
+}
+
+.michaeldmoore-multistat-panel-yaxis line {
+	stroke: red;
+}
+
+.michaeldmoore-multistat-panel-yaxis path {
+	stroke: red;
+}
+
+.michaeldmoore-multistat-panel-yaxis text {
+	fill: red;
 }
 
 .michaeldmoore-multistat-rows-topleft {
