@@ -22,26 +22,23 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
         this.alertSrv = alertSrv;
 
         var panelDefaults = {
+			"ShowValues": true,
+			"ValueFontSize": "100%",
+			"ValueColor": "white",
+			"ShowLabels": true,
+			"LabelFontSize": "100%",
+			"LabelColor": "white",
 			"ShowDate": true,
 			"ShowLeftAxis": true,
 			"ShowRightAxis": true,
-			"MinValue": "",
-			"MaxValue": "",
-            "Metric": {
-                "Name": "current",
-                "Format": "percent",
-                "Color": "rgb(2, 247, 2)",
-                "Decimals": "4",
-                "FontSize": "100%"
-            },
-            "Prefix": {
-                "Text": "",
-                "FontSize": "hide",
-            },
-            "Postfix": {
-                "Text": "",
-                "FontSize": "hide",
-            }
+			"ShowBaseLine": true,
+			"BaseLineValue": "",
+			"BaseLineColor": "red",
+			"HighBarColor": "teal",
+			"LowBarColor": "teal",
+			"MinLineValue": "",
+			"MaxLineValue": "",
+			"SortDirection": "none"
         };
 
         var panel = {};
@@ -63,20 +60,13 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
     }
 
     onInitEditMode() {
-        this.metricNames = ['min', 'max', 'avg', 'current', 'total', 'name', 'first', 'delta', 'diff', 'range'];
+		this.metricNames = ['min', 'max', 'avg', 'current', 'total', 'name', 'first', 'delta', 'diff', 'range'];
+		this.sortDirections = ['none', 'ascending', 'decending'];
         this.fontSizes = ['20%', '30%', '50%', '70%', '80%', '100%', '110%', '120%', '150%', '170%', '200%'];
-        this.fontSizes0 = ['hide'].concat(this.fontSizes);
-        this.displayStates = ['disabled', 'static', 'flash'];
-        this.unitFormats = kbn.getUnitFormats();
         this.addEditorTab('Options', 'public/plugins/michaeldmoore-multistat-panel/options.html', 2);
     }
 
-    setUnitFormat(subItem) {
-        this.panel.Metric.Format = subItem.value;
-        this.render();
-    }
-
-	buildDateHtml(){
+	buildDateHtml(dateTimeCol){
 		var $title = this.elem.closest('.panel-container').find('.panel-title.drag-handle.pointer');
 		var $maxDate = $title.find('span.michaeldmoore-multistat-panel-maxDate');
 
@@ -84,14 +74,15 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			$maxDate = $title.append('<span class="michaeldmoore-multistat-panel-maxDate"/>').children().last();
 
 		if (this.panel.ShowDate) {
-			var maxDate = this.rows[0][this.time_col];
+			var maxDate = this.rows[0][dateTimeCol];
 
 			for(var i = 1; i < this.rows.length; i++){
-				if (maxDate < this.rows[0][this.time_col])
-					maxDate = this.rows[0][this.time_col];
+				if (maxDate < this.rows[i][dateTimeCol])
+					maxDate = this.rows[i][dateTimeCol];
 			}
 			
 			$maxDate.text(maxDate).show();
+//			$maxDate.text(d3.max(function(d) { return d[dateTimeCol]; })).show();
 		}
 		else
 			$maxDate.hide();			
@@ -100,95 +91,184 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
 	
     onRender() {
-		this.buildDateHtml();
-		var className = 'michaeldmoore-multistat-panel';
-		this.elem.html("<svg class='" + className + "'  style='height:" + this.ctrl.height + "px; width:100%'></svg>");
-		var $container = this.elem.find('.' + className);
-		var leftMargin = this.panel.ShowLeftAxis ? 40 : 0;
-		var rightMargin = this.panel.ShowRightAxis ? 40 : 0;
-		var bottomMargin = 20;
-		var h = $container.height() - bottomMargin;
-		var w = $container.width() - leftMargin - rightMargin;
-		var dw = w / this.rows.length;
-		var barPadding = 10;
-		var minValue = this.panel.MinValue;
-		var maxValue = this.panel.MaxValue;
+		if (this.rows != null) {
+			var dateTimeCol = 0;
+			var labelCol = 0;
+			var valueCol = 0;
+			var sortCol = 0;
+			for(var i=0; i < this.cols.length; i++){
+				if (this.cols[i] == this.panel.DateTimeColName)
+					dateTimeCol = i;
+				if (this.cols[i] == this.panel.LabelColName)
+					labelCol = i;
+				if (this.cols[i] == this.panel.ValueColName)
+					valueCol = i;
+				if (this.cols[i] == this.panel.SortColName)
+					sortCol = i;
+			}
 
-		if ($.isNumeric(minValue) == false)
-			minValue = d3.min(this.rows, function(d) { return d[2]; });
-		
-		if ($.isNumeric(maxValue) == false)
-			maxValue = d3.max(this.rows, function(d) { return d[2]; });
-		
-		var formatDecimal = d3.format(".2f");
-		
-		var yScale = d3.scaleLinear()
-                    .domain([maxValue, minValue])
-                    .range([10, h])
-					.nice();
-					
-		var svg = d3.select('.' + className);
-
-		function hLine(y) {	
-			svg.append("line")
-				.style("stroke", "yellow")
-				.attr("x1", leftMargin - barPadding)
-				.attr("y1", yScale(y))
-				.attr("x2", w + rightMargin)
-				.attr("y2", yScale(y));
-		}			
-
-		hLine(0.37);
-		hLine(0.09);
-		hLine(0.00);
-		
-		svg.selectAll("rect")
-			.data(this.rows)
-			.enter()
-			.append("rect")
-			.attr("class", "michaeldmoore-multistat-panel-bar")
-			.attr("x", function(d, i) { return leftMargin + i * dw; })
-			.attr("y", function(d) { return yScale(d[2]); })
-			.attr("width", dw - barPadding)
-			.attr("height", function(d) { return yScale(0) - yScale(d[2]); })
-			.attr("fill", "teal");
+			if (this.panel.SortDirection != "none"){
+				var ascending = this.panel.SortDirection == "ascending";
+				this.rows.sort(function(x, y){
+					var comp = (x[sortCol] == y[sortCol]) ? 0 : ((x[sortCol] > y[sortCol]) ? 1 : -1);
+					return ascending ? comp : -comp;
+				});				
+			}
 			
-		var g = svg.selectAll("text")
-			.data(this.rows)
-			.enter()
-			.append("g");
+			this.buildDateHtml(dateTimeCol);
 			
-			g.append("text")
-			.text(function(d) { return formatDecimal(d[2]); })
-			.attr("x", function(d, i) { return leftMargin + (i * dw) + (dw - barPadding) / 2; })
-			.attr("y", function(d) { return yScale(d[2]) + 14; })
-			.attr("font-family", "sans-serif")
-			.attr("font-size", "11px")
-			.attr("fill", "white")
-			.attr("text-anchor", "middle");
+			var className = 'michaeldmoore-multistat-panel';
+			this.elem.html("<svg class='" + className + "'  style='height:" + this.ctrl.height + "px; width:100%'></svg>");
+			var $container = this.elem.find('.' + className);
+			var leftMargin = this.panel.LeftMargin >= 0 ? this.panel.LeftMargin : 0;
+			var rightMargin = this.panel.RightMargin >= 0 ? this.panel.RightMargin : 0;
+			var bottomMargin = 20;
+			var h = $container.height() - bottomMargin;
+			var w = $container.width() - leftMargin - rightMargin;
+			var dw = w / this.rows.length;
+			var barPadding = this.panel.BarPadding;
+			var baseLineValue = this.panel.BaseLineValue;
+			var minLineValue = this.panel.MinLineValue;
+			var maxLineValue = this.panel.MaxLineValue;
+			var highBarColor = this.panel.HighBarColor;
+			var lowBarColor = this.panel.LowBarColor;
 
-			g.append("text")
-			.text(function(d) { return d[1]; })
-			.attr("x", function(d, i) { return leftMargin + (i * dw) + (dw - barPadding) / 2; })
-			.attr("y", function(d) { return h + 14; })
-			.attr("font-family", "sans-serif")
-			.attr("font-size", "11px")
-			.attr("fill", "white")
-			.attr("text-anchor", "middle");
+			if ($.isNumeric(barPadding) == false)
+				barPadding = dw * 0.10;
+			
+			if ($.isNumeric(minLineValue) == false)
+				minLineValue = d3.min(this.rows, function(d) { return d[valueCol]; });
+			
+			if ($.isNumeric(maxLineValue) == false)
+				maxLineValue = d3.max(this.rows, function(d) { return d[valueCol]; });
+			
+			if ($.isNumeric(baseLineValue) == false)
+				baseLineValue = 0;
+			
+			if (minLineValue > baseLineValue)
+				minLineValue = baseLineValue;
+			
+			if (maxLineValue < baseLineValue)
+				maxLineValue = baseLineValue;
+			
+//			if (baseLineValue < minLineValue)
+//				baseLineValue = minLineValue;
+//			
+//			if (baseLineValue > maxLineValue)
+//				baseLineValue = maxLineValue;			
+			
+			var formatDecimal = d3.format(".2f");
+			
+			var yScale = d3.scaleLinear()
+						.domain([maxLineValue, minLineValue])
+						.range([10, h])
+						.nice();
+
+			var svg = d3.select('.' + className);
+
+//			// DEBUG
+//			svg.append("rect")
+//				.attr("x", 0)
+//				.attr("y", 0) 
+//				.attr("width", $container.width())
+//				.attr("height", $container.height())
+//				.attr("fill", "yellow");
 
 
-		if (this.panel.ShowLeftAxis) {	
-			svg.append("g")
-				.attr('transform', 'translate(30, 0)')
-				.classed('michaeldmoore-multistat-panel-yaxis', true)
-				.call(d3.axisLeft(yScale).tickSizeInner(5).tickSizeOuter(leftMargin - w).ticks(5));
-		}
-		
-		if (this.panel.ShowRightAxis) {	
-			svg.append("g")
-				.attr('transform', 'translate(' + (w + rightMargin) + ', 0)')
-				.classed('michaeldmoore-multistat-panel-yaxis', true)
-				.call(d3.axisRight(yScale).tickSizeInner(5).tickSizeOuter(rightMargin - w).ticks(5));
+
+			
+			function hLine(y, color) {	
+				svg.append("line")
+					.style("stroke", color)
+					.attr("x1", leftMargin)
+					.attr("y1", yScale(y))
+					.attr("x2", w + leftMargin)
+					.attr("y2", yScale(y));
+			}			
+
+			if(this.panel.ShowBaseLine)
+				hLine(baseLineValue, this.panel.BaseLineColor);
+
+			if(this.panel.ShowMaxLine)
+				hLine(maxLineValue, this.panel.MaxLineColor);
+
+			if(this.panel.ShowMinLine)
+				hLine(minLineValue, this.panel.MinLineColor);
+
+			
+			svg.selectAll("rect")
+				.data(this.rows)
+				.enter()
+				.append("rect")
+				.attr("class", "michaeldmoore-multistat-panel-bar")
+				.attr("x", function(d, i) { return leftMargin + (barPadding / 2) + (i * dw); })
+				.attr("y", function(d) { 
+						return d3.min([yScale(d[valueCol]), yScale(baseLineValue)]); 
+					})
+				.attr("width", dw - barPadding)
+				.attr("height", function(d) { 
+						var hh = yScale(baseLineValue) - yScale(d[valueCol]);
+						if (hh < 0)
+							hh = -hh;
+						return hh; 
+					})
+				.attr("fill", function(d) { 
+						return (yScale(d[valueCol]) < yScale(baseLineValue)) ? highBarColor : lowBarColor;
+					});
+				
+			var g = svg.selectAll("text")
+				.data(this.rows)
+				.enter()
+				.append("g");
+				
+				if (this.panel.ShowValues) {
+					g.append("text")
+					.text(function(d) { return formatDecimal(d[valueCol]); })
+					.attr("x", function(d, i) { return leftMargin + (dw / 2) + (i * dw); })
+					.attr("y", function(d) { return yScale(d[valueCol]) + 14; })
+					.attr("font-family", "sans-serif")
+					.attr("font-size", this.panel.ValueFontSize)
+					.attr("fill", this.panel.ValueColor)
+					.attr("text-anchor", "middle");
+				}
+
+				if (this.panel.ShowLabels) {
+					g.append("text")
+					.text(function(d) { return d[labelCol]; })
+					.attr("x", function(d, i) { return leftMargin + (dw / 2) + (i * dw); })
+					.attr("y", function(d) { return h + 14; })
+					.attr("font-family", "sans-serif")
+					.attr("font-size", this.panel.LabelFontSize)
+					.attr("fill", this.panel.LabelColor)
+					.attr("text-anchor", "middle");
+				}
+
+			if (leftMargin > 0) {	
+				svg.append("g")
+					.attr('transform', 'translate(' + leftMargin + ', 0)')
+					.classed('michaeldmoore-multistat-panel-yaxis', true)
+					.call(d3.axisLeft(yScale).tickSizeInner(5).tickSizeOuter(10).ticks(5));
+			}
+			
+			if (rightMargin > 0) {	
+				svg.append("g")
+					.attr('transform', 'translate(' + (leftMargin + w) + ', 0)')
+					.classed('michaeldmoore-multistat-panel-yaxis', true)
+					.call(d3.axisRight(yScale).tickSizeInner(5).tickSizeOuter(10).ticks(5));
+			}
+
+//			// DEBUG
+//			var xScale = d3.scaleLinear()
+//				.domain([0, 100])
+//				.range([0, $container.width()]);
+//
+//			svg.append("g")
+//				.attr('transform', 'translate(0, 50)')
+//				.classed('michaeldmoore-multistat-panel-yaxis', true)
+//				.call(d3.axisBottom(xScale).tickSizeInner(10).tickSizeOuter(40).ticks(50));
+
+
+
 		}
 		
         this.ctrl.renderingCompleted();
@@ -198,6 +278,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
     onDataReceived(dataList) {
 		if (dataList.length == 0){
 			this.elem.html("<div style='position:absolute;top:50%;text-align:center;font-size:0.875rem;'>No data to show</div>");
+			this.rows = null;
+			this.cols = [];
 		}
 		else if (dataList[0].type == "table"){
 			this.rows = dataList[0].rows;
@@ -210,125 +292,17 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
     }
 
 	parseCols(cols){
-		for(var i=0; i<cols.length; i++){
-			switch(cols[i].text){
-				case 'time_sec': {
-					this.time_col = i; 
-					break;
-				}
-				case 'metric': this.metric_col = i; break;
-				case 'value': this.value_col = i; break;
-			}
+		this.cols = [];
+		for(var i=0; i < cols.length; i++){
+			this.cols[i] = cols[i].text;
+//			if (cols[i].text == this.panel.DateTimeColName)
+//				this.DateTimeCol = i;
+//			if (cols[i].text == this.panel.LabelColName)
+//				this.LabelCol = i;
+//			if (cols[i].text == this.panel.ValueColName)
+//				this.ValueCol = i;
 		}
 	}
-//    seriesHandler(seriesData) {
-//        var series = new TimeSeries({
-//            datapoints: seriesData.datapoints,
-//            alias: seriesData.target,
-//        });
-//
-//        series.flotpairs = series.getFlotPairs(this.panel.nullPointMode);
-//        return series;
-//    }
-//
-//    getDecimalsForValue(value, decimals) {
-//        if (_.isNumber(decimals)) {
-//            return {
-//                decimals: decimals,
-//                scaledDecimals: null
-//            };
-//        }
-//
-//        var delta = value / 2;
-//        var dec = -Math.floor(Math.log(delta) / Math.LN10);
-//
-//        var magn = Math.pow(10, -dec),
-//            norm = delta / magn, // norm is between 1.0 and 10.0
-//            size;
-//
-//        if (norm < 1.5) {
-//            size = 1;
-//        } else if (norm < 3) {
-//            size = 2;
-//            // special case for 2.5, requires an extra decimal
-//            if (norm > 2.25) {
-//                size = 2.5;
-//                ++dec;
-//            }
-//        } else if (norm < 7.5) {
-//            size = 5;
-//        } else {
-//            size = 10;
-//        }
-//
-//        size *= magn;
-//
-//        // reduce starting decimals if not needed
-//        if (Math.floor(value) === value) {
-//            dec = 0;
-//        }
-//
-//        var result = {};
-//        result.decimals = Math.max(0, dec);
-//        result.scaledDecimals = result.decimals - Math.floor(Math.log(size) / Math.LN10) + 2;
-//
-//        return result;
-//    }
-//
-//    formatValue(value, decimals) {
-//        // crude work-around for kbn formatting function error - preserve decimal places even for whole numbers
-//        if (value == 0 && decimals > 0)
-//            value += 0.000000000000001;
-//        var decimalInfo = this.getDecimalsForValue(value, decimals);
-//        var formatFunc = kbn.valueFormats[this.panel.Metric.Format];
-//        return formatFunc(value, decimalInfo.decimals, decimalInfo.scaledDecimals);
-//    }
-//
-//    setValues(data) {
-//        data.flotpairs = [];
-//
-//        if (this.series.length > 1) {
-//            this.alertSrv.set('Multistat Multiple Series Error',
-//                'Metric query returns ' + this.series.length + ' series. Multistat Panel expects a single series.\n\nResponse:\n' + JSON.stringify(this.series), 'error', 10000);
-//        }
-//
-//        if (this.series && this.series.length > 0) {
-//            var lastPoint = _.last(this.series[0].datapoints);
-//            var lastValue = _.isArray(lastPoint) ? lastPoint[0] : null;
-//
-//            if (this.panel.Metric.Name === 'name') {
-//                data.value = 0;
-//                data.valueRounded = 0;
-//                data.valueFormatted = this.series[0].alias;
-//            } else if (_.isString(lastValue)) {
-//                data.value = 0;
-//                data.valueFormatted = _.escape(lastValue);
-//                data.valueRounded = 0;
-//            } else {
-//                data.value = this.series[0].stats[this.panel.Metric.Name];
-//                data.flotpairs = this.series[0].flotpairs;
-//
-//                if (data == null || data.value == null) {
-//                    data.value = 0.0;
-//                }
-//
-//                var decimalInfo = this.getDecimalsForValue(data.value, this.panel.Metric.Decimals);
-//                var formatFunc = kbn.valueFormats[this.panel.Metric.Format];
-//                data.valueFormatted = formatFunc(data.value, decimalInfo.decimals, decimalInfo.scaledDecimals);
-//                data.valueRounded = kbn.roundValue(data.value, decimalInfo.decimals);
-//            }
-//
-//            if (data == null || data.value == null) {
-//                data.value = 0.0;
-//            }
-//
-//            // Add $__name variable for using in prefix or postfix
-//            data.scopedVars = _.extend({}, this.panel.scopedVars);
-//            data.scopedVars["__name"] = {
-//                value: this.series[0].label
-//            };
-//        }
-//    }
 
     onConfigChanged() {
         this.refresh();

@@ -1,75 +1,131 @@
 <div class="editor-row">
   <div class="section gf-form-group">
-    <h5 class="section-heading">Value</h5>
+    <h5 class="section-heading">Values</h5>
 
-    <div class="gf-form-inline">
-      <div class="gf-form">
-        <label class="gf-form-label michaeldmoore-multistat-panel-w6">Metric</label>
-        <div class="gf-form-select-wrapper michaeldmoore-multistat-panel-w7">
-          <select class="gf-form-input" ng-model="ctrl.panel.Metric.Name" ng-options="f for f in ctrl.metricNames" ng-change="ctrl.render()"></select>
-        </div>
-      </div>
-      <div class="gf-form">
-        <label class="gf-form-label michaeldmoore-multistat-panel-w6">Font size</label>
+	<div class="gf-form">
+	  <div class="gf-form-inline">
+        <label class="gf-form-label michaeldmoore-multistat-panel-w6">DateTime col</label>
         <div class="gf-form-select-wrapper">
-          <select class="gf-form-input michaeldmoore-multistat-panel-w6" ng-model="ctrl.panel.Metric.FontSize" ng-options="f for f in ctrl.fontSizes" ng-change="ctrl.render()"></select>
+          <select class="gf-form-input michaeldmoore-multistat-panel-w6" ng-model="ctrl.panel.DateTimeColName" ng-options="f for f in ctrl.cols" ng-change="ctrl.render()"></select>
         </div>
-      </div>
-    </div>
-
-    <div class="gf-form-inline">
-      <div class="gf-form">
-        <label class="gf-form-label michaeldmoore-multistat-panel-w6">Prefix</label>
-        <input type="text" class="gf-form-input michaeldmoore-multistat-panel-w7" ng-model="ctrl.panel.Prefix.Text" ng-change="ctrl.render()" ng-model-onblur>
-        <label class="gf-form-label michaeldmoore-multistat-panel-w6">Font size</label>
+	  </div>
+	  <div class="gf-form-inline">
+        <label class="gf-form-label michaeldmoore-multistat-panel-w6">Label col</label>
         <div class="gf-form-select-wrapper">
-          <select class="gf-form-input michaeldmoore-multistat-panel-w6" ng-model="ctrl.panel.Prefix.FontSize" ng-options="f for f in ctrl.fontSizes0" ng-change="ctrl.render()"></select>
+          <select class="gf-form-input michaeldmoore-multistat-panel-w6" ng-model="ctrl.panel.LabelColName" ng-options="f for f in ctrl.cols" ng-change="ctrl.render()"></select>
         </div>
-      </div>
-    </div>
+	  </div>
+	  <div class="gf-form-inline">
+        <label class="gf-form-label michaeldmoore-multistat-panel-w6">Value col</label>
+        <div class="gf-form-select-wrapper">
+          <select class="gf-form-input michaeldmoore-multistat-panel-w6" ng-model="ctrl.panel.ValueColName" ng-options="f for f in ctrl.cols" ng-change="ctrl.render()"></select>
+        </div>
+	  </div>
+	</div>
 
-    <div class="gf-form">
-      <label class="gf-form-label michaeldmoore-multistat-panel-w6">Postfix</label>
-      <input type="text" class="gf-form-input michaeldmoore-multistat-panel-w7" ng-model="ctrl.panel.Postfix.Text" ng-change="ctrl.render()" ng-model-onblur>
-      <label class="gf-form-label michaeldmoore-multistat-panel-w6">Font size</label>
-      <div class="gf-form-select-wrapper">
-        <select class="gf-form-input michaeldmoore-multistat-panel-w6" ng-model="ctrl.panel.Postfix.FontSize" ng-options="f for f in ctrl.fontSizes0" ng-change="ctrl.render()"></select>
-      </div>
+	<div class="gf-form">
+	  <div class="gf-form-inline">
+        <label class="gf-form-label michaeldmoore-multistat-panel-w6">Sorting</label>
+        <div class="gf-form-select-wrapper">
+          <select class="gf-form-input michaeldmoore-multistat-panel-w6" ng-model="ctrl.panel.SortDirection" ng-options="f for f in ctrl.sortDirections" ng-change="ctrl.render()"></select>
+        </div>
+	  </div>
+	  <div class="gf-form-inline" ng-if="ctrl.panel.SortDirection != 'none'">
+        <label class="gf-form-label michaeldmoore-multistat-panel-w6">Sort col</label>
+        <div class="gf-form-select-wrapper">
+          <select class="gf-form-input michaeldmoore-multistat-panel-w6" ng-model="ctrl.panel.SortColName" ng-options="f for f in ctrl.cols" ng-change="ctrl.render()"></select>
+        </div>
+	  </div>
+
     </div>
 	
 	<div class="gf-form">
-	  <label class="gf-form-label michaeldmoore-multistat-panel-w6">Unit</label>
-	  <div class="gf-form-dropdown-typeahead michaeldmoore-multistat-panel-w19" ng-model="ctrl.panel.Metric.Format" dropdown-typeahead2="ctrl.unitFormats" dropdown-typeahead-on-select="ctrl.setUnitFormat($subItem)">
+      <gf-form-switch class="gf-form" label-class="width-7" label="Show Values" checked="ctrl.panel.ShowValues" on-change="ctrl.render()"></gf-form-switch>
+	  <div class="gf-form-inline" ng-if="ctrl.panel.ShowValues">
+        <label class="gf-form-label michaeldmoore-multistat-panel-w6">Font size</label>
+        <div class="gf-form-select-wrapper">
+          <select class="gf-form-input michaeldmoore-multistat-panel-w6" ng-model="ctrl.panel.ValueFontSize" ng-options="f for f in ctrl.fontSizes" ng-change="ctrl.render()"></select>
+        </div>
+	    <label class="gf-form-label michaeldmoore-multistat-panel-w6">Color</label>
+	    <span class="gf-form-label michaeldmoore-annunciator-panel-w4">
+		  <spectrum-picker ng-model="ctrl.panel.ValueColor" ng-change="ctrl.render()" ></spectrum-picker>
+	    </span>
 	  </div>
 	</div>
+
+	<div class="gf-form">
+      <gf-form-switch class="gf-form" label-class="width-7" label="Show Labels" checked="ctrl.panel.ShowLabels" on-change="ctrl.render()"></gf-form-switch>
+	  <div class="gf-form-inline" ng-if="ctrl.panel.ShowLabels">
+        <label class="gf-form-label michaeldmoore-multistat-panel-w6">Font size</label>
+        <div class="gf-form-select-wrapper">
+          <select class="gf-form-input michaeldmoore-multistat-panel-w6" ng-model="ctrl.panel.LabelFontSize" ng-options="f for f in ctrl.fontSizes" ng-change="ctrl.render()"></select>
+        </div>
+	    <label class="gf-form-label michaeldmoore-multistat-panel-w6">Color</label>
+	    <span class="gf-form-label michaeldmoore-annunciator-panel-w4">
+		  <spectrum-picker ng-model="ctrl.panel.LabelColor" ng-change="ctrl.render()" ></spectrum-picker>
+	    </span>
+	  </div>
+	</div>
+
+	<div class="gf-form">
+	  <label class="gf-form-label michaeldmoore-multistat-panel-w6">High Bar Color</label>
+	  <span class="gf-form-label michaeldmoore-annunciator-panel-w4">
+		<spectrum-picker ng-model="ctrl.panel.HighBarColor" ng-change="ctrl.render()" ></spectrum-picker>
+	  </span>
+	  <label class="gf-form-label michaeldmoore-multistat-panel-w6">Low Bar Color</label>
+	  <span class="gf-form-label michaeldmoore-annunciator-panel-w4">
+		<spectrum-picker ng-model="ctrl.panel.LowBarColor" ng-change="ctrl.render()" ></spectrum-picker>
+	  </span>
+	  <label class="gf-form-label width-9">Bar Padding</label>
+	  <input type="number" class="gf-form-input width-5" placeholder="auto" data-placement="right" 
+	    bs-tooltip="'Override automatic maximum scale value'" ng-model="ctrl.panel.BarPadding" ng-change="ctrl.render()" ng-model-onblur>
+	</div>
+
   </div>
 	
   <div class="section gf-form-group">
     <h5 class="section-heading">Flags</h5>
 
     <div class="gf-form">
-      <gf-form-switch class="gf-form" label-class="width-10" label="Show Date" checked="ctrl.panel.ShowDate" on-change="ctrl.render()"></gf-form-switch>
+	  <label class="gf-form-label width-9">Left Margin</label>
+	  <input type="number" class="gf-form-input width-5" placeholder="auto" data-placement="right" 
+	    bs-tooltip="'Set to 0 for no left side axis'" ng-model="ctrl.panel.LeftMargin" ng-change="ctrl.render()" ng-model-onblur>
+	  <label class="gf-form-label width-9">Right Margin</label>
+	  <input type="number" class="gf-form-input width-5" placeholder="auto" data-placement="right" 
+	    bs-tooltip="'Set to 0 for no right side axis'" ng-model="ctrl.panel.RightMargin" ng-change="ctrl.render()" ng-model-onblur>
+      <gf-form-switch class="gf-form" label-class="width-9" label="Show Date" checked="ctrl.panel.ShowDate" on-change="ctrl.render()"></gf-form-switch>
     </div>
-	  
-    <div class="gf-form">
-      <gf-form-switch class="gf-form" label-class="width-10" label="Show Left Axis" checked="ctrl.panel.ShowLeftAxis" on-change="ctrl.render()"></gf-form-switch>
-    </div>
-	  
-    <div class="gf-form">
-      <gf-form-switch class="gf-form" label-class="width-10" label="Show Right Axis" checked="ctrl.panel.ShowRightAxis" on-change="ctrl.render()"></gf-form-switch>
-    </div>
-	  
-    <div class="gf-form">
-	  <label class="gf-form-label width-9">Min Value</label>
-	  <input type="number" class="gf-form-input width-10" placeholder="auto" data-placement="right" 
-		bs-tooltip="'Override automatic minimum scale value'" ng-model="ctrl.panel.MinValue" ng-change="ctrl.render()" ng-model-onblur>
-	</div>
 	  
 	<div class="gf-form">
 	  <label class="gf-form-label width-9">Max Value</label>
-	  <input type="number" class="gf-form-input width-10" placeholder="auto" data-placement="right" 
-	    bs-tooltip="'Override automatic maximum scale value'" ng-model="ctrl.panel.MaxValue" ng-change="ctrl.render()" ng-model-onblur>
+	  <input type="number" class="gf-form-input width-5" placeholder="auto" data-placement="right" 
+	    bs-tooltip="'Override automatic maximum scale value'" ng-model="ctrl.panel.MaxLineValue" ng-change="ctrl.render()" ng-model-onblur>
+      <gf-form-switch class="gf-form" label-class="width-6" label="Show Line" checked="ctrl.panel.ShowMaxLine" on-change="ctrl.render()"></gf-form-switch>
+	  <span class="gf-form-label michaeldmoore-annunciator-panel-w4" ng-if="ctrl.panel.ShowMaxLine">
+		<spectrum-picker ng-model="ctrl.panel.MaxLineColor" ng-change="ctrl.render()" ></spectrum-picker>
+	  </span>
 	</div>
+	  
+    <div class="gf-form">
+	  <label class="gf-form-label width-9">BaseLine</label>
+	  <input type="number" class="gf-form-input width-5" placeholder="auto" data-placement="right" 
+		bs-tooltip="'Override automatic zero baseline value'" ng-model="ctrl.panel.BaseLineValue" ng-change="ctrl.render()" ng-model-onblur>
+      <gf-form-switch class="gf-form" label-class="width-6" label="Show Line" checked="ctrl.panel.ShowBaseLine" on-change="ctrl.render()"></gf-form-switch>
+	  <span class="gf-form-label michaeldmoore-annunciator-panel-w4" ng-if="ctrl.panel.ShowBaseLine">
+		<spectrum-picker ng-model="ctrl.panel.BaseLineColor" ng-change="ctrl.render()" ></spectrum-picker>
+	  </span>
+	</div>
+
+    <div class="gf-form">
+	  <label class="gf-form-label width-9">Min Value</label>
+	  <input type="number" class="gf-form-input width-5" placeholder="auto" data-placement="right" 
+		bs-tooltip="'Override automatic minimum scale value'" ng-model="ctrl.panel.MinLineValue" ng-change="ctrl.render()" ng-model-onblur>
+      <gf-form-switch class="gf-form" label-class="width-6" label="Show Line" checked="ctrl.panel.ShowMinLine" on-change="ctrl.render()"></gf-form-switch>
+	  <span class="gf-form-label michaeldmoore-annunciator-panel-w4" ng-if="ctrl.panel.ShowMinLine">
+		<spectrum-picker ng-model="ctrl.panel.MinLineColor" ng-change="ctrl.render()" ></spectrum-picker>
+	  </span>
+	</div>
+  
   </div>
   
 </div>
