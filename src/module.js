@@ -28,6 +28,17 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			"ShowLabels": true,
 			"LabelFontSize": "100%",
 			"LabelColor": "white",
+			"HighLimitValue": "",
+			"HighLimitLineColor": "red",
+			"ShowHighLimitLine": false,
+			"RecolorHighLimitBar": false,
+			"HighLimitBarColor": "red",
+			"FlashHighLimitBar": true,
+			"LowLimitLineColor": "red",
+			"ShowLowLimitLine": false,
+			"RecolorLowLimitBar": false,
+			"LowLimitBarColor": "red",
+			"FlashLowLimitBar": true,
 			"ShowDate": true,
 			"ShowLeftAxis": true,
 			"ShowRightAxis": true,
@@ -132,7 +143,15 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			var maxLineValue = this.panel.MaxLineValue;
 			var highBarColor = this.panel.HighBarColor;
 			var lowBarColor = this.panel.LowBarColor;
-
+			var highLimitValue = this.panel.HighLimitValue;
+			var HighLimitBarColor = this.panel.HighLimitBarColor;
+			var recolorHighLimitBar = this.panel.RecolorHighLimitBar;
+			var lowLimitValue = this.panel.LowLimitValue;
+			var LowLimitBarColor = this.panel.LowLimitBarColor;
+			var recolorLowLimitBar = this.panel.RecolorLowLimitBar;
+			var flashHighLimitBar = this.panel.FlashHighLimitBar;
+			var flashLowLimitBar = this.panel.FlashLowLimitBar;
+			
 			if ($.isNumeric(barPadding) == false)
 				barPadding = dw * 0.10;
 			
@@ -195,6 +214,12 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			if(this.panel.ShowMinLine)
 				hLine(minLineValue, this.panel.MinLineColor);
 
+			if(this.panel.ShowHighLimitLine)
+				hLine(highLimitValue, this.panel.HighLimitLineColor);
+
+			if(this.panel.ShowLowLimitLine)
+				hLine(lowLimitValue, this.panel.LowLimitLineColor);
+
 			
 			svg.selectAll("rect")
 				.data(this.rows)
@@ -213,7 +238,18 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 						return hh; 
 					})
 				.attr("fill", function(d) { 
+						if (recolorHighLimitBar && (d[valueCol] > highLimitValue))
+							return HighLimitBarColor;
+						if (recolorLowLimitBar && (d[valueCol] < lowLimitValue))
+							return LowLimitBarColor;
 						return (yScale(d[valueCol]) < yScale(baseLineValue)) ? highBarColor : lowBarColor;
+					})
+				.classed("flash", function(d) { 
+						if (recolorHighLimitBar && (d[valueCol] > highLimitValue))
+							return true;
+						if (recolorLowLimitBar && (d[valueCol] < lowLimitValue))
+							return true;
+						return false;
 					});
 				
 			var g = svg.selectAll("text")

@@ -17,6 +17,11 @@
     background-color: teal;
 }
 
+.michaeldmoore-multistat-panel-bar flash {
+	margin: 10px;
+    background-color: black;
+}
+
 .michaeldmoore-multistat-panel-yaxis line {
 	stroke: red;
 }
