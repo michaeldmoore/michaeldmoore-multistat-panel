@@ -196,7 +196,7 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 
 							var horizontal = this.panel.Horizontal;
 
-							var className = 'michaeldmoore-multistat-panel';
+							var className = 'michaeldmoore-multistat-panel-' + this.panel.id;
 							this.elem.html("<svg class='" + className + "'  style='height:" + this.ctrl.height + "px; width:100%'></svg>");
 							var $container = this.elem.find('.' + className);
 							var labelMargin = $.isNumeric(this.panel.LabelMargin) && this.panel.LabelMargin >= 0 ? this.panel.LabelMargin : horizontal ? 100 : 20;

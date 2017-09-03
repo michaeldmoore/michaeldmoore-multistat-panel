@@ -1,7 +1,3 @@
-.xxmichaeldmoore-multistat-panel {
-  background-color: silver;
-}
-
 .michaeldmoore-multistat-panel-nodata {
   position: absolute;
   top: 50%;
@@ -15,23 +11,6 @@
   float:right;
 }
 
-.michaeldmoore-multistat-panel-bar {
-//  display: inline-block;
-//	margin-right: 2px;
-}
-
-.michaeldmoore-multistat-panel-bar flash {
-    animation: someAnimationNameImadeUp 5s;
-}
-
-@keyframes someAnimationNameImadeUp {
-    0%   {fill: red; }
-    25%  {fill: yellow; }
-    50%  {fill: blue; }
-    75%  {fill: green; }
-    100% {fill: red; }
-}
-
 .michaeldmoore-multistat-panel-valueaxis line {
 	stroke: red;
 }
@@ -42,37 +21,6 @@
 
 .michaeldmoore-multistat-panel-valueaxis text {
 	fill: red;
-}
-
-.michaeldmoore-multistat-rows-topleft {
-  background-color: red;
-}
-
-.michaeldmoore-multistat-rows-topright {
-  width: 100%;
-  vertical-align: middle;
-  background-color: yellow;
-}
-
-.michaeldmoore-multistat-rows-middleleft {
-  height: 100%;
-  padding-right: 5px;
-  background-color: green;
-}
-
-.michaeldmoore-multistat-rows-middleright {
-  height: 100%;
-  width: 100%;
-  background-color: blue;
-}
-
-.michaeldmoore-multistat-rows-bottomleft {
-  background-color: orange;
-}
-
-.michaeldmoore-multistat-rows-bottomright {
-  width: 100%;
-  background-color: grey;
 }
 
 
@@ -118,54 +66,3 @@
   margin-bottom: 0px;
 }
 
-.XXXmichaeldmoore-multistat-panel-container {
-  position: relative;
-  display: table;
-  width: 100%;
-}
-
-.XXXmichaeldmoore-multistat-panel-value-container {
-  display: table-cell;
-  vertical-align: middle;
-  text-align: center;
-  position: relative;
-  font-size: 3em;
-  font-weight: bold;
-}
-
-.XXXmichaeldmoore-multistat-panel-prefix {
-  padding: 20px;
-}
-
-.XXXmichaeldmoore-multistat-panel-value {
-}
-
-.XXXmichaeldmoore-multistat-panel-postfix {
-  padding-left: 20px;
-}
-
-.XXXmichaeldmoore-multistat-panel-limits-container {
-  font-size: 3em;
-}
-
-.XXXmichaeldmoore-multistat-panel-lower-limit {
-  position: absolute;
-  top: 0px;
-  left: 0px;
-}
-
-.XXXmichaeldmoore-multistat-panel-upper-limit {
-  position: absolute;
-  top: 0px;
-  right: 0px;
-}
-
-.XXXmichaeldmoore-multistat-flash {
-  animation: michaeldmoore-multistat-flash 1s infinite;
-}
-
-@keyframes michaeldmoore-multistat-flash {
-  0% { font-weight: bold; }
-  50% { font-weight: normal; }
-  100% { font-weight: bold; } 
-}
