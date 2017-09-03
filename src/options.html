@@ -24,8 +24,9 @@
 	</div>
 
 	<div class="gf-form">
+      <gf-form-switch class="gf-form" label-class="width-7" label="Horitontal" checked="ctrl.panel.Horizontal" on-change="ctrl.render()"></gf-form-switch>
 	  <div class="gf-form-inline">
-        <label class="gf-form-label michaeldmoore-multistat-panel-w6">Sorting</label>
+        <label class="gf-form-label michaeldmoore-multistat-panel-w7">Sorting</label>
         <div class="gf-form-select-wrapper">
           <select class="gf-form-input michaeldmoore-multistat-panel-w6" ng-model="ctrl.panel.SortDirection" ng-options="f for f in ctrl.sortDirections" ng-change="ctrl.render()"></select>
         </div>
@@ -76,24 +77,27 @@
 	  <span class="gf-form-label michaeldmoore-annunciator-panel-w4">
 		<spectrum-picker ng-model="ctrl.panel.LowBarColor" ng-change="ctrl.render()" ></spectrum-picker>
 	  </span>
-	  <label class="gf-form-label width-9">Bar Padding</label>
+	  <label class="gf-form-label width-9">Bar Padding %</label>
 	  <input type="number" class="gf-form-input width-5" placeholder="auto" data-placement="right" 
 	    bs-tooltip="'Override automatic maximum scale value'" ng-model="ctrl.panel.BarPadding" ng-change="ctrl.render()" ng-model-onblur>
 	</div>
 
+    <div class="gf-form">
+	  <label class="gf-form-label width-7">Label Margin</label>
+	  <input type="number" class="gf-form-input width-5" placeholder="auto" data-placement="right" 
+	    bs-tooltip="'Set to 0 for no bottom margin'" ng-model="ctrl.panel.LabelMargin" ng-change="ctrl.render()" ng-model-onblur>
+	  <label class="gf-form-label width-7">Low Side Margin</label>
+	  <input type="number" class="gf-form-input width-5" placeholder="auto" data-placement="right" 
+	    bs-tooltip="'Set to 0 for no left side axis'" ng-model="ctrl.panel.LowSideMargin" ng-change="ctrl.render()" ng-model-onblur>
+	  <label class="gf-form-label width-8">High Side Margin</label>
+	  <input type="number" class="gf-form-input width-5" placeholder="auto" data-placement="right" 
+	    bs-tooltip="'Set to 0 for no right side axis'" ng-model="ctrl.panel.HighSideMargin" ng-change="ctrl.render()" ng-model-onblur>
+    </div>
+
   </div>
 	
   <div class="section gf-form-group">
-    <h5 class="section-heading">Flags</h5>
-
-    <div class="gf-form">
-	  <label class="gf-form-label width-7">Left Margin</label>
-	  <input type="number" class="gf-form-input width-5" placeholder="auto" data-placement="right" 
-	    bs-tooltip="'Set to 0 for no left side axis'" ng-model="ctrl.panel.LeftMargin" ng-change="ctrl.render()" ng-model-onblur>
-	  <label class="gf-form-label width-8">Right Margin</label>
-	  <input type="number" class="gf-form-input width-5" placeholder="auto" data-placement="right" 
-	    bs-tooltip="'Set to 0 for no right side axis'" ng-model="ctrl.panel.RightMargin" ng-change="ctrl.render()" ng-model-onblur>
-    </div>
+    <h5 class="section-heading">Lines and Limits</h5>
 	  
 	<div class="gf-form">
 	  <label class="gf-form-label width-7">Max Value</label>
@@ -135,27 +139,58 @@
 	  </span>
 		
       <gf-form-switch class="gf-form" label-class="width-6" label="Color Bar" checked="ctrl.panel.RecolorHighLimitBar" on-change="ctrl.render()"></gf-form-switch>
-	  <span class="gf-form-label michaeldmoore-annunciator-panel-w4" ng-if="ctrl.panel.RecolorHighLimitBar">
-		<spectrum-picker ng-model="ctrl.panel.HighLimitBarColor" ng-change="ctrl.render()" ></spectrum-picker>
-	  </span>
-      <gf-form-switch class="gf-form" label-class="width-4" label="Flash" checked="ctrl.panel.FlashHighLimitBar" on-change="ctrl.render()"></gf-form-switch>
+      <span class="gf-form-label michaeldmoore-annunciator-panel-w4" ng-if="ctrl.panel.RecolorHighLimitBar">
+        <spectrum-picker ng-model="ctrl.panel.HighLimitBarColor" ng-change="ctrl.render()" ></spectrum-picker>
+      </span>
+	  <div ng-if="ctrl.panel.RecolorHighLimitBar">
+        <gf-form-switch class="gf-form" label-class="width-4" label="Flash" checked="ctrl.panel.FlashHighLimitBar" on-change="ctrl.render()"></gf-form-switch>
+      </div>
+	  	  
+      <div class="gf-form" ng-if="ctrl.panel.RecolorHighLimitBar">
+        <span class="gf-form-label michaeldmoore-annunciator-panel-w4" ng-if="ctrl.panel.FlashHighLimitBar">
+		  <spectrum-picker ng-model="ctrl.panel.HighLimitBarFlashColor" ng-change="ctrl.render()" ></spectrum-picker>
+        </span>
+		<div ng-if="ctrl.panel.FlashHighLimitBar">
+		  <label class="gf-form-label width-5">Rate</label>
+		</div>  
+		<div ng-if="ctrl.panel.FlashHighLimitBar">
+		    <input type="number" class="gf-form-input width-4" placeholder="auto" data-placement="right" 
+		      bs-tooltip="'Set high limit flash timeout (in mS)'" ng-model="ctrl.panel.HighLimitBarFlashTimeout" ng-change="ctrl.render()" ng-model-onblur>
+		</div>
+ 	  </div>
 	</div>
-  
+
     <div class="gf-form">
 	  <label class="gf-form-label width-7">Low Limit</label>
 	  <input type="number" class="gf-form-input width-5" placeholder="auto" data-placement="right" 
-		bs-tooltip="'Set low limit value'" ng-model="ctrl.panel.LowLimitValue" ng-change="ctrl.render()" ng-model-onblur>
+		bs-tooltip="'Set high limit value'" ng-model="ctrl.panel.LowLimitValue" ng-change="ctrl.render()" ng-model-onblur>
       <gf-form-switch class="gf-form" label-class="width-6" label="Show Line" checked="ctrl.panel.ShowLowLimitLine" on-change="ctrl.render()"></gf-form-switch>
 	  <span class="gf-form-label michaeldmoore-annunciator-panel-w4" ng-if="ctrl.panel.ShowLowLimitLine">
 		<spectrum-picker ng-model="ctrl.panel.LowLimitLineColor" ng-change="ctrl.render()" ></spectrum-picker>
 	  </span>
 		
       <gf-form-switch class="gf-form" label-class="width-6" label="Color Bar" checked="ctrl.panel.RecolorLowLimitBar" on-change="ctrl.render()"></gf-form-switch>
-	  <span class="gf-form-label michaeldmoore-annunciator-panel-w4" ng-if="ctrl.panel.RecolorLowLimitBar">
-		<spectrum-picker ng-model="ctrl.panel.LowLimitBarColor" ng-change="ctrl.render()" ></spectrum-picker>
-  	  </span>
-      <gf-form-switch class="gf-form" label-class="width-4" label="Flash" checked="ctrl.panel.FlashLowLimitBar" on-change="ctrl.render()"></gf-form-switch>
+      <span class="gf-form-label michaeldmoore-annunciator-panel-w4" ng-if="ctrl.panel.RecolorLowLimitBar">
+        <spectrum-picker ng-model="ctrl.panel.LowLimitBarColor" ng-change="ctrl.render()" ></spectrum-picker>
+      </span>
+	  <div ng-if="ctrl.panel.RecolorLowLimitBar">
+        <gf-form-switch class="gf-form" label-class="width-4" label="Flash" checked="ctrl.panel.FlashLowLimitBar" on-change="ctrl.render()"></gf-form-switch>
+      </div>
+	  	  
+      <div class="gf-form" ng-if="ctrl.panel.RecolorLowLimitBar">
+        <span class="gf-form-label michaeldmoore-annunciator-panel-w4" ng-if="ctrl.panel.FlashLowLimitBar">
+		  <spectrum-picker ng-model="ctrl.panel.LowLimitBarFlashColor" ng-change="ctrl.render()" ></spectrum-picker>
+        </span>
+		<div ng-if="ctrl.panel.FlashLowLimitBar">
+		  <label class="gf-form-label width-5">Rate</label>
+		</div>  
+		<div ng-if="ctrl.panel.FlashLowLimitBar">
+		    <input type="number" class="gf-form-input width-4" placeholder="auto" data-placement="right" 
+		      bs-tooltip="'Set high limit flash timeout (in mS)'" ng-model="ctrl.panel.LowLimitBarFlashTimeout" ng-change="ctrl.render()" ng-model-onblur>
+		</div>
+ 	  </div>
 	</div>
+	
   
   </div>
   

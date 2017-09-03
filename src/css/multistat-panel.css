@@ -1,3 +1,7 @@
+.xxmichaeldmoore-multistat-panel {
+  background-color: silver;
+}
+
 .michaeldmoore-multistat-panel-nodata {
   position: absolute;
   top: 50%;
@@ -12,25 +16,31 @@
 }
 
 .michaeldmoore-multistat-panel-bar {
-    display: inline-block;
-	margin-right: 2px;
-    background-color: teal;
+//  display: inline-block;
+//	margin-right: 2px;
 }
 
 .michaeldmoore-multistat-panel-bar flash {
-	margin: 10px;
-    background-color: black;
+    animation: someAnimationNameImadeUp 5s;
 }
 
-.michaeldmoore-multistat-panel-yaxis line {
+@keyframes someAnimationNameImadeUp {
+    0%   {fill: red; }
+    25%  {fill: yellow; }
+    50%  {fill: blue; }
+    75%  {fill: green; }
+    100% {fill: red; }
+}
+
+.michaeldmoore-multistat-panel-valueaxis line {
 	stroke: red;
 }
 
-.michaeldmoore-multistat-panel-yaxis path {
+.michaeldmoore-multistat-panel-valueaxis path {
 	stroke: red;
 }
 
-.michaeldmoore-multistat-panel-yaxis text {
+.michaeldmoore-multistat-panel-valueaxis text {
 	fill: red;
 }
 
