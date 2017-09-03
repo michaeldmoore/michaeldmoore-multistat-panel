@@ -170,6 +170,18 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 					key: 'onRender',
 					value: function onRender() {
 						if (this.rows != null) {
+							var pulse = function pulse() {
+								var highFlashRects = svg.selectAll("rect.michaeldmoore-multistat-panel-bar.highflash");
+								(function highRepeat() {
+									highFlashRects.transition().duration(HighLimitBarFlashTimeout).attr("fill", HighLimitBarColor).transition().duration(HighLimitBarFlashTimeout).attr("fill", HighLimitBarFlashColor).on("end", highRepeat);
+								})();
+
+								var lowFlashRects = svg.selectAll("rect.michaeldmoore-multistat-panel-bar.lowflash");
+								(function lowRepeat() {
+									lowFlashRects.transition().duration(LowLimitBarFlashTimeout).attr("fill", LowLimitBarColor).transition().duration(LowLimitBarFlashTimeout).attr("fill", LowLimitBarFlashColor).on("end", lowRepeat);
+								})();
+							};
+
 							var dateTimeCol = 0;
 							var labelCol = 0;
 							var valueCol = 0;
@@ -188,9 +200,6 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 									return ascending ? comp : -comp;
 								});
 							}
-
-							var anyHighFlash = false;
-							var anyLowFlash = false;
 
 							this.buildDateHtml(dateTimeCol);
 
@@ -283,17 +292,9 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 									if (recolorLowLimitBar && d[valueCol] < lowLimitValue) return LowLimitBarColor;
 									return d[valueCol] > baseLineValue ? highBarColor : lowBarColor;
 								}).classed("highflash", function (d) {
-									if (flashHighLimitBar && d[valueCol] > highLimitValue) {
-										anyHighFlash = true;
-										return true;
-									}
-									return false;
+									return flashHighLimitBar && d[valueCol] > highLimitValue;
 								}).classed("lowflash", function (d) {
-									if (flashLowLimitBar && d[valueCol] < lowLimitValue) {
-										anyLowFlash = true;
-										return true;
-									}
-									return false;
+									return flashLowLimitBar && d[valueCol] < lowLimitValue;
 								});
 
 								var g = svg.selectAll("text").data(this.rows).enter().append("g");
@@ -334,6 +335,10 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 
 								var valueScale = d3.scaleLinear().domain([maxLineValue, minLineValue]).range([0, h - labelMargin]).nice();
 
+								var labelScale = d3.scaleBand().domain(this.rows.map(function (d) {
+									return d[labelCol];
+								})).range([lowSideMargin, w - highSideMargin]).padding(barPadding / 100);
+
 								if (this.panel.ShowBaseLine) hLine(baseLineValue, this.panel.BaseLineColor);
 
 								if (this.panel.ShowMaxLine) hLine(maxLineValue, this.panel.MaxLineColor);
@@ -344,30 +349,22 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 
 								if (this.panel.ShowLowLimitLine) hLine(lowLimitValue, this.panel.LowLimitLineColor);
 
-								svg.selectAll("rect").data(this.rows).enter().append("rect").attr("class", "michaeldmoore-multistat-panel-bar").attr("x", function (d, i) {
-									return lowSideMargin + barPadding / 2 + i * dw;
-								}).attr("y", function (d) {
-									return d3.min([valueScale(d[valueCol]), valueScale(baseLineValue)]);
-								}).attr("width", dw - barPadding).attr("height", function (d) {
-									var hh = valueScale(baseLineValue) - valueScale(d[valueCol]);
+								svg.selectAll("rect").data(this.rows).enter().append("rect").attr("class", "michaeldmoore-multistat-panel-bar").attr("height", function (d) {
+									var hh = valueScale(d[valueCol]) - valueScale(baseLineValue);
 									if (hh < 0) hh = -hh;
 									return hh;
+								}).attr("width", labelScale.bandwidth()).attr("y", function (d) {
+									return d3.min([valueScale(d[valueCol]), valueScale(baseLineValue)]);
+								}).attr("x", function (d, i) {
+									return labelScale(d[labelCol]);
 								}).attr("fill", function (d) {
 									if (recolorHighLimitBar && d[valueCol] > highLimitValue) return HighLimitBarColor;
 									if (recolorLowLimitBar && d[valueCol] < lowLimitValue) return LowLimitBarColor;
 									return d[valueCol] > baseLineValue ? highBarColor : lowBarColor;
 								}).classed("highflash", function (d) {
-									if (flashHighLimitBar && d[valueCol] > highLimitValue) {
-										anyHighFlash = true;
-										return true;
-									}
-									return false;
+									return flashHighLimitBar && d[valueCol] > highLimitValue;
 								}).classed("lowflash", function (d) {
-									if (flashLowLimitBar && d[valueCol] < lowLimitValue) {
-										anyLowFlash = true;
-										return true;
-									}
-									return false;
+									return flashLowLimitBar && d[valueCol] < lowLimitValue;
 								});
 
 								var g = svg.selectAll("text").data(this.rows).enter().append("g");
@@ -376,7 +373,7 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 									g.append("text").text(function (d) {
 										return formatDecimal(d[valueCol]);
 									}).attr("x", function (d, i) {
-										return lowSideMargin + dw / 2 + i * dw;
+										return labelScale(d[labelCol]) + labelScale.bandwidth() / 2;
 									}).attr("y", function (d) {
 										return valueScale(d[valueCol]) + (d[valueCol] > baseLineValue ? 5 : -5);
 									}).attr("font-family", "sans-serif").attr("font-size", this.panel.ValueFontSize).attr("fill", this.panel.ValueColor).attr("text-anchor", "middle").attr("dominant-baseline", function (d) {
@@ -388,7 +385,7 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 									g.append("text").text(function (d) {
 										return d[labelCol];
 									}).attr("x", function (d, i) {
-										return lowSideMargin + dw / 2 + i * dw;
+										return labelScale(d[labelCol]) + labelScale.bandwidth() / 2;
 									}).attr("y", function (d) {
 										return h - labelMargin + 14;
 									}).attr("font-family", "sans-serif").attr("font-size", this.panel.LabelFontSize).attr("fill", this.panel.LabelColor).attr("text-anchor", "middle");
@@ -402,21 +399,9 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 									svg.append("g").attr('transform', 'translate(' + (w - highSideMargin) + ', 0)').classed('michaeldmoore-multistat-panel-valueaxis', true).call(d3.axisRight(valueScale).tickSizeInner(5).tickSizeOuter(10).ticks(5));
 								}
 							}
+
+							pulse();
 						}
-
-						function pulse() {
-							var highFlashRects = svg.selectAll("rect.michaeldmoore-multistat-panel-bar.highflash");
-							(function highRepeat() {
-								highFlashRects.transition().duration(HighLimitBarFlashTimeout).attr("fill", HighLimitBarColor).transition().duration(HighLimitBarFlashTimeout).attr("fill", HighLimitBarFlashColor).on("end", highRepeat);
-							})();
-
-							var lowFlashRects = svg.selectAll("rect.michaeldmoore-multistat-panel-bar.lowflash");
-							(function lowRepeat() {
-								lowFlashRects.transition().duration(LowLimitBarFlashTimeout).attr("fill", LowLimitBarColor).transition().duration(LowLimitBarFlashTimeout).attr("fill", LowLimitBarFlashColor).on("end", lowRepeat);
-							})();
-						}
-
-						pulse();
 
 						this.ctrl.renderingCompleted();
 					}
@@ -441,12 +426,6 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 						this.cols = [];
 						for (var i = 0; i < cols.length; i++) {
 							this.cols[i] = cols[i].text;
-							//			if (cols[i].text == this.panel.DateTimeColName)
-							//				this.DateTimeCol = i;
-							//			if (cols[i].text == this.panel.LabelColName)
-							//				this.LabelCol = i;
-							//			if (cols[i].text == this.panel.ValueColName)
-							//				this.ValueCol = i;
 						}
 					}
 				}, {

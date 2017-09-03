@@ -131,9 +131,6 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 				});				
 			}
 			
-			var anyHighFlash = false;
-			var anyLowFlash = false;
-			
 			this.buildDateHtml(dateTimeCol);
 			
 			var horizontal = this.panel.Horizontal;
@@ -231,42 +228,34 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					vLine(lowLimitValue, this.panel.LowLimitLineColor);
 
 				svg.selectAll("rect")
-							.data(this.rows)
-							.enter()
-							.append("rect")
-							.attr("class", "michaeldmoore-multistat-panel-bar")
-							.attr("width", function(d) { 
-									var ww = valueScale(d[valueCol]) - valueScale(baseLineValue);
-									if (ww < 0)
-										ww = -ww;
-									return ww; 
-								})
-							.attr("height", labelScale.bandwidth())
-							.attr("x", function(d) { 
-									return d3.min([valueScale(d[valueCol]), valueScale(baseLineValue)]); 
-								})
-							.attr("y", function(d,i){return labelScale(d[labelCol])})
-							.attr("fill", function(d) { 
-									if (recolorHighLimitBar && (d[valueCol] > highLimitValue))
-										return HighLimitBarColor;
-									if (recolorLowLimitBar && (d[valueCol] < lowLimitValue))
-										return LowLimitBarColor;
-									return (d[valueCol] > baseLineValue) ? highBarColor : lowBarColor;
-								})
-							.classed("highflash", function(d) { 
-									if (flashHighLimitBar && (d[valueCol] > highLimitValue)){
-										anyHighFlash = true;
-										return true;
-									}
-									return false;
-								})
-							.classed("lowflash", function(d) { 
-									if (flashLowLimitBar && (d[valueCol] < lowLimitValue)){
-										anyLowFlash = true;
-										return true;
-									}
-									return false;
-								});
+					.data(this.rows)
+					.enter()
+					.append("rect")
+					.attr("class", "michaeldmoore-multistat-panel-bar")
+					.attr("width", function(d) { 
+						var ww = valueScale(d[valueCol]) - valueScale(baseLineValue);
+						if (ww < 0)
+							ww = -ww;
+						return ww; 
+						})
+					.attr("height", labelScale.bandwidth())
+					.attr("x", function(d) { 
+						return d3.min([valueScale(d[valueCol]), valueScale(baseLineValue)]); 
+						})
+					.attr("y", function(d,i){return labelScale(d[labelCol])})
+					.attr("fill", function(d) { 
+						if (recolorHighLimitBar && (d[valueCol] > highLimitValue))
+							return HighLimitBarColor;
+						if (recolorLowLimitBar && (d[valueCol] < lowLimitValue))
+							return LowLimitBarColor;
+						return (d[valueCol] > baseLineValue) ? highBarColor : lowBarColor;
+						})
+					.classed("highflash", function(d) { 
+						return flashHighLimitBar && (d[valueCol] > highLimitValue);
+						})
+					.classed("lowflash", function(d) { 
+						return flashLowLimitBar && (d[valueCol] < lowLimitValue);
+						});
 
 				var g = svg.selectAll("text")
 							.data(this.rows)
@@ -324,6 +313,11 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 							.range([0, h - labelMargin])
 							.nice();
 				
+				var labelScale = d3.scaleBand()
+							.domain(this.rows.map(function(d){ return d[labelCol]; }))
+							.range([lowSideMargin, w - highSideMargin])
+							.padding(barPadding / 100);
+			
 				function hLine(value, color) {	
 					svg.append("line")
 						.style("stroke", color)
@@ -352,70 +346,62 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 				svg.selectAll("rect")
 					.data(this.rows)
 					.enter()
-					.append("rect")
+					.append("rect")	
 					.attr("class", "michaeldmoore-multistat-panel-bar")
-					.attr("x", function(d, i) { return lowSideMargin + (barPadding / 2) + (i * dw); })
-					.attr("y", function(d) { 
-							return d3.min([valueScale(d[valueCol]), valueScale(baseLineValue)]); 
-						})
-					.attr("width", dw - barPadding)
 					.attr("height", function(d) { 
-							var hh = valueScale(baseLineValue) - valueScale(d[valueCol]);
-							if (hh < 0)
-								hh = -hh;
-							return hh; 
+						var hh = valueScale(d[valueCol]) - valueScale(baseLineValue);
+						if (hh < 0)
+							hh = -hh;
+						return hh; 
 						})
+					.attr("width", labelScale.bandwidth())
+					.attr("y", function(d) { 
+						return d3.min([valueScale(d[valueCol]), valueScale(baseLineValue)]); 
+						})
+					.attr("x", function(d, i) { return labelScale(d[labelCol]) })
 					.attr("fill", function(d) { 
-							if (recolorHighLimitBar && (d[valueCol] > highLimitValue))
-								return HighLimitBarColor;
-							if (recolorLowLimitBar && (d[valueCol] < lowLimitValue))
-								return LowLimitBarColor;
-							return (d[valueCol] > baseLineValue) ? highBarColor : lowBarColor;
+						if (recolorHighLimitBar && (d[valueCol] > highLimitValue))
+							return HighLimitBarColor;
+						if (recolorLowLimitBar && (d[valueCol] < lowLimitValue))
+							return LowLimitBarColor;
+						return (d[valueCol] > baseLineValue) ? highBarColor : lowBarColor;
 						})
 					.classed("highflash", function(d) { 
-							if (flashHighLimitBar && (d[valueCol] > highLimitValue)){
-								anyHighFlash = true;
-								return true;
-							}
-							return false;
+						return flashHighLimitBar && (d[valueCol] > highLimitValue);
 						})
 					.classed("lowflash", function(d) { 
-							if (flashLowLimitBar && (d[valueCol] < lowLimitValue)){
-								anyLowFlash = true;
-								return true;
-							}
-							return false;
+						return flashLowLimitBar && (d[valueCol] < lowLimitValue);
 						});
-					
+				
 				var g = svg.selectAll("text")
 					.data(this.rows)
 					.enter()
 					.append("g");
 					
-					if (this.panel.ShowValues) {
-						g.append("text")
-						.text(function(d) { return formatDecimal(d[valueCol]); })
-						.attr("x", function(d, i) { return lowSideMargin + (dw / 2) + (i * dw); })
-						.attr("y", function(d){
-							return valueScale(d[valueCol]) + ((d[valueCol] > baseLineValue) ? 5 : -5);
-						})						
-						.attr("font-family", "sans-serif")
-						.attr("font-size", this.panel.ValueFontSize)
-						.attr("fill", this.panel.ValueColor)
-						.attr("text-anchor", "middle")
-						.attr("dominant-baseline", function(d){return (d[valueCol] > baseLineValue) ? "text-before-edge" : "text-after-edge"});
-					}
+				if (this.panel.ShowValues) {
+					g.append("text")
+					.text(function(d) { return formatDecimal(d[valueCol]); })
+					.attr("x", function(d, i) { return labelScale(d[labelCol]) + (labelScale.bandwidth() / 2); })
+					.attr("y", function(d){
+						return valueScale(d[valueCol]) + ((d[valueCol] > baseLineValue) ? 5 : -5);
+					})						
+					.attr("font-family", "sans-serif")
+					.attr("font-size", this.panel.ValueFontSize)
+					.attr("fill", this.panel.ValueColor)
+					.attr("text-anchor", "middle")
+					.attr("dominant-baseline", function(d){return (d[valueCol] > baseLineValue) ? "text-before-edge" : "text-after-edge"});
+				}
 
-					if (this.panel.ShowLabels) {
-						g.append("text")
-						.text(function(d) { return d[labelCol]; })
-						.attr("x", function(d, i) { return lowSideMargin + (dw / 2) + (i * dw); })
-						.attr("y", function(d) { return h - labelMargin + 14; })
-						.attr("font-family", "sans-serif")
-						.attr("font-size", this.panel.LabelFontSize)
-						.attr("fill", this.panel.LabelColor)
-						.attr("text-anchor", "middle");
-					}
+				if (this.panel.ShowLabels) {
+					g.append("text")
+					.text(function(d) { return d[labelCol]; })
+					.attr("x", function(d, i) { return labelScale(d[labelCol]) + (labelScale.bandwidth() / 2); })
+					.attr("y", function(d) { return h - labelMargin + 14; })
+					.attr("font-family", "sans-serif")
+					.attr("font-size", this.panel.LabelFontSize)
+					.attr("fill", this.panel.LabelColor)
+					.attr("text-anchor", "middle");
+				}
 
 				if (lowSideMargin > 0) {	
 					svg.append("g")
@@ -431,33 +417,33 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 						.call(d3.axisRight(valueScale).tickSizeInner(5).tickSizeOuter(10).ticks(5));
 				}
 			}
-		}
 		
-		function pulse() {
-			var highFlashRects = svg.selectAll("rect.michaeldmoore-multistat-panel-bar.highflash");
-			(function highRepeat() {
-				highFlashRects.transition()
-				.duration(HighLimitBarFlashTimeout)
-				.attr("fill", HighLimitBarColor)
-				.transition()
-				.duration(HighLimitBarFlashTimeout)
-				.attr("fill", HighLimitBarFlashColor)
-				.on("end", highRepeat);
-			})();
+			function pulse() {
+				var highFlashRects = svg.selectAll("rect.michaeldmoore-multistat-panel-bar.highflash");
+				(function highRepeat() {
+					highFlashRects.transition()
+					.duration(HighLimitBarFlashTimeout)
+					.attr("fill", HighLimitBarColor)
+					.transition()
+					.duration(HighLimitBarFlashTimeout)
+					.attr("fill", HighLimitBarFlashColor)
+					.on("end", highRepeat);
+				})();
 
-			var lowFlashRects = svg.selectAll("rect.michaeldmoore-multistat-panel-bar.lowflash");
-			(function lowRepeat() {
-				lowFlashRects.transition()
-				.duration(LowLimitBarFlashTimeout)
-				.attr("fill", LowLimitBarColor)
-				.transition()
-				.duration(LowLimitBarFlashTimeout)
-				.attr("fill", LowLimitBarFlashColor)
-				.on("end", lowRepeat);
-			})();
+				var lowFlashRects = svg.selectAll("rect.michaeldmoore-multistat-panel-bar.lowflash");
+				(function lowRepeat() {
+					lowFlashRects.transition()
+					.duration(LowLimitBarFlashTimeout)
+					.attr("fill", LowLimitBarColor)
+					.transition()
+					.duration(LowLimitBarFlashTimeout)
+					.attr("fill", LowLimitBarFlashColor)
+					.on("end", lowRepeat);
+				})();
+			}
+
+			pulse();
 		}
-
-		pulse();
 		
         this.ctrl.renderingCompleted();
     }
@@ -483,12 +469,6 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 		this.cols = [];
 		for(var i=0; i < cols.length; i++){
 			this.cols[i] = cols[i].text;
-//			if (cols[i].text == this.panel.DateTimeColName)
-//				this.DateTimeCol = i;
-//			if (cols[i].text == this.panel.LabelColName)
-//				this.LabelCol = i;
-//			if (cols[i].text == this.panel.ValueColName)
-//				this.ValueCol = i;
 		}
 	}
 
