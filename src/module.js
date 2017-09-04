@@ -13,6 +13,7 @@ import kbn from 'app/core/utils/kbn';
 import config from 'app/core/config';
 import TimeSeries from 'app/core/time_series2';
 
+
 class MultistatPanelCtrl extends MetricsPanelCtrl {
 
     /** @ngInject */
@@ -54,7 +55,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			"LowBarColor": "teal",
 			"MinLineValue": "",
 			"MaxLineValue": "",
-			"SortDirection": "none"
+			"SortDirection": "none",
+			"ShowTooltips": true
         };
 
         var panel = {};
@@ -108,18 +110,19 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 	
     onRender() {
 		if (this.rows != null) {
+			var cols = this.cols;
 			var dateTimeCol = 0;
 			var labelCol = 0;
 			var valueCol = 0;
 			var sortCol = 0;
-			for(var i=0; i < this.cols.length; i++){
-				if (this.cols[i] == this.panel.DateTimeColName)
+			for(var i=0; i < cols.length; i++){
+				if (cols[i] == this.panel.DateTimeColName)
 					dateTimeCol = i;
-				if (this.cols[i] == this.panel.LabelColName)
+				if (cols[i] == this.panel.LabelColName)
 					labelCol = i;
-				if (this.cols[i] == this.panel.ValueColName)
+				if (cols[i] == this.panel.ValueColName)
 					valueCol = i;
-				if (this.cols[i] == this.panel.SortColName)
+				if (cols[i] == this.panel.SortColName)
 					sortCol = i;
 			}
 
@@ -165,6 +168,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			var recolorLowLimitBar = this.panel.RecolorLowLimitBar;
 			var flashHighLimitBar = this.panel.FlashHighLimitBar;
 			var flashLowLimitBar = this.panel.FlashLowLimitBar;
+			var showTooltips = this.panel.ShowTooltips;
 			
 			if ($.isNumeric(barPadding) == false)
 				barPadding = dw * 0.10;
@@ -192,6 +196,31 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			
 			var formatDecimal = d3.format(".2f");
 
+			var tooltipDiv = d3.select("body").append("div")
+				.attr("class", "michaeldmoore-multistat-panel-tooltip")
+				.style("opacity", 0);
+				
+			var tooltipShow = function(d, c){
+				tooltipDiv.transition()
+				.duration(200)
+				.style("opacity", .9);
+				var html = "<table>";
+				for (i = 0; i < d.length; i++)
+					html += "<tr><td>" + c[i] + "</td><td>" + d[i] + "</td></tr>";
+				html += "</table>";
+				tooltipDiv.html(html)
+				//tooltipDiv.html(d[dateTimeCol] + "<br/>" + d[labelCol] + "<br/>" + d[valueCol])
+				//tooltipDiv.html(JSON.stringify(d, undefined, 2))
+				.style("left", (d3.event.pageX) + "px")
+				.style("top", (d3.event.pageY - 28) + "px");
+			}
+
+			var tooltipHide = function() {
+				tooltipDiv.transition()		
+				.duration(500)		
+				.style("opacity", 0);	
+			}
+			
 			if(horizontal) {
 				var valueScale = d3.scaleLinear()
 							.domain([minLineValue, maxLineValue])
@@ -251,10 +280,17 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 						return (d[valueCol] > baseLineValue) ? highBarColor : lowBarColor;
 						})
 					.classed("highflash", function(d) { 
-						return flashHighLimitBar && (d[valueCol] > highLimitValue);
+						return recolorHighLimitBar && flashHighLimitBar && (d[valueCol] > highLimitValue);
 						})
 					.classed("lowflash", function(d) { 
-						return flashLowLimitBar && (d[valueCol] < lowLimitValue);
+						return recolorLowLimitBar && flashLowLimitBar && (d[valueCol] < lowLimitValue);
+						})
+				    .on("mouseover", function(d) {
+						if (showTooltips)
+							tooltipShow(d, cols);
+						})
+					.on("mouseout", function() { 
+						tooltipHide();
 						});
 
 				var g = svg.selectAll("text")
@@ -367,11 +403,19 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 						return (d[valueCol] > baseLineValue) ? highBarColor : lowBarColor;
 						})
 					.classed("highflash", function(d) { 
-						return flashHighLimitBar && (d[valueCol] > highLimitValue);
+						return recolorHighLimitBar && flashHighLimitBar && (d[valueCol] > highLimitValue);
 						})
 					.classed("lowflash", function(d) { 
-						return flashLowLimitBar && (d[valueCol] < lowLimitValue);
+						return recolorLowLimitBar && flashLowLimitBar && (d[valueCol] < lowLimitValue);
+						})
+				    .on("mouseover", function(d) {
+						if (showTooltips)
+							tooltipShow(d, cols);
+						})
+					.on("mouseout", function() { 
+						tooltipHide();
 						});
+
 				
 				var g = svg.selectAll("text")
 					.data(this.rows)

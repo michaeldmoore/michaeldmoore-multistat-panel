@@ -116,7 +116,8 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 						"LowBarColor": "teal",
 						"MinLineValue": "",
 						"MaxLineValue": "",
-						"SortDirection": "none"
+						"SortDirection": "none",
+						"ShowTooltips": true
 					};
 
 					var panel = {};
@@ -182,15 +183,16 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 								})();
 							};
 
+							var cols = this.cols;
 							var dateTimeCol = 0;
 							var labelCol = 0;
 							var valueCol = 0;
 							var sortCol = 0;
-							for (var i = 0; i < this.cols.length; i++) {
-								if (this.cols[i] == this.panel.DateTimeColName) dateTimeCol = i;
-								if (this.cols[i] == this.panel.LabelColName) labelCol = i;
-								if (this.cols[i] == this.panel.ValueColName) valueCol = i;
-								if (this.cols[i] == this.panel.SortColName) sortCol = i;
+							for (var i = 0; i < cols.length; i++) {
+								if (cols[i] == this.panel.DateTimeColName) dateTimeCol = i;
+								if (cols[i] == this.panel.LabelColName) labelCol = i;
+								if (cols[i] == this.panel.ValueColName) valueCol = i;
+								if (cols[i] == this.panel.SortColName) sortCol = i;
 							}
 
 							if (this.panel.SortDirection != "none") {
@@ -235,6 +237,7 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 							var recolorLowLimitBar = this.panel.RecolorLowLimitBar;
 							var flashHighLimitBar = this.panel.FlashHighLimitBar;
 							var flashLowLimitBar = this.panel.FlashLowLimitBar;
+							var showTooltips = this.panel.ShowTooltips;
 
 							if ($.isNumeric(barPadding) == false) barPadding = dw * 0.10;
 
@@ -257,6 +260,24 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 							if (maxLineValue < baseLineValue) maxLineValue = baseLineValue;
 
 							var formatDecimal = d3.format(".2f");
+
+							var tooltipDiv = d3.select("body").append("div").attr("class", "michaeldmoore-multistat-panel-tooltip").style("opacity", 0);
+
+							var tooltipShow = function tooltipShow(d, c) {
+								tooltipDiv.transition().duration(200).style("opacity", .9);
+								var html = "<table>";
+								for (i = 0; i < d.length; i++) {
+									html += "<tr><td>" + c[i] + "</td><td>" + d[i] + "</td></tr>";
+								}html += "</table>";
+								tooltipDiv.html(html)
+								//tooltipDiv.html(d[dateTimeCol] + "<br/>" + d[labelCol] + "<br/>" + d[valueCol])
+								//tooltipDiv.html(JSON.stringify(d, undefined, 2))
+								.style("left", d3.event.pageX + "px").style("top", d3.event.pageY - 28 + "px");
+							};
+
+							var tooltipHide = function tooltipHide() {
+								tooltipDiv.transition().duration(500).style("opacity", 0);
+							};
 
 							if (horizontal) {
 								var vLine = function vLine(value, color) {
@@ -292,9 +313,13 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 									if (recolorLowLimitBar && d[valueCol] < lowLimitValue) return LowLimitBarColor;
 									return d[valueCol] > baseLineValue ? highBarColor : lowBarColor;
 								}).classed("highflash", function (d) {
-									return flashHighLimitBar && d[valueCol] > highLimitValue;
+									return recolorHighLimitBar && flashHighLimitBar && d[valueCol] > highLimitValue;
 								}).classed("lowflash", function (d) {
-									return flashLowLimitBar && d[valueCol] < lowLimitValue;
+									return recolorLowLimitBar && flashLowLimitBar && d[valueCol] < lowLimitValue;
+								}).on("mouseover", function (d) {
+									if (showTooltips) tooltipShow(d, cols);
+								}).on("mouseout", function () {
+									tooltipHide();
 								});
 
 								var g = svg.selectAll("text").data(this.rows).enter().append("g");
@@ -362,9 +387,13 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 									if (recolorLowLimitBar && d[valueCol] < lowLimitValue) return LowLimitBarColor;
 									return d[valueCol] > baseLineValue ? highBarColor : lowBarColor;
 								}).classed("highflash", function (d) {
-									return flashHighLimitBar && d[valueCol] > highLimitValue;
+									return recolorHighLimitBar && flashHighLimitBar && d[valueCol] > highLimitValue;
 								}).classed("lowflash", function (d) {
-									return flashLowLimitBar && d[valueCol] < lowLimitValue;
+									return recolorLowLimitBar && flashLowLimitBar && d[valueCol] < lowLimitValue;
+								}).on("mouseover", function (d) {
+									if (showTooltips) tooltipShow(d, cols);
+								}).on("mouseout", function () {
+									tooltipHide();
 								});
 
 								var g = svg.selectAll("text").data(this.rows).enter().append("g");
