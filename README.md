@@ -97,14 +97,15 @@ Just to make thing more obvious, the color of bar exceeding either of these limi
 For the full glory (or gory), we can check the 'Flash' option too, overriding the default 2nd flash color and rate (mS per cycle, actually) for a truely unforgettable and un-ignorable, experience.
 ![lines-and-limits](https://user-images.githubusercontent.com/3724718/30007679-5849101a-90c9-11e7-9c39-5618e8404454.png)
 ![alarms-alarms](https://user-images.githubusercontent.com/3724718/30007648-b45bfc6a-90c8-11e7-8ea8-5f43852ad27d.gif)
- (In retrospect, setting the Rate parameter to 300 or 400 works just as well, without risk of inducing epilepsy...
+
+(In retrospect, setting the Rate parameter to 300 or 400 works just as well, without risk of inducing epilepsy...
  ![calm-alarms](https://user-images.githubusercontent.com/3724718/30007967-6780c14a-90ce-11e7-809d-289d180ea310.gif)
- 
+
  
  **Known Issues**
  This is a version 1.0.0 release, as such there are a few known issues that need to be added or fixed.
  * Adding an auto-test data set with random walk values (for demos and testing)
- * Pop-up/hover info box, listing all the fields returned for this row.
+ * ~~Pop-up/hover info box, listing all the fields returned for this row.~~ Done
  * Support for time-series data sets, with options for setting the metric to current, average, max, min etc.
  * Configurable settings for the axes colors (without resorting to editing the CSS style sheet)
  * Formatting the decimal places of the value (currently fixed at 2)

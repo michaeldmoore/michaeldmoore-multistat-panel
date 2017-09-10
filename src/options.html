@@ -21,11 +21,19 @@
           <select class="gf-form-input michaeldmoore-multistat-panel-w6" ng-model="ctrl.panel.ValueColName" ng-options="f for f in ctrl.cols" ng-change="ctrl.render()"></select>
         </div>
 	  </div>
-      <gf-form-switch class="gf-form" label-class="width-6" label="Tooltips" checked="ctrl.panel.ShowTooltips" on-change="ctrl.render()"></gf-form-switch>
 	</div>
 
 	<div class="gf-form">
       <gf-form-switch class="gf-form" label-class="width-7" label="Horitontal" checked="ctrl.panel.Horizontal" on-change="ctrl.render()"></gf-form-switch>
+	  <div class="gf-form-inline" ng-if="ctrl.panel.Horizontal">
+        <label class="gf-form-label michaeldmoore-multistat-panel-w6">Group col</label>
+        <div class="gf-form-select-wrapper">
+          <select class="gf-form-input michaeldmoore-multistat-panel-w6" ng-model="ctrl.panel.GroupColName" ng-options="f for f in ctrl.groupCols" ng-change="ctrl.render()"></select>
+        </div>
+	  </div>
+      <gf-form-switch class="gf-form" label-class="width-7" label="Tooltips" checked="ctrl.panel.ShowTooltips" on-change="ctrl.render()"></gf-form-switch>
+	</div>  
+	<div class="gf-form">
 	  <div class="gf-form-inline">
         <label class="gf-form-label michaeldmoore-multistat-panel-w7">Sorting</label>
         <div class="gf-form-select-wrapper">

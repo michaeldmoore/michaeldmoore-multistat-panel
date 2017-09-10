@@ -84,40 +84,52 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 					_this.alertSrv = alertSrv;
 
 					var panelDefaults = {
-						"Horizontal": false,
-						"ShowValues": true,
-						"ValueFontSize": "100%",
-						"ValueColor": "white",
-						"ShowLabels": true,
-						"LabelFontSize": "100%",
-						"LabelColor": "white",
-						"HighLimitValue": "",
-						"HighLimitLineColor": "red",
-						"ShowHighLimitLine": false,
-						"RecolorHighLimitBar": false,
+						"BarPadding": 10,
+						"BaseLineColor": "red",
+						"BaseLineValue": 0,
+						"DateTimeColName": "date",
+						"FlashHighLimitBar": true,
+						"FlashLowLimitBar": true,
+						"HighBarColor": "rgb(120, 128, 0)",
 						"HighLimitBarColor": "red",
 						"HighLimitBarFlashColor": "orange",
-						"HighLimitBarFlashTimeout": 200,
-						"FlashHighLimitBar": true,
-						"LowLimitLineColor": "red",
-						"ShowLowLimitLine": false,
-						"RecolorLowLimitBar": false,
+						"HighLimitBarFlashTimeout": 1000,
+						"HighLimitLineColor": "red",
+						"HighLimitValue": 0.33,
+						"HighSideMargin": 20,
+						"Horizontal": false,
+						"LabelColName": "sensor",
+						"LabelColor": "white",
+						"LabelFontSize": "100%",
+						"LabelMargin": null,
+						"LowBarColor": "teal",
 						"LowLimitBarColor": "red",
 						"LowLimitBarFlashColor": "orange",
 						"LowLimitBarFlashTimeout": 200,
-						"FlashLowLimitBar": true,
-						"ShowDate": true,
-						"ShowLeftAxis": true,
-						"ShowRightAxis": true,
+						"LowLimitLineColor": "red",
+						"LowLimitValue": null,
+						"LowSideMargin": 20,
+						"MaxLineColor": "rgb(74, 232, 12)",
+						"MaxLineValue": 1,
+						"MinLineValue": 0,
+						"RecolorHighLimitBar": true,
+						"RecolorLowLimitBar": false,
 						"ShowBaseLine": true,
-						"BaseLineValue": "",
-						"BaseLineColor": "red",
-						"HighBarColor": "teal",
-						"LowBarColor": "teal",
-						"MinLineValue": "",
-						"MaxLineValue": "",
-						"SortDirection": "none",
-						"ShowTooltips": true
+						"ShowDate": false,
+						"ShowHighLimitLine": true,
+						"ShowLabels": true,
+						"ShowLeftAxis": true,
+						"ShowLowLimitLine": false,
+						"ShowMaxLine": false,
+						"ShowMinLine": true,
+						"ShowRightAxis": true,
+						"ShowTooltips": true,
+						"ShowValues": true,
+						"SortColName": "value",
+						"SortDirection": "ascending",
+						"ValueColName": "value",
+						"ValueColor": "white",
+						"ValueFontSize": "100%"
 					};
 
 					var panel = {};
@@ -188,12 +200,21 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 							var labelCol = 0;
 							var valueCol = 0;
 							var sortCol = 0;
+							var groupCol = -1;
 							for (var i = 0; i < cols.length; i++) {
 								if (cols[i] == this.panel.DateTimeColName) dateTimeCol = i;
 								if (cols[i] == this.panel.LabelColName) labelCol = i;
 								if (cols[i] == this.panel.ValueColName) valueCol = i;
 								if (cols[i] == this.panel.SortColName) sortCol = i;
+								if (cols[i] == this.panel.GroupColName) groupCol = i;
 							}
+
+							var className = 'michaeldmoore-multistat-panel-' + this.panel.id;
+							this.elem.html("<svg class='" + className + "'  style='height:" + this.ctrl.height + "px; width:100%'></svg>");
+							var $container = this.elem.find('.' + className);
+
+							var h = $container.height();
+							var w = $container.width() - 5;
 
 							if (this.panel.SortDirection != "none") {
 								var ascending = this.panel.SortDirection == "ascending";
@@ -207,18 +228,12 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 
 							var horizontal = this.panel.Horizontal;
 
-							var className = 'michaeldmoore-multistat-panel-' + this.panel.id;
-							this.elem.html("<svg class='" + className + "'  style='height:" + this.ctrl.height + "px; width:100%'></svg>");
-							var $container = this.elem.find('.' + className);
 							var labelMargin = $.isNumeric(this.panel.LabelMargin) && this.panel.LabelMargin >= 0 ? this.panel.LabelMargin : horizontal ? 100 : 20;
 							var lowSideMargin = this.panel.LowSideMargin >= 0 ? this.panel.LowSideMargin : 0;
 							var highSideMargin = this.panel.HighSideMargin >= 0 ? this.panel.HighSideMargin : 0;
 
 							var svg = d3.select('.' + className).append('svg');
 
-							var h = $container.height();
-							var w = $container.width() - 5;
-							var dw = (w - lowSideMargin - highSideMargin) / this.rows.length;
 							var barPadding = this.panel.BarPadding;
 							var baseLineValue = this.panel.BaseLineValue;
 							var minLineValue = this.panel.MinLineValue;
@@ -238,8 +253,6 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 							var flashHighLimitBar = this.panel.FlashHighLimitBar;
 							var flashLowLimitBar = this.panel.FlashLowLimitBar;
 							var showTooltips = this.panel.ShowTooltips;
-
-							if ($.isNumeric(barPadding) == false) barPadding = dw * 0.10;
 
 							if ($.isNumeric(HighLimitBarFlashTimeout) == false) HighLimitBarFlashTimeout = 200;
 
@@ -269,10 +282,7 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 								for (i = 0; i < d.length; i++) {
 									html += "<tr><td>" + c[i] + "</td><td>" + d[i] + "</td></tr>";
 								}html += "</table>";
-								tooltipDiv.html(html)
-								//tooltipDiv.html(d[dateTimeCol] + "<br/>" + d[labelCol] + "<br/>" + d[valueCol])
-								//tooltipDiv.html(JSON.stringify(d, undefined, 2))
-								.style("left", d3.event.pageX + "px").style("top", d3.event.pageY - 28 + "px");
+								tooltipDiv.html(html).style("left", d3.event.pageX + "px").style("top", d3.event.pageY - 28 + "px");
 							};
 
 							var tooltipHide = function tooltipHide() {
@@ -280,78 +290,109 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 							};
 
 							if (horizontal) {
-								var vLine = function vLine(value, color) {
-									svg.append("line").style("stroke", color).attr("y1", lowSideMargin).attr("x1", valueScale(value)).attr("y2", h - highSideMargin).attr("x2", valueScale(value));
+
+								var plotGroupHorizontal = function plotGroupHorizontal(panel, data, numRows, groupName, left, w) {
+									var valueScale = d3.scaleLinear().domain([minLineValue, maxLineValue]).range([left + labelMargin, w]).nice();
+
+									var labels = data.map(function (d) {
+										return d[labelCol];
+									});
+									while (labels.length < numRows) {
+										labels = labels.concat('_' + Math.random().toString(36).substr(2, 9));
+									}var labelScale = d3.scaleBand().domain(labels).rangeRound([lowSideMargin, h - highSideMargin]).padding(barPadding / 100);
+
+									function vLine(value, color) {
+										svg.append("line").style("stroke", color).attr("y1", lowSideMargin).attr("x1", valueScale(value)).attr("y2", h - highSideMargin).attr("x2", valueScale(value));
+									}
+
+									if (panel.ShowBaseLine) vLine(baseLineValue, panel.BaseLineColor);
+
+									if (panel.ShowMaxLine) vLine(maxLineValue, panel.MaxLineColor);
+
+									if (panel.ShowMinLine) vLine(minLineValue, panel.MinLineColor);
+
+									if (panel.ShowHighLimitLine) vLine(highLimitValue, panel.HighLimitLineColor);
+
+									if (panel.ShowLowLimitLine) vLine(lowLimitValue, panel.LowLimitLineColor);
+
+									svg.append("g").selectAll("rect").data(data).enter().append("rect").attr("class", "michaeldmoore-multistat-panel-bar").attr("width", function (d) {
+										var ww = valueScale(d[valueCol]) - valueScale(baseLineValue);
+										if (ww < 0) ww = -ww;
+										return ww;
+									}).attr("height", labelScale.bandwidth()).attr("x", function (d) {
+										return d3.min([valueScale(d[valueCol]), valueScale(baseLineValue)]);
+									}).attr("y", function (d, i) {
+										return labelScale(d[labelCol]);
+									}).attr("fill", function (d) {
+										if (recolorHighLimitBar && d[valueCol] > highLimitValue) return HighLimitBarColor;
+										if (recolorLowLimitBar && d[valueCol] < lowLimitValue) return LowLimitBarColor;
+										return d[valueCol] > baseLineValue ? highBarColor : lowBarColor;
+									}).classed("highflash", function (d) {
+										return recolorHighLimitBar && flashHighLimitBar && d[valueCol] > highLimitValue;
+									}).classed("lowflash", function (d) {
+										return recolorLowLimitBar && flashLowLimitBar && d[valueCol] < lowLimitValue;
+									}).on("mouseover", function (d) {
+										if (showTooltips) tooltipShow(d, cols);
+									}).on("mouseout", function () {
+										tooltipHide();
+									});
+
+									var g = svg.append("g").selectAll("text").data(data).enter().append("g");
+
+									if (panel.ShowValues) {
+										g.append("text").text(function (d) {
+											return formatDecimal(d[valueCol]);
+										}).attr("x", function (d) {
+											return valueScale(d[valueCol]) + (d[valueCol] > baseLineValue ? -5 : +5);
+										}).attr("y", function (d, i) {
+											return labelScale(d[labelCol]) + labelScale.bandwidth() / 2;
+										}).attr("font-family", "sans-serif").attr("font-size", panel.ValueFontSize).attr("fill", panel.LabelColor).attr("text-anchor", function (d) {
+											return d[valueCol] > baseLineValue ? "end" : "start";
+										}).attr("dominant-baseline", "central");
+									}
+
+									if (panel.ShowLabels) {
+										g.append("text").text(function (d) {
+											return d[labelCol];
+										}).attr("x", left + labelMargin - 5).attr("y", function (d, i) {
+											return labelScale(d[labelCol]) + labelScale.bandwidth() / 2;
+										}).attr("font-family", "sans-serif").attr("font-size", panel.LabelFontSize).attr("fill", panel.LabelColor)
+										//						.attr("text-anchor", "middle")
+										.attr("text-anchor", "end").attr("dominant-baseline", "central");
+									}
+
+									//Add Low Side Value Axis (X)
+									if (lowSideMargin > 0) {
+										if (groupName != '') {
+											svg.append("text").text(groupName).attr("x", left + (labelMargin + w - left) / 2 - 5).attr("y", 5).attr("font-family", "sans-serif").attr("font-size", panel.LabelFontSize).attr("fill", panel.LabelColor).attr("text-anchor", "middle").attr("dominant-baseline", "central");
+										}
+
+										svg.append("g").attr("transform", 'translate(0,' + lowSideMargin + ')').attr("class", "michaeldmoore-multistat-panel-valueaxis").call(d3.axisTop(valueScale));
+									}
+
+									//Add High Side Value Axis (X)
+									if (highSideMargin > 0) {
+										svg.append("g").attr("transform", 'translate(0,' + (h - highSideMargin) + ')').attr("class", "michaeldmoore-multistat-panel-valueaxis").call(d3.axisBottom(valueScale));
+									}
 								};
 
-								var valueScale = d3.scaleLinear().domain([minLineValue, maxLineValue]).range([labelMargin, w]).nice();
+								if (groupCol >= 0) {
+									this.groupedRows = d3.nest().key(function (d) {
+										return d[groupCol];
+									}).entries(this.rows);
 
-								var labelScale = d3.scaleBand().domain(this.rows.map(function (d) {
-									return d[labelCol];
-								})).rangeRound([lowSideMargin, h - highSideMargin]).padding(barPadding / 100);
+									var dw = w / this.groupedRows.length;
+									var numRows = d3.max(this.groupedRows, function (d) {
+										return d.values.length;
+									});
 
-								if (this.panel.ShowBaseLine) vLine(baseLineValue, this.panel.BaseLineColor);
+									for (var i = 0; i < this.groupedRows.length; i++) {
+										plotGroupHorizontal(this.panel, this.groupedRows[i].values, numRows, this.groupedRows[i].key, i * dw, (i + 1) * dw);
+									}
+								} else {
+									this.groupedRows = null;
 
-								if (this.panel.ShowMaxLine) vLine(maxLineValue, this.panel.MaxLineColor);
-
-								if (this.panel.ShowMinLine) vLine(minLineValue, this.panel.MinLineColor);
-
-								if (this.panel.ShowHighLimitLine) vLine(highLimitValue, this.panel.HighLimitLineColor);
-
-								if (this.panel.ShowLowLimitLine) vLine(lowLimitValue, this.panel.LowLimitLineColor);
-
-								svg.selectAll("rect").data(this.rows).enter().append("rect").attr("class", "michaeldmoore-multistat-panel-bar").attr("width", function (d) {
-									var ww = valueScale(d[valueCol]) - valueScale(baseLineValue);
-									if (ww < 0) ww = -ww;
-									return ww;
-								}).attr("height", labelScale.bandwidth()).attr("x", function (d) {
-									return d3.min([valueScale(d[valueCol]), valueScale(baseLineValue)]);
-								}).attr("y", function (d, i) {
-									return labelScale(d[labelCol]);
-								}).attr("fill", function (d) {
-									if (recolorHighLimitBar && d[valueCol] > highLimitValue) return HighLimitBarColor;
-									if (recolorLowLimitBar && d[valueCol] < lowLimitValue) return LowLimitBarColor;
-									return d[valueCol] > baseLineValue ? highBarColor : lowBarColor;
-								}).classed("highflash", function (d) {
-									return recolorHighLimitBar && flashHighLimitBar && d[valueCol] > highLimitValue;
-								}).classed("lowflash", function (d) {
-									return recolorLowLimitBar && flashLowLimitBar && d[valueCol] < lowLimitValue;
-								}).on("mouseover", function (d) {
-									if (showTooltips) tooltipShow(d, cols);
-								}).on("mouseout", function () {
-									tooltipHide();
-								});
-
-								var g = svg.selectAll("text").data(this.rows).enter().append("g");
-
-								if (this.panel.ShowValues) {
-									g.append("text").text(function (d) {
-										return formatDecimal(d[valueCol]);
-									}).attr("x", function (d) {
-										return valueScale(d[valueCol]) + (d[valueCol] > baseLineValue ? -5 : +5);
-									}).attr("y", function (d, i) {
-										return labelScale(d[labelCol]) + labelScale.bandwidth() / 2;
-									}).attr("font-family", "sans-serif").attr("font-size", this.panel.ValueFontSize).attr("fill", this.panel.LabelColor).attr("text-anchor", function (d) {
-										return d[valueCol] > baseLineValue ? "end" : "start";
-									}).attr("dominant-baseline", "central");
-								}
-
-								if (this.panel.ShowLabels) {
-									g.append("text").text(function (d) {
-										return d[labelCol];
-									}).attr("x", labelMargin / 2).attr("y", function (d, i) {
-										return labelScale(d[labelCol]) + labelScale.bandwidth() / 2;
-									}).attr("font-family", "sans-serif").attr("font-size", this.panel.LabelFontSize).attr("fill", this.panel.LabelColor).attr("text-anchor", "middle").attr("dominant-baseline", "central");
-								}
-
-								//Add Low Side Value Axis (X)
-								if (lowSideMargin > 0) {
-									svg.append("g").attr("transform", 'translate(0,' + lowSideMargin + ')').attr("class", "michaeldmoore-multistat-panel-valueaxis").call(d3.axisTop(valueScale));
-								}
-
-								//Add High Side Value Axis (X)
-								if (highSideMargin > 0) {
-									svg.append("g").attr("transform", 'translate(0,' + (h - highSideMargin) + ')').attr("class", "michaeldmoore-multistat-panel-valueaxis").call(d3.axisBottom(valueScale));
+									plotGroupHorizontal(this.panel, this.rows, this.rows.length, '', 0, w);
 								}
 							} else {
 								var hLine = function hLine(value, color) {
@@ -442,19 +483,17 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 							this.rows = null;
 							this.cols = [];
 						} else if (dataList[0].type == "table") {
-							this.rows = dataList[0].rows;
-							this.parseCols(dataList[0].columns);
+							var data = dataList[0];
+							this.rows = data.rows;
+							this.cols = [];
+							for (var i = 0; i < data.columns.length; i++) {
+								this.cols[i] = data.columns[i].text;
+							}
+
+							this.groupCols = [''].concat(this.cols);
 							this.render();
 						} else {
 							this.alertSrv.set('Multistat Data Error', 'Query type "' + dataList[0].Type + '", not supported', 'error', 5000);
-						}
-					}
-				}, {
-					key: 'parseCols',
-					value: function parseCols(cols) {
-						this.cols = [];
-						for (var i = 0; i < cols.length; i++) {
-							this.cols[i] = cols[i].text;
 						}
 					}
 				}, {
