@@ -97,7 +97,8 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 						"HighLimitLineColor": "red",
 						"HighLimitValue": 0.33,
 						"HighSideMargin": 20,
-						"Horizontal": false,
+						//"Horizontal": false,
+						"Orientation": "Horizontal",
 						"LabelColName": "sensor",
 						"LabelColor": "white",
 						"LabelFontSize": "100%",
@@ -123,7 +124,8 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 						"ShowMaxLine": false,
 						"ShowMinLine": true,
 						"ShowRightAxis": true,
-						"ShowTooltips": true,
+						//"ShowTooltips": true,
+						"Tooltips": "Tooltips",
 						"ShowValues": true,
 						"SortColName": "value",
 						"SortDirection": "ascending",
@@ -156,7 +158,9 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 					key: 'onInitEditMode',
 					value: function onInitEditMode() {
 						this.metricNames = ['min', 'max', 'avg', 'current', 'total', 'name', 'first', 'delta', 'diff', 'range'];
-						this.sortDirections = ['none', 'ascending', 'decending'];
+						this.sortDirections = ['none', 'ascending', 'descending'];
+						this.orientations = ['Horizontal', 'Vertical'];
+						this.tooltips = ['Tooltips', 'No Tooltips'];
 						this.fontSizes = ['20%', '30%', '50%', '70%', '80%', '100%', '110%', '120%', '150%', '170%', '200%'];
 						this.addEditorTab('Options', 'public/plugins/michaeldmoore-multistat-panel/options.html', 2);
 					}
@@ -176,7 +180,6 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 							}
 
 							$maxDate.text(maxDate).show();
-							//			$maxDate.text(d3.max(function(d) { return d[dateTimeCol]; })).show();
 						} else $maxDate.hide();
 					}
 				}, {
@@ -226,7 +229,7 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 
 							this.buildDateHtml(dateTimeCol);
 
-							var horizontal = this.panel.Horizontal;
+							var horizontal = this.panel.Orientation == "Horizontal";
 
 							var labelMargin = $.isNumeric(this.panel.LabelMargin) && this.panel.LabelMargin >= 0 ? this.panel.LabelMargin : horizontal ? 100 : 20;
 							var lowSideMargin = this.panel.LowSideMargin >= 0 ? this.panel.LowSideMargin : 0;
@@ -252,7 +255,7 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 							var recolorLowLimitBar = this.panel.RecolorLowLimitBar;
 							var flashHighLimitBar = this.panel.FlashHighLimitBar;
 							var flashLowLimitBar = this.panel.FlashLowLimitBar;
-							var showTooltips = this.panel.ShowTooltips;
+							var showTooltips = this.panel.Tooltips == "Tooltips";
 
 							if ($.isNumeric(HighLimitBarFlashTimeout) == false) HighLimitBarFlashTimeout = 200;
 
