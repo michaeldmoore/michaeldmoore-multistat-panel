@@ -1,0 +1,77 @@
+<div class="editor-row">
+  <div class="section gf-form-group">
+    <h5 class="section-heading">Column Definitions</h5>
+
+	
+	<div class="gf-form">
+	  <div class="gf-form-inline">
+        <label class="gf-form-label michaeldmoore-multistat-panel-w9">DateTime col</label>
+        <div class="gf-form-select-wrapper">
+          <select class="gf-form-input michaeldmoore-multistat-panel-w12" ng-model="ctrl.panel.DateTimeColName" ng-options="f for f in ctrl.cols" ng-change="ctrl.render()"></select>
+        </div>
+	  </div>
+    </div>
+
+	<div class="gf-form">
+	  <gf-form-switch class="gf-form" label-class="width-9" label="Show as-of Date" checked="ctrl.panel.ShowDate" on-change="ctrl.render()"></gf-form-switch>
+	  <div class="gf-form" ng-if="ctrl.panel.ShowDate">
+		<label class="gf-form-label width-8">Format</label>
+	    <input type="string" class="gf-form-input width-16" data-placement="right" 
+		  bs-tooltip="'Date formatting string - e.g. MMMM Do YYYY, h:mm:ss a'" ng-model="ctrl.panel.DateFormat" ng-change="ctrl.render()" ng-model-onblur />
+		  
+        <label class="gf-form-label query-keyword" ng-click="ctrl.showHelp = !ctrl.showHelp">
+          Show Help
+          <i class="fa fa-caret-down" ng-show="ctrl.showHelp"></i>
+          <i class="fa fa-caret-right" ng-hide="ctrl.showHelp"></i>
+        </label>
+	  </div>
+    </div>
+	  
+	<div class="gf-form" ng-show="ctrl.showHelp">
+	  <pre class="gf-form-pre alert alert-info" ng-if="ctrl.panel.ShowDate">As-Of Date display:
+This option controls if, and how the latest query time is displayed in the top right hand side of the panel.
+Depending on the data source and query, each row in Multistat may be updated at different times.  This display
+can be useful in showing the latest timestamp of all the data displayed in the panel - as a snapshot date/time.
+
+Date display formatting string uses common standards. <a href="https://momentjs.com/guides/#/parsing/known-formats/" target="_blank">(see here)</a> 
+
+Setting the format string to the reserved keyword "ELAPSED" displays the time as the elapsed time since the last data update (as per the latest grafana refresh operation).
+	  </pre>
+	</div>
+	
+	  
+	
+	<div class="gf-form">
+	  <div class="gf-form-inline">
+        <label class="gf-form-label michaeldmoore-multistat-panel-w9">Label col</label>
+        <div class="gf-form-select-wrapper">
+          <select class="gf-form-input michaeldmoore-multistat-panel-w12" ng-model="ctrl.panel.LabelColName" ng-options="f for f in ctrl.cols" ng-change="ctrl.render()"></select>
+        </div>
+	  </div>
+    </div>
+	<div class="gf-form">
+	  <div class="gf-form-inline">
+        <label class="gf-form-label michaeldmoore-multistat-panel-w9">Value col</label>
+        <div class="gf-form-select-wrapper">
+          <select class="gf-form-input michaeldmoore-multistat-panel-w12" ng-model="ctrl.panel.ValueColName" ng-options="f for f in ctrl.cols" ng-change="ctrl.render()"></select>
+        </div>
+	    <label class="gf-form-label width-8">Decimals</label>
+	    <input type="number" class="gf-form-input width-3" data-placement="right" 
+			bs-tooltip="'Number of decimal places for value in tool tip'" ng-model="ctrl.panel.ValueDecimals" ng-change="ctrl.render()" ng-model-onblur>		
+	  </div>
+	</div>
+	
+	<div class="gf-form">
+	  <div class="gf-form-inline">
+        <label class="gf-form-label michaeldmoore-multistat-panel-w9">Sort col</label>
+        <div class="gf-form-select-wrapper">
+          <select class="gf-form-input michaeldmoore-multistat-panel-w12" ng-model="ctrl.panel.SortColName" ng-options="f for f in ctrl.cols0" ng-change="ctrl.render()"></select>
+        </div>
+		<div class="gf-form-select-wrapper" ng-if="ctrl.panel.SortColName != ''">
+		  <select class="gf-form-input michaeldmoore-multistat-panel-w8" ng-model="ctrl.panel.SortDirection" ng-options="f for f in ctrl.sortDirections" ng-change="ctrl.render()"></select>
+		</div>
+	  </div>
+	</div>
+	
+  </div>
+</div>
