@@ -1,9 +1,9 @@
 'use strict';
 
-System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jquery', 'jquery.flot', 'angular', './external/d3', 'app/core/utils/kbn', 'app/core/config', 'app/core/time_series2'], function (_export, _context) {
+System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jquery', 'jquery.flot', './external/d3', 'angular', 'app/core/utils/kbn', 'app/core/config', 'app/core/time_series2', 'moment'], function (_export, _context) {
 	"use strict";
 
-	var MetricsPanelCtrl, _, $, angular, d3, kbn, config, TimeSeries, _createClass, MultistatPanelCtrl;
+	var MetricsPanelCtrl, _, $, d3, angular, kbn, config, TimeSeries, moment, _createClass, MultistatPanelCtrl;
 
 	function _classCallCheck(instance, Constructor) {
 		if (!(instance instanceof Constructor)) {
@@ -42,16 +42,18 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 			_ = _lodash.default;
 		}, function (_jquery) {
 			$ = _jquery.default;
-		}, function (_jqueryFlot) {}, function (_angular) {
+		}, function (_jqueryFlot) {}, function (_externalD) {
+			d3 = _externalD.default;
+		}, function (_angular) {
 			angular = _angular.default;
-		}, function (_externalD) {
-			d3 = _externalD;
 		}, function (_appCoreUtilsKbn) {
 			kbn = _appCoreUtilsKbn.default;
 		}, function (_appCoreConfig) {
 			config = _appCoreConfig.default;
 		}, function (_appCoreTime_series) {
 			TimeSeries = _appCoreTime_series.default;
+		}, function (_moment) {
+			moment = _moment.default;
 		}],
 		execute: function () {
 			_createClass = function () {
@@ -88,8 +90,10 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 						"BaseLineColor": "red",
 						"BaseLineValue": 0,
 						"DateTimeColName": "date",
+						"DateFormat": "YYYY-MM-DD HH:mm:ss",
 						"FlashHighLimitBar": true,
 						"FlashLowLimitBar": true,
+						"HighAxisColor": "white",
 						"HighBarColor": "rgb(120, 128, 0)",
 						"HighLimitBarColor": "red",
 						"HighLimitBarFlashColor": "orange",
@@ -97,12 +101,12 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 						"HighLimitLineColor": "red",
 						"HighLimitValue": 0.33,
 						"HighSideMargin": 20,
-						//"Horizontal": false,
-						"Orientation": "Horizontal",
+						"Horizontal": false,
 						"LabelColName": "sensor",
 						"LabelColor": "white",
 						"LabelFontSize": "100%",
 						"LabelMargin": null,
+						"LowAxisColor": "white",
 						"LowBarColor": "teal",
 						"LowLimitBarColor": "red",
 						"LowLimitBarFlashColor": "orange",
@@ -124,14 +128,16 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 						"ShowMaxLine": false,
 						"ShowMinLine": true,
 						"ShowRightAxis": true,
-						//"ShowTooltips": true,
-						"Tooltips": "Tooltips",
+						"ShowTooltips": true,
 						"ShowValues": true,
 						"SortColName": "value",
 						"SortDirection": "ascending",
 						"ValueColName": "value",
+						"ValueDecimals": "2",
 						"ValueColor": "white",
-						"ValueFontSize": "100%"
+						"ValueFontSize": "100%",
+						"OddRowColor": "rgba(33, 33, 34, 0.92)",
+						"EvenRowColor": "rgba(61, 61, 64, 0.78)"
 					};
 
 					var panel = {};
@@ -158,16 +164,16 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 					key: 'onInitEditMode',
 					value: function onInitEditMode() {
 						this.metricNames = ['min', 'max', 'avg', 'current', 'total', 'name', 'first', 'delta', 'diff', 'range'];
-						this.sortDirections = ['none', 'ascending', 'descending'];
-						this.orientations = ['Horizontal', 'Vertical'];
-						this.tooltips = ['Tooltips', 'No Tooltips'];
+						this.sortDirections = ['none', 'ascending', 'decending'];
 						this.fontSizes = ['20%', '30%', '50%', '70%', '80%', '100%', '110%', '120%', '150%', '170%', '200%'];
-						this.addEditorTab('Options', 'public/plugins/michaeldmoore-multistat-panel/options.html', 2);
+						this.addEditorTab('Columns', 'public/plugins/michaeldmoore-multistat-panel/columns.html', 2);
+						this.addEditorTab('Layout', 'public/plugins/michaeldmoore-multistat-panel/layout.html', 3);
+						this.addEditorTab('Lines & Limits', 'public/plugins/michaeldmoore-multistat-panel/linesandlimits.html', 4);
 					}
 				}, {
 					key: 'buildDateHtml',
 					value: function buildDateHtml(dateTimeCol) {
-						var $title = this.elem.closest('.panel-container').find('.panel-title.drag-handle.pointer');
+						var $title = this.elem.closest('.panel-container').find('.panel-title');
 						var $maxDate = $title.find('span.michaeldmoore-multistat-panel-maxDate');
 
 						if ($maxDate.length == 0) $maxDate = $title.append('<span class="michaeldmoore-multistat-panel-maxDate"/>').children().last();
@@ -179,7 +185,7 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 								if (maxDate < this.rows[i][dateTimeCol]) maxDate = this.rows[i][dateTimeCol];
 							}
 
-							$maxDate.text(maxDate).show();
+							if (this.panel.DateFormat.toUpperCase() == 'ELAPSED') $maxDate.text(moment(maxDate).fromNow()).show();else $maxDate.text(moment(maxDate).format(this.panel.DateFormat)).show();
 						} else $maxDate.hide();
 					}
 				}, {
@@ -217,7 +223,7 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 							var $container = this.elem.find('.' + className);
 
 							var h = $container.height();
-							var w = $container.width() - 5;
+							var w = $container.width() - 15;
 
 							if (this.panel.SortDirection != "none") {
 								var ascending = this.panel.SortDirection == "ascending";
@@ -229,7 +235,7 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 
 							this.buildDateHtml(dateTimeCol);
 
-							var horizontal = this.panel.Orientation == "Horizontal";
+							var horizontal = this.panel.Horizontal;
 
 							var labelMargin = $.isNumeric(this.panel.LabelMargin) && this.panel.LabelMargin >= 0 ? this.panel.LabelMargin : horizontal ? 100 : 20;
 							var lowSideMargin = this.panel.LowSideMargin >= 0 ? this.panel.LowSideMargin : 0;
@@ -255,36 +261,60 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 							var recolorLowLimitBar = this.panel.RecolorLowLimitBar;
 							var flashHighLimitBar = this.panel.FlashHighLimitBar;
 							var flashLowLimitBar = this.panel.FlashLowLimitBar;
-							var showTooltips = this.panel.Tooltips == "Tooltips";
+							var showTooltips = this.panel.ShowTooltips;
+							var DateTimeColName = this.panel.DateTimeColName;
+							var DateFormat = this.panel.DateFormat;
+							var ValueColName = this.panel.ValueColName;
+							var ValueDecimals = this.panel.ValueDecimals;
+							var OddRowColor = this.panel.OddRowColor;
+							var EvenRowColor = this.panel.EvenRowColor;
 
 							if ($.isNumeric(HighLimitBarFlashTimeout) == false) HighLimitBarFlashTimeout = 200;
 
 							if ($.isNumeric(LowLimitBarFlashTimeout) == false) LowLimitBarFlashTimeout = 200;
 
-							if ($.isNumeric(minLineValue) == false) minLineValue = d3.min(this.rows, function (d) {
-								return d[valueCol];
+							var minValue = d3.min(this.rows, function (d) {
+								return Number(d[valueCol]);
 							});
+							if ($.isNumeric(minLineValue) == false || minLineValue > minValue) minLineValue = minValue;
 
-							if ($.isNumeric(maxLineValue) == false) maxLineValue = d3.max(this.rows, function (d) {
-								return d[valueCol];
+							var maxValue = d3.max(this.rows, function (d) {
+								return Number(d[valueCol]);
 							});
+							if ($.isNumeric(maxLineValue) == false || maxLineValue < maxValue) maxLineValue = maxValue;
 
 							if ($.isNumeric(baseLineValue) == false) baseLineValue = 0;
 
 							if (minLineValue > baseLineValue) minLineValue = baseLineValue;
 
+							if ($.isNumeric(lowLimitValue) && minLineValue > lowLimitValue) minLineValue = lowLimitValue;
+
 							if (maxLineValue < baseLineValue) maxLineValue = baseLineValue;
+
+							if ($.isNumeric(highLimitValue) && maxLineValue < highLimitValue) maxLineValue = highLimitValue;
 
 							var formatDecimal = d3.format(".2f");
 
-							var tooltipDiv = d3.select("body").append("div").attr("class", "michaeldmoore-multistat-panel-tooltip").style("opacity", 0);
+							var cc1 = d3.select("body");
+							var cc2 = cc1.selectAll(".michaeldmoore-multistat-panel-tooltip-" + this.panel.id);
+							cc2.remove();
+
+							var tooltipDiv = d3.select("body").append("div").attr("class", "michaeldmoore-multistat-panel-tooltip michaeldmoore-multistat-panel-tooltip-" + this.panel.id).style("opacity", 0);
 
 							var tooltipShow = function tooltipShow(d, c) {
 								tooltipDiv.transition().duration(200).style("opacity", .9);
 								var html = "<table>";
 								for (i = 0; i < d.length; i++) {
-									html += "<tr><td>" + c[i] + "</td><td>" + d[i] + "</td></tr>";
-								}html += "</table>";
+									var cc = c[i];
+									var dd = d[i];
+
+									if (cc == DateTimeColName) dd = moment(dd).format(DateFormat);
+									//else if (cc == ValueColName && $.isNumeric(dd))
+									//dd = dd.toFixed(ValueDecimals);
+
+									html += "<tr><td>" + cc + "</td><td>" + dd + "</td></tr>";
+								}
+								html += "</table>";
 								tooltipDiv.html(html).style("left", d3.event.pageX + "px").style("top", d3.event.pageY - 28 + "px");
 							};
 
@@ -293,8 +323,10 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 							};
 
 							if (horizontal) {
-
 								var plotGroupHorizontal = function plotGroupHorizontal(panel, data, numRows, groupName, left, w) {
+									var groupNameOffset = groupName != '' ? 15 : 0;
+									lowSideMargin += groupNameOffset;
+
 									var valueScale = d3.scaleLinear().domain([minLineValue, maxLineValue]).range([left + labelMargin, w]).nice();
 
 									var labels = data.map(function (d) {
@@ -303,6 +335,15 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 									while (labels.length < numRows) {
 										labels = labels.concat('_' + Math.random().toString(36).substr(2, 9));
 									}var labelScale = d3.scaleBand().domain(labels).rangeRound([lowSideMargin, h - highSideMargin]).padding(barPadding / 100);
+
+									// Draw background of alternating stripes 
+									var oddeven = false;
+									svg.append("g").selectAll("rect").data(data).enter().append("rect").attr("class", "michaeldmoore-multistat-panel-row").attr("width", w).attr("height", labelScale.bandwidth()).attr("x", left).attr("y", function (d, i) {
+										return labelScale(d[labelCol]);
+									}).attr("fill", function (d) {
+										oddeven = !oddeven;
+										return oddeven ? OddRowColor : EvenRowColor;
+									});
 
 									function vLine(value, color) {
 										svg.append("line").style("stroke", color).attr("y1", lowSideMargin).attr("x1", valueScale(value)).attr("y2", h - highSideMargin).attr("x2", valueScale(value));
@@ -349,7 +390,7 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 											return valueScale(d[valueCol]) + (d[valueCol] > baseLineValue ? -5 : +5);
 										}).attr("y", function (d, i) {
 											return labelScale(d[labelCol]) + labelScale.bandwidth() / 2;
-										}).attr("font-family", "sans-serif").attr("font-size", panel.ValueFontSize).attr("fill", panel.LabelColor).attr("text-anchor", function (d) {
+										}).attr("font-family", "sans-serif").attr("font-size", panel.ValueFontSize).attr("fill", panel.ValueColor).attr("text-anchor", function (d) {
 											return d[valueCol] > baseLineValue ? "end" : "start";
 										}).attr("dominant-baseline", "central");
 									}
@@ -359,24 +400,31 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 											return d[labelCol];
 										}).attr("x", left + labelMargin - 5).attr("y", function (d, i) {
 											return labelScale(d[labelCol]) + labelScale.bandwidth() / 2;
-										}).attr("font-family", "sans-serif").attr("font-size", panel.LabelFontSize).attr("fill", panel.LabelColor)
-										//						.attr("text-anchor", "middle")
-										.attr("text-anchor", "end").attr("dominant-baseline", "central");
+										}).attr("font-family", "sans-serif").attr("font-size", panel.LabelFontSize).attr("fill", panel.LabelColor).attr("text-anchor", "end").attr("dominant-baseline", "central");
+									}
+
+									// Add Low Side Group Names
+									if (groupName != '') {
+										svg.append("text").text(groupName).attr("x", left + (labelMargin + w - left) / 2 - 5).attr("y", 5).attr("font-family", "sans-serif").attr("font-size", panel.LabelFontSize).attr("fill", panel.LabelColor).attr("text-anchor", "middle").attr("dominant-baseline", "central");
 									}
 
 									//Add Low Side Value Axis (X)
-									if (lowSideMargin > 0) {
-										if (groupName != '') {
-											svg.append("text").text(groupName).attr("x", left + (labelMargin + w - left) / 2 - 5).attr("y", 5).attr("font-family", "sans-serif").attr("font-size", panel.LabelFontSize).attr("fill", panel.LabelColor).attr("text-anchor", "middle").attr("dominant-baseline", "central");
-										}
-
-										svg.append("g").attr("transform", 'translate(0,' + lowSideMargin + ')').attr("class", "michaeldmoore-multistat-panel-valueaxis").call(d3.axisTop(valueScale));
+									if (lowSideMargin > groupNameOffset) {
+										var gg = svg.append("g").attr("transform", 'translate(0,' + lowSideMargin + ')').attr("class", "michaeldmoore-multistat-panel-valueaxis").call(d3.axisTop(valueScale));
+										gg.selectAll('.tick text').attr('fill', panel.LowAxisColor);
+										gg.selectAll('.tick line').attr('stroke', panel.LowAxisColor);
+										gg.selectAll('path.domain').attr('stroke', panel.LowAxisColor);
 									}
 
 									//Add High Side Value Axis (X)
 									if (highSideMargin > 0) {
-										svg.append("g").attr("transform", 'translate(0,' + (h - highSideMargin) + ')').attr("class", "michaeldmoore-multistat-panel-valueaxis").call(d3.axisBottom(valueScale));
+										var gg = svg.append("g").attr("transform", 'translate(0,' + (h - highSideMargin) + ')').attr("class", "michaeldmoore-multistat-panel-valueaxis").call(d3.axisBottom(valueScale));
+										gg.selectAll('.tick text').attr('fill', panel.HighAxisColor);
+										gg.selectAll('.tick line').attr('stroke', panel.HighAxisColor);
+										gg.selectAll('path.domain').attr('stroke', panel.HighAxisColor);
 									}
+
+									lowSideMargin -= groupNameOffset;
 								};
 
 								if (groupCol >= 0) {
@@ -384,13 +432,14 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 										return d[groupCol];
 									}).entries(this.rows);
 
-									var dw = w / this.groupedRows.length;
+									var gap = 5;
+									var dw = (w + gap) / this.groupedRows.length;
 									var numRows = d3.max(this.groupedRows, function (d) {
 										return d.values.length;
 									});
 
 									for (var i = 0; i < this.groupedRows.length; i++) {
-										plotGroupHorizontal(this.panel, this.groupedRows[i].values, numRows, this.groupedRows[i].key, i * dw, (i + 1) * dw);
+										plotGroupHorizontal(this.panel, this.groupedRows[i].values, numRows, this.groupedRows[i].key, i * dw, i * dw + dw - gap);
 									}
 								} else {
 									this.groupedRows = null;
@@ -402,11 +451,21 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 									svg.append("line").style("stroke", color).attr("x1", lowSideMargin).attr("y1", valueScale(value)).attr("x2", w - highSideMargin).attr("y2", valueScale(value));
 								};
 
-								var valueScale = d3.scaleLinear().domain([maxLineValue, minLineValue]).range([0, h - labelMargin]).nice();
+								var valueScale = d3.scaleLinear().domain([maxLineValue, minLineValue]).range([10, h - labelMargin]).nice();
 
 								var labelScale = d3.scaleBand().domain(this.rows.map(function (d) {
 									return d[labelCol];
 								})).range([lowSideMargin, w - highSideMargin]).padding(barPadding / 100);
+
+								// Draw background of alternating stripes 
+								var oddeven = false;
+								svg //.append("g")
+								.selectAll("rect").data(this.rows).enter().append("rect").attr("class", "michaeldmoore-multistat-panel-row").attr("width", labelScale.bandwidth()).attr("height", h).attr("x", function (d, i) {
+									return labelScale(d[labelCol]);
+								}).attr("y", 0).attr("fill", function (d) {
+									oddeven = !oddeven;
+									return oddeven ? OddRowColor : EvenRowColor;
+								});
 
 								if (this.panel.ShowBaseLine) hLine(baseLineValue, this.panel.BaseLineColor);
 
@@ -418,7 +477,7 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 
 								if (this.panel.ShowLowLimitLine) hLine(lowLimitValue, this.panel.LowLimitLineColor);
 
-								svg.selectAll("rect").data(this.rows).enter().append("rect").attr("class", "michaeldmoore-multistat-panel-bar").attr("height", function (d) {
+								svg.append("g").selectAll("rect").data(this.rows).enter().append("rect").attr("class", "michaeldmoore-multistat-panel-bar").attr("height", function (d) {
 									var hh = valueScale(d[valueCol]) - valueScale(baseLineValue);
 									if (hh < 0) hh = -hh;
 									return hh;
@@ -465,16 +524,30 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 								}
 
 								if (lowSideMargin > 0) {
-									svg.append("g").attr('transform', 'translate(' + lowSideMargin + ', 0)').classed('michaeldmoore-multistat-panel-valueaxis', true).call(d3.axisLeft(valueScale).tickSizeInner(5).tickSizeOuter(10).ticks(5));
+									var gg = svg.append("g").attr('transform', 'translate(' + lowSideMargin + ', 0)').classed('michaeldmoore-multistat-panel-valueaxis', true).call(d3.axisLeft(valueScale).tickSizeInner(5).tickSizeOuter(10).ticks(5));
+									gg.selectAll('.tick text').attr('fill', this.panel.LowAxisColor);
+									gg.selectAll('.tick line').attr('stroke', this.panel.LowAxisColor);
+									gg.selectAll('path.domain').attr('stroke', this.panel.LowAxisColor);
 								}
 
 								if (highSideMargin > 0) {
-									svg.append("g").attr('transform', 'translate(' + (w - highSideMargin) + ', 0)').classed('michaeldmoore-multistat-panel-valueaxis', true).call(d3.axisRight(valueScale).tickSizeInner(5).tickSizeOuter(10).ticks(5));
+									var gg = svg.append("g").attr('transform', 'translate(' + (w - highSideMargin) + ', 0)').classed('michaeldmoore-multistat-panel-valueaxis', true).call(d3.axisRight(valueScale).tickSizeInner(5).tickSizeOuter(10).ticks(5));
+									gg.selectAll('.tick text').attr('fill', this.panel.HighAxisColor);
+									gg.selectAll('.tick line').attr('stroke', this.panel.HighAxisColor);
+									gg.selectAll('path.domain').attr('stroke', this.panel.HighAxisColor);
 								}
 							}
 
 							pulse();
 						}
+
+						//var tooltipDiv = svg.append("div")
+						//		.attr("class", "michaeldmoore-multistat-panel-tooltip")
+						//		//.style("height", "100px")
+						//		//.style("width", "100px")
+						//		//.style("left", "100px")
+						//		//.style("top", "100px")
+						//		.style("opacity", 0);
 
 						this.ctrl.renderingCompleted();
 					}
@@ -493,7 +566,7 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 								this.cols[i] = data.columns[i].text;
 							}
 
-							this.groupCols = [''].concat(this.cols);
+							this.cols0 = [''].concat(this.cols);
 							this.render();
 						} else {
 							this.alertSrv.set('Multistat Data Error', 'Query type "' + dataList[0].Type + '", not supported', 'error', 5000);
