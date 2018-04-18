@@ -28,6 +28,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			"BaseLineValue": 0,
 			"DateTimeColName": "date",
 			"DateFormat": "YYYY-MM-DD HH:mm:ss",
+			"TooltipDateFormat": "YYYY-MM-DD HH:mm:ss",
 			"FlashHighLimitBar": true,
 			"FlashLowLimitBar": true,
 			"HighAxisColor": "white",
@@ -69,8 +70,9 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			"ShowValues": true,
 			"SortColName": "value",
 			"SortDirection": "ascending",
+			"TZOffsetHours": 0,
 			"ValueColName": "value",
-			"ValueDecimals": "2",
+			"ValueDecimals": 2,
 			"ValueColor": "white",
 			"ValueFontSize": "100%",
 			"OddRowColor": "rgba(33, 33, 34, 0.92)",
@@ -111,18 +113,20 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 		if($maxDate.length == 0)
 			$maxDate = $title.append('<span class="michaeldmoore-multistat-panel-maxDate"/>').children().last();
 
-		if (this.panel.ShowDate) {
+		if (dateTimeCol != -1 && this.panel.ShowDate) {
 			var maxDate = this.rows[0][dateTimeCol];
 
 			for(var i = 1; i < this.rows.length; i++){
 				if (maxDate < this.rows[i][dateTimeCol])
 					maxDate = this.rows[i][dateTimeCol];
 			}
-
+			
+			var dd = moment(maxDate).add(this.panel.TZOffsetHours, 'h');
+			
 			if (this.panel.DateFormat.toUpperCase() == 'ELAPSED')
-				$maxDate.text(moment(maxDate).fromNow()).show();
+				$maxDate.text(dd.fromNow()).show();
 			else
-				$maxDate.text(moment(maxDate).format(this.panel.DateFormat)).show();
+				$maxDate.text(dd.format(this.panel.DateFormat)).show();
 		}
 		else
 			$maxDate.hide();			
@@ -133,7 +137,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
     onRender() {
 		if (this.rows != null) {
 			var cols = this.cols;
-			var dateTimeCol = 0;
+			var dateTimeCol = -1;
 			var labelCol = 0;
 			var valueCol = 0;
 			var sortCol = 0;
@@ -197,10 +201,12 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			var showTooltips = this.panel.ShowTooltips;
 			var DateTimeColName = this.panel.DateTimeColName;
 			var DateFormat = this.panel.DateFormat;
+			var TooltipDateFormat = this.panel.TooltipDateFormat;
 			var ValueColName = this.panel.ValueColName;
 			var ValueDecimals = this.panel.ValueDecimals;
 			var OddRowColor = this.panel.OddRowColor;
 			var EvenRowColor = this.panel.EvenRowColor;
+			var TZOffsetHours = this.panel.TZOffsetHours;
 			
 			if ($.isNumeric(HighLimitBarFlashTimeout) == false)
 				HighLimitBarFlashTimeout = 200;
@@ -231,7 +237,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			if ($.isNumeric(highLimitValue) && maxLineValue < highLimitValue)
 				maxLineValue = highLimitValue;
 
-			var formatDecimal = d3.format(".2f");
+			//var formatDecimal = d3.format(".2f");
+			
 
 			var cc1 = d3.select("body");
 			var cc2 = cc1.selectAll(".michaeldmoore-multistat-panel-tooltip-" + this.panel.id);
@@ -252,9 +259,9 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					var dd = d[i];
 					
 					if (cc == DateTimeColName)
-						dd = moment(dd).format(DateFormat);
-					//else if (cc == ValueColName && $.isNumeric(dd))
-						//dd = dd.toFixed(ValueDecimals);
+						dd = moment(dd).add(TZOffsetHours, 'h').format(TooltipDateFormat);
+					else if (cc == ValueColName && $.isNumeric(dd))
+						dd = dd.toFixed(ValueDecimals);
 					
 					html += "<tr><td>" + cc + "</td><td>" + dd + "</td></tr>";
 				}
@@ -378,7 +385,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					
 					if (panel.ShowValues) {
 						g.append("text")
-						.text(function(d) {return formatDecimal(d[valueCol])})
+						//.text(function(d) {return formatDecimal(d[valueCol])})
+						.text(function(d) {return d[valueCol].toFixed(ValueDecimals)})
 						.attr("x", function(d){return valueScale(d[valueCol]) + ((d[valueCol] > baseLineValue) ? - 5 : + 5)})
 						.attr("y", function(d,i){return labelScale(d[labelCol]) + (labelScale.bandwidth() / 2)})
 						.attr("font-family", "sans-serif")
@@ -556,7 +564,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					
 				if (this.panel.ShowValues) {
 					g.append("text")
-					.text(function(d) { return formatDecimal(d[valueCol]); })
+					//.text(function(d) { return formatDecimal(d[valueCol]); })
+					.text(function(d) {return d[valueCol].toFixed(ValueDecimals)})
 					.attr("x", function(d, i) { return labelScale(d[labelCol]) + (labelScale.bandwidth() / 2); })
 					.attr("y", function(d){
 						return valueScale(d[valueCol]) + ((d[valueCol] > baseLineValue) ? 5 : -5);
