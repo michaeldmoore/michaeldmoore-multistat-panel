@@ -73,7 +73,7 @@
 	<div class="gf-form">
       <gf-form-switch class="gf-form" label-class="width-8" label="Show Values" checked="ctrl.panel.ShowValues" on-change="ctrl.render()"></gf-form-switch>
 	  <div class="gf-form-inline" ng-if="ctrl.panel.ShowValues">
-        <label class="gf-form-label michaeldmoore-multistat-panel-w6">Font size</label>
+        <label class="gf-form-label michaeldmoore-multistat-panel-w7">Font size</label>
         <div class="gf-form-select-wrapper">
           <select class="gf-form-input michaeldmoore-multistat-panel-w6" ng-model="ctrl.panel.ValueFontSize" ng-options="f for f in ctrl.fontSizes" ng-change="ctrl.render()"></select>
         </div>
@@ -87,7 +87,7 @@
 	<div class="gf-form">
       <gf-form-switch class="gf-form" label-class="width-8" label="Show Labels" checked="ctrl.panel.ShowLabels" on-change="ctrl.render()"></gf-form-switch>
 	  <div class="gf-form-inline" ng-if="ctrl.panel.ShowLabels">
-        <label class="gf-form-label michaeldmoore-multistat-panel-w6">Font size</label>
+        <label class="gf-form-label michaeldmoore-multistat-panel-w7">Font size</label>
         <div class="gf-form-select-wrapper">
           <select class="gf-form-input michaeldmoore-multistat-panel-w6" ng-model="ctrl.panel.LabelFontSize" ng-options="f for f in ctrl.fontSizes" ng-change="ctrl.render()"></select>
         </div>
@@ -100,9 +100,13 @@
 
 	<div class="gf-form">
       <gf-form-switch class="gf-form" label-class="width-8" label="Tooltips" checked="ctrl.panel.ShowTooltips" on-change="ctrl.render()"></gf-form-switch>
+	  
+	  <div class="gf-form" ng-if="ctrl.panel.ShowTooltips">
+		<label class="gf-form-label width-7">Date Format</label>
+	    <input type="string" class="gf-form-input width-15" data-placement="right" 
+		  bs-tooltip="'Date formatting string - e.g. MMMM Do YYYY, h:mm:ss a'" ng-model="ctrl.panel.TooltipDateFormat" ng-change="ctrl.render()" ng-model-onblur />
+	  </div>
 	</div>  
-
-	
 	
 	
 
