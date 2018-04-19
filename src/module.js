@@ -258,9 +258,6 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			if ($.isNumeric(highLimitValue) && maxLineValue < highLimitValue)
 				maxLineValue = highLimitValue;
 
-			//var formatDecimal = d3.format(".2f");
-			
-
 			var cc1 = d3.select("body");
 			var cc2 = cc1.selectAll(".michaeldmoore-multistat-panel-tooltip-" + this.panel.id);
 			cc2.remove();
@@ -597,7 +594,6 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					
 				if (this.panel.ShowValues) {
 					g.append("text")
-					//.text(function(d) { return formatDecimal(d[valueCol]); })
 					.text(function(d) {return d[valueCol].toFixed(ValueDecimals)})
 					.attr("x", function(d, i) { return labelScale(d[labelCol]) + (labelScale.bandwidth() / 2); })
 					.attr("y", function(d){
@@ -687,30 +683,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			for(var i=0; i < this.data.columns.length; i++)
 				this.cols[i] = this.data.columns[i].text;
 			this.cols0 = [''].concat(this.cols);
-/*
-			var labelColx = -1;
-			for(var i=0; i < this.data.columns.length; i++){
-				if (this.cols[i] == this.panel.LabelColName)
-					labelColx = i;
-			}
-			
-			if (this.panel.FilterMultiples == true && labelColx != -1){
-				var oo = [];
-				//this.rows = [];
-				d3.nest()
-					.key(function(d){return d[labelColx]})
-					.rollup(function(d){return d[d.length - 1]})
-					.entries(this.data.rows)
-					.forEach(function(x){
-						//this.rows.push(x.value);
-						oo.push(x.value);
-					});
-				this.rows = oo;
-			}
-			else {
-				this.rows = this.data.rows;
-			}		
-*/			
+
 			this.render();
 		}
 		else {
