@@ -59,6 +59,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			"RecolorLowLimitBar": false,
 			"ShowBaseLine": true,
 			"ShowDate": false,
+			"FilterMultiples": false,
 			"ShowHighLimitLine": true,
 			"ShowLabels": true,
 			"ShowLeftAxis": true,
@@ -636,13 +637,6 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			pulse();
 		}
 		
-		//var tooltipDiv = svg.append("div")
-		//		.attr("class", "michaeldmoore-multistat-panel-tooltip")
-		//		//.style("height", "100px")
-		//		//.style("width", "100px")
-		//		//.style("left", "100px")
-		//		//.style("top", "100px")
-		//		.style("opacity", 0);
 				
         this.ctrl.renderingCompleted();
     }
@@ -656,13 +650,33 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 		}
 		else if (dataList[0].type == "table"){
 			var data = dataList[0];
-			this.rows = data.rows;
+
 			this.cols = [];
+			var labelColx = -1;
 			for(var i=0; i < data.columns.length; i++){
 				this.cols[i] = data.columns[i].text;
+				if (this.cols[i] == this.panel.LabelColName)
+					labelColx = i;
 			}
-		
 			this.cols0 = [''].concat(this.cols);
+			
+			if (this.panel.FilterMultiples == true && labelColx != -1){
+				var oo = [];
+				//this.rows = [];
+				d3.nest()
+					.key(function(d){return d[labelColx]})
+					.rollup(function(d){return d[d.length - 1]})
+					.entries(data.rows)
+					.forEach(function(x){
+						//this.rows.push(x.value);
+						oo.push(x.value);
+					});
+				this.rows = oo;
+			}
+			else {
+				this.rows = data.rows;
+			}		
+			
 			this.render();
 		}
 		else {
