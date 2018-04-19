@@ -46,9 +46,7 @@ These queries should return a relatively small number of rows - Multistat does n
 
 Multistat has a wealth of configurable options.  just about everything displayed can be adjusted and hidden using the extensive set of configuration options, described in detail below.
 
-![image](https://user-images.githubusercontent.com/3724718/38958437-17227e9a-4312-11e8-9918-7cdc576a17b0.png)
-
-
+![image](https://user-images.githubusercontent.com/3724718/38972936-38b6ec76-4358-11e8-9e00-756707ef8f04.png)
 
 
 
@@ -109,6 +107,12 @@ If no query is defined, or the data source is unavaliable, Multistat displays a 
 
 
 
+**Queries should return just one value per label**
+
+Multistat can only display a single bar for each label.  Ideally, query results *should be written* to return a single value per label.  When the query returns multiple values per label, Multistat uses the last one - assuming the query contains an date/time order by clause, this works out to be the most recent value, presumably the one users will be interested in.  For efficiency though, it is much better to write a query that only returns the required data.
+
+
+
 For this discussion, I created some test data and a stored procedure in mySQL, returning the latest updates from a set of hypothetical sensors, returning a set of values, like this:
 
 
@@ -122,6 +126,12 @@ Note, this query returns the required label and values fields, plus, in this cas
 First, the data source and query is setup using the standard **Metrics** tab
 
 ![image](https://user-images.githubusercontent.com/3724718/38960019-b7e3ba92-4317-11e8-91b8-b480c367f1d7.png)
+
+
+
+In the event that the query returns more than one value per label, set the 'Filter Multiples' check box - this tells the panel to group the return set by whatever field is defined as the 'value col', retaining only the last record for any given 'label'.  Note., this is a trade-off between the client and the server itself - sometimes it will be better to use this feature, and sometimes not.
+
+
 
 Note: The Query Inspector built into Grafana is a terrific resource for figuring out source data problems.  Here's what we get from my demo query:
 
