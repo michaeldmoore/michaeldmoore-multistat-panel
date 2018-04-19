@@ -165,6 +165,18 @@ This is made up of two sections - Layout and Options.
 
 Layouts define the setting controlling how the data is arranged on the panel.  In horizontal mode only, a group col setting can be used to define a field that displays multiple sets, or groups, of elements.  In this demo case, we're grouping on the 'region' field, which takes on 5 different values (East, West, North, South and Central).
 
+When grouping, by default, the groups are arranged in alphabetical order.  (See here, Central->East->North->South->West)
+
+![image](https://user-images.githubusercontent.com/3724718/39014353-f93f1894-43ce-11e8-8ad1-d10906f3ee3b.png)
+
+
+
+This default can be overridden by setting the Group Sort Order string - a comma delimited sequence of group names, like "North,East,West,South,Central"  that make it North->East->West->South->Central
+
+![image](https://user-images.githubusercontent.com/3724718/39014554-86a11ebc-43cf-11e8-997b-a0d3bab94f74.png)
+
+
+
 
 
 The margin settings control how much space needs to be reserved, depending on the actual name of the labels etc.  Bar colors (plus others such as the axis labels and ticks and the odd/even bar background) are defined in this section.  Depending on the application, we can set different colors for positive and negative values and also control the bar-to-gap padding percentage.
