@@ -6,7 +6,7 @@
 
 
 
->This panel was developed for as a table-like panel for presenting bar charts, providing some useful additions particularly suited to process control/monitoring dashboards.  Singlestat displays a single metric from time series data set, with optional threshold-related coloring etc.  Multistat builds on this base, displaying query data in the form of a bar graph  with adding optional upper and lower hard limits.  
+This panel was developed for as a table-like panel for presenting bar charts, providing some useful additions particularly suited to process control/monitoring dashboards.  Singlestat displays a single metric from time series data set, with optional threshold-related coloring etc.  Multistat builds on this base, displaying query data in the form of a bar graph  with adding optional upper and lower hard limits.  Plus a lot, lot more....
 
 
 
@@ -14,25 +14,39 @@
 
 
 
+Data can be displayed as vertical bars...
+
+![image](https://user-images.githubusercontent.com/3724718/38955637-1b1bd9d6-430a-11e8-9633-4e752f12d237.png)
+
+Horizontally...
+
+![image](https://user-images.githubusercontent.com/3724718/38958080-07cd248c-4311-11e8-85c4-6c988b7ded08.png)
 
 
->Multistat takes it's data from a table query - this query must return at minimum, 2 fields (names can be anything)
+
+Or as horizontal groups (based on the data query)
+
+![image](https://user-images.githubusercontent.com/3724718/38958223-7b5a3106-4311-11e8-9172-a4786728a236.png)
+
+
+
+Multistat takes it's data from a table query - returning, at minimum, 2 fields (names can be anything)
 
 * Label
-
 * Value
-
 * Timestamp (optional)
+* Group By (optional, horizontal mode only)
 
 
 
-Note - These queries should return a relatively small number of rows - Multistat does not use scroll bars - all bars are auto-scaled to fit the display window (scroll bars are useless in a monitoring dashboard).
+
+These queries should return a relatively small number of rows - Multistat does not use scroll bars - all bars are auto-scaled to fit the display window (scroll bars are useless in a monitoring dashboard).
 
 
 
-Mutistat has a wealth of configurable options.  just about everything displayed can be adjusted and hidden using the extensive set of configuration options.  These will be described in detail below.
+Multistat has a wealth of configurable options.  just about everything displayed can be adjusted and hidden using the extensive set of configuration options, described in detail below.
 
-![options](https://user-images.githubusercontent.com/3724718/30005394-771279c4-9096-11e7-8908-616af1d5429d.png)
+![image](https://user-images.githubusercontent.com/3724718/38958437-17227e9a-4312-11e8-9918-7cdc576a17b0.png)
 
 
 
@@ -66,7 +80,7 @@ Mutistat has a wealth of configurable options.  just about everything displayed 
 
 * Optional two-color alarm flashing, with settable flash rate
 
- 
+
 
 `Note : With all these options, the author accepts no responsibility for inducing
 nausea, epilepsy or generally violating the bounds of good taste)`
@@ -79,11 +93,11 @@ nausea, epilepsy or generally violating the bounds of good taste)`
 
 The Grafana-standard Metrics tab allows the user to specify a query, to be issued each time the panel is refreshed.
 
-This area is under continued active development.  Currently, Multistat only supports **Table** data queries.  Each row returned will be displayed as a bar, auto-sized to use the available space.  The panel does nt provide scroll bars, so any query returning more rows than can comfortably fit in the alloted panel area will be unreadable. 
+This area is under continued active development.  Currently, Multistat only supports **Table** data queries.  Each row returned will be displayed as a bar, auto-sized to use the available space.  The panel does not provide scroll bars, so any query returning more rows than can comfortably fit in the allotted panel area will be unreadable. 
 
 
 
-Table Queries
+**Table Queries**
 
 Multistat queries are expected to be something along the lines of ''Get the working pressure of all steam boilers in building 5'' or ''Get the temperature of the 10 hottest cities in the US'' etc.  Anything that can be re-queried efficiently and returns a list of results containing - at minimum - a Label (e.g. Boiler ID or City Name) and a value (e.g. the pressure or temperature).  Optionally, Multistat takes advantage of a DateTime field, if present, which can be displayed alongside the panel title as an indicator as to the last time the data was updated.  More details on this below.
 
@@ -95,137 +109,109 @@ If no query is defined, or the data source is unavaliable, Multistat displays a 
 
 
 
-For this discussion, a mySQL stored procedure is is used to query a hypothetical sensor array, returning 5 labeled values:
+For this discussion, I created some test data and a stored procedure in mySQL, returning the latest updates from a set of hypothetical sensors, returning a set of values, like this:
 
-![samplequery](https://user-images.githubusercontent.com/3724718/30006627-7bede29c-90b1-11e7-9d74-4f54d0ed33e3.png)
 
 
+![image](https://user-images.githubusercontent.com/3724718/38958649-be730336-4312-11e8-8903-8a6544d0bd7f.png)
 
-Note, this query returns the required fields, including the DateTime field, using the Grafana-standard table field names.  Multistat does not require that the standard names be used - the actual names returned can be mapped using the top row of Values configuration options.
+Note, this query returns the required label and values fields, plus, in this case, a DateTime field indicating when this value was last recorded, plus a region field (that will be useful in grouping).   The field names can be anything; everything is defined in the configuration tabs.
 
-![mappingfields](https://user-images.githubusercontent.com/3724718/30006686-afc99e02-90b2-11e7-8daa-d45fbf7a2dac.png)
 
 
+First, the data source and query is setup using the standard **Metrics** tab
 
+![image](https://user-images.githubusercontent.com/3724718/38960019-b7e3ba92-4317-11e8-91b8-b480c367f1d7.png)
 
+Note: The Query Inspector built into Grafana is a terrific resource for figuring out source data problems.  Here's what we get from my demo query:
 
+![image](https://user-images.githubusercontent.com/3724718/38960473-88d4ab42-4319-11e8-9d34-f9187731e46c.png)
 
+etc.
 
-Once a valid query has been generated, the panel will create a basic bar chart of the results (shown here in both vertical and horizontal forms):
 
-![basic-bar-charts](https://user-images.githubusercontent.com/3724718/30006743-96e67340-90b4-11e7-9568-fbda6b23c497.png)
 
+The data is mapped using the **Columns** configuration tab:
 
+![image](https://user-images.githubusercontent.com/3724718/38960879-f0edfe6c-431a-11e8-8a74-d63d229259d0.png)
 
-These settings (Column mapping and Vertical/Horizontal layout) are all part of the **Values** section of the configuration Options tab.  Other settings in this group affect the basic layout and features of the bar chart(s).
 
 
+Here, you can see how the 4 key fields in the query result set get mapped to the Multistat fields.  In this case, the label is associated with the query field 'sensor', Value as 'value', with 2 decimal places. Note too, that the bars are set to be sorted in ascending 'value' order.
 
-Sorting & 'Show Date'
+The DateTime col (optional) is mapped here to the 'date' field.  When set, the TZ Offset Hrs setting can be used to offset the display value to account for time-zone differences between the data source and the client.
 
-![sorting](https://user-images.githubusercontent.com/3724718/30006850-1f349360-90b7-11e7-9f5a-5f16adacbaba.png)
+The 'Show as-of Date' setting controls whether or not the last update time is to be displayed in the top right of the panel.  When set, this displays the maximum datetime value in the query record set, which can be useful in process monitoring applications.  The format field controls how this time is displayed (see documentation for [moment.js](https://momentjs.com/guides/#/parsing/known-formats/) for formatting details), or us the reserved keyword 'ELAPSED' to display as a natural language string, relative to the current time.   Help is available, if needed.
 
-By default, bars are arranged in the order returned by the query.  Setting the Sorting to ascending or descending and selecting a sort column, re-arranges the columns.  Note, any column can be selected for sorting - not just the DateTime, Label or Value columns.  Once set, this option is reapplied during each data refresh, hence if sorted by (say) the value, each labeled column may jump about as the corresponding values change.
 
 
+The **Layout** tab
 
-If the Show Date option is selected, the maximum value of the field identified in the DateTime col selector is displayed to the right hand side of the panel title row.  Note, this is not the **current** time, rather the maximum value of all the DateTime values in the query result set.  In the event that these values are updated in the underlying database asyncronously, this reference datetime could passed in the query to retrieve the state of the data ``at that moment in time``.  More commonly, the query window will be the current time, so this will show when the data was last updated (this can be useful in demonstrating that the data collection process has not stalled).
+![image](https://user-images.githubusercontent.com/3724718/38961239-87444cd0-431c-11e8-8130-2e81ea2ed8f7.png)
 
+This is made up of two sections - Layout and Options.
 
 
 
+Layouts define the setting controlling how the data is arranged on the panel.  In horizontal mode only, a group col setting can be used to define a field that displays multiple sets, or groups, of elements.  In this demo case, we're grouping on the 'region' field, which takes on 5 different values (East, West, North, South and Central).
 
-Next up, the display options, font size and color for bot the values and the labels.  No mysteries here.
 
-![label-format](https://user-images.githubusercontent.com/3724718/30007054-04cac982-90bb-11e7-9547-7814b25cb946.png)
 
+The margin settings control how much space needs to be reserved, depending on the actual name of the labels etc.  Bar colors (plus others such as the axis labels and ticks and the odd/even bar background) are defined in this section.  Depending on the application, we can set different colors for positive and negative values and also control the bar-to-gap padding percentage.
 
+Font size and color is selectable for the labels and values too, plus a switch to enable mouse hover tool-tips, plus (in the event that a datetime field has been set in the Columns tab), the format used to display any datetime values in the query result set.
 
 
 
-Bar Coloring and Padding - There are so many optins affecting bar coloring, this part may take some effort to understand.
+The **Lines and Limits** tab
 
-The basic color of the bars is set using the 'High Bar Color' selector (Why we have both 'High Bar Color' and 'Low Bar Color' will make sense later - for now, ignor this second setting).
+![image](https://user-images.githubusercontent.com/3724718/38961668-6ad56d98-431e-11e8-82c1-70c70be84fcf.png)
 
-Bar padding - that is, the amount of space between bars - expressed as a percentage of the bar thickness (or span).  This can be adjusted from the default (10%) according to asthetics.  Set any number from 1 to 99, or leave on 'Auto'.
 
-![bar-color-and-padding](https://user-images.githubusercontent.com/3724718/30007066-61f3e4cc-90bb-11e7-8161-fdfe5d4a9431.png)
 
+On this tab, you can override the auto-defaults to control upper and lower extents (these automatically extend when the values displayed fall outside these settings), plus optionally display these values as colored reference lines.
 
+The Base Line setting (default 0) differentiates between positive and negative values, each potentially having a different color.  This can be useful when monitoring deviations from some non-zero set point.  For example, Electrical generators (in North America, at least) operate at very close to 60Hz, with normally, only small deviations.  Setting a baseline at 60.0 and a Max/Min to (say) 60.10 and 59.90 would make an easily understood display in such an application.
 
-The last line of this group control the basic layout - setting room for the labels and optional value axes to the left and right (in vertical charts) or top and bottom (in horizontal charts).  Left in the default ('Auto') state, the axes are not shown (there is no space reserved for them).  Setting this to a suitable values (try 20) and the axes will appear.  Adjust according to the size of the value units.
 
-![margins](https://user-images.githubusercontent.com/3724718/30007228-d2ab806e-90be-11e7-8f88-41edba6c330b.png)
 
-``Note - currently, the value axes colors are set to red.
-These can be changed by adjusting the style definition file
-(<grafana-install-dir>/data/plugins/michaeldmoore-multistat-panel/dist/css/multistat-panel.css)``
+**Threshold limits**
 
+In addition, this tab allow the user to specify high and low Limit values.  Bars with values outside these limits can be colored differently, to indicate an exceedance.  As with all there settings, the user can display a reference line on the chart and set the colors to whatever makes sense in the application.   In the frequency example above, there might be high and Low Limits set at (say) 60.05 and 95.95 respectively.
 
+Additionally, exceedances can be configured to 'flash' - toggling between two colors and some pre-defined rate.
 
-Moving on to the second group - **Lines and Limits**
+![image](https://user-images.githubusercontent.com/3724718/38963541-547a9560-4327-11e8-912a-5fdca266fd5f.png)
 
-The first (and third) row of options control the Max and Min values of the bar chart.  By default, the Min and Max are automatically set to the range of values of the returned data set (rounded to 'nice' units for readability).These can both be overridden, if desired, and marked on the chart as a perpendicular lines, each colored according to personal taste (or lack thereof).
 
-![max-value](https://user-images.githubusercontent.com/3724718/30007300-8d75becc-90c0-11e7-9f0f-4ba13e60308e.png)
 
-
-
-Baseline value.
-
-Hidden between these two setting rows is a row for the Baseline - that is, a reference base for all the bars - when a zero-based option is inappropriate.  This is useful when tracking a deviation from some expected norm, such as when monitoring domestic water pressure - nominally (say) 80 psi.  Bars may be set to show the deviation from this norm, with bars to the right representing larger than expected and bars to the left representing less than expected.  This also is where the mysterious 'Low Bar Color' comes in from the first set of configuration options.  The 'Low Bar Color' is used for bars below, or to the left or the expected baseline value.  The baseline itself can be shown using whatever (possibly garish) color desired.
-
-![baseline](https://user-images.githubusercontent.com/3724718/30007492-bd9a2300-90c4-11e7-9cba-4d8bcdb0f3ac.png)
-
-
-
-High and Low limits.
-
-These settings (they both work the same) allow for optional threshold values to be defined, possibly with colored marker lines for reference (the Show Line option).
-
-![limits](https://user-images.githubusercontent.com/3724718/30007544-1868b0a2-90c6-11e7-9048-fd88d2a6ca04.png)
-
-
-
-Just to make thing more obvious, the color of bar exceeding either of these limits can be set to something new, probably something shocking - like red (why not).  And while we're at it, why not set a low limit with under threshold bar colored blue.  Pretty, isn't it?
-
-![limit-bar-colors](https://user-images.githubusercontent.com/3724718/30007603-3401a8cc-90c7-11e7-8873-84160d18afc8.png)
-
-
-
-For the full glory (or gory), we can check the 'Flash' option too, overriding the default 2nd flash color and rate (mS per cycle, actually) for a truely unforgettable and un-ignorable, experience.
+Putting it all together, the displays can make a truly unforgettable and un-ignorable, experience.
 
 ![lines-and-limits](https://user-images.githubusercontent.com/3724718/30007679-5849101a-90c9-11e7-9c39-5618e8404454.png)
 
 ![alarms-alarms](https://user-images.githubusercontent.com/3724718/30007648-b45bfc6a-90c8-11e7-8ea8-5f43852ad27d.gif)
 
 
-
 (In retrospect, setting the Rate parameter to 300 or 400 works just as well, without risk of inducing epilepsy...
-
  ![calm-alarms](https://user-images.githubusercontent.com/3724718/30007967-6780c14a-90ce-11e7-809d-289d180ea310.gif)
+
+
 
 
 
  
 
- **Known Issues**
+**Known Issues**
 
- This is a version 1.0.0 release, as such there are a few known issues that need to be added or fixed.
+ This is a version 1.1.0 release, as such there are a few known issues that need to be added or fixed.
 
  * Adding an auto-test data set with random walk values (for demos and testing)
 
- * ~~Pop-up/hover info box, listing all the fields returned for this row.~~ Done
 
  * Support for time-series data sets, with options for setting the metric to current, average, max, min etc.
 
- * Configurable settings for the axes colors (without resorting to editing the CSS style sheet)
-
- * Formatting the decimal places of the value (currently fixed at 2)
-
  * Setting/displaying the units of measurement
 
- * Generalizing the Show Time feature to include any selected field and position
 
 
 
