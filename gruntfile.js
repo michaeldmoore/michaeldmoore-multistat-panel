@@ -23,7 +23,7 @@ module.exports = (grunt) => {
       img_to_dist: {
         cwd: 'src',
         expand: true,
-        src: ['img/michaeldmoore-multistat-panel.svg', 'img/Options.png', 'img/Showcase.gif'],
+        src: ['img/michaeldmoore-multistat-panel.svg', 'img/Showcase.gif'],
         dest: 'dist'
       },
       css_to_dist: {
