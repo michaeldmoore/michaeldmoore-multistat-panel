@@ -77,7 +77,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			"ValueColor": "white",
 			"ValueFontSize": "100%",
 			"OddRowColor": "rgba(33, 33, 34, 0.92)",
-			"EvenRowColor": "rgba(61, 61, 64, 0.78)"
+			"EvenRowColor": "rgba(61, 61, 64, 0.78)",
+			"GroupSortString": ""
 			};
 
         var panel = {};
@@ -134,12 +135,11 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 	}
 
 
-	
     onRender() {
-		if (this.rows != null) {
+		if (this.data != null) {
 			var cols = this.cols;
 			var dateTimeCol = -1;
-			var labelCol = 0;
+			var labelCol = -1;
 			var valueCol = 0;
 			var sortCol = 0;
 			var groupCol = -1;
@@ -156,6 +156,25 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					groupCol = i;
 			}
 
+		
+			if (this.panel.FilterMultiples && labelCol != -1){
+				var oo = [];
+				//this.rows = [];
+				d3.nest()
+					.key(function(d){return d[labelCol]})
+					.rollup(function(d){return d[d.length - 1]})
+					.entries(this.data.rows)
+					.forEach(function(x){
+						//this.rows.push(x.value);
+						oo.push(x.value);
+					});
+				this.rows = oo;
+			}
+			else {
+				this.rows = this.data.rows;
+			}		
+
+			
 			var className = 'michaeldmoore-multistat-panel-' + this.panel.id;
 			this.elem.html("<svg class='" + className + "'  style='height:" + this.ctrl.height + "px; width:100%'></svg>");
 			var $container = this.elem.find('.' + className);
@@ -208,6 +227,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			var OddRowColor = this.panel.OddRowColor;
 			var EvenRowColor = this.panel.EvenRowColor;
 			var TZOffsetHours = this.panel.TZOffsetHours;
+			var GroupSortString = this.panel.GroupSortString;
 			
 			if ($.isNumeric(HighLimitBarFlashTimeout) == false)
 				HighLimitBarFlashTimeout = 200;
@@ -452,6 +472,18 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 						.key(function(d){return d[groupCol]})
 						.entries(this.rows);
 						
+					this.groupedRows.sort(
+						function(a,b){
+							var aPos = GroupSortString.search(a.key);
+							var bPos = GroupSortString.search(b.key);
+							
+							if (aPos == bPos)
+								return a.key.localeCompare(b.key);
+							else
+								return aPos - bPos;
+						}
+					);
+					
 					var gap = 5;	
 					var dw = ((w + gap) / this.groupedRows.length);
 					var numRows = d3.max(this.groupedRows, function(d) { return d.values.length;} );
@@ -642,23 +674,25 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
     }
 
 
-    onDataReceived(dataList) {
-		if (dataList.length == 0){
+    onDataReceived(data) {
+		this.cols = [];
+		if (data.length == 0){
 			this.elem.html("<div style='position:absolute;top:50%;text-align:center;font-size:0.875rem;'>No data to show</div>");
+			this.data = data;
 			this.rows = null;
-			this.cols = [];
 		}
-		else if (dataList[0].type == "table"){
-			var data = dataList[0];
+		else if (data[0].type == "table"){
+			this.data = data[0];
 
-			this.cols = [];
+			for(var i=0; i < this.data.columns.length; i++)
+				this.cols[i] = this.data.columns[i].text;
+			this.cols0 = [''].concat(this.cols);
+/*
 			var labelColx = -1;
-			for(var i=0; i < data.columns.length; i++){
-				this.cols[i] = data.columns[i].text;
+			for(var i=0; i < this.data.columns.length; i++){
 				if (this.cols[i] == this.panel.LabelColName)
 					labelColx = i;
 			}
-			this.cols0 = [''].concat(this.cols);
 			
 			if (this.panel.FilterMultiples == true && labelColx != -1){
 				var oo = [];
@@ -666,7 +700,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 				d3.nest()
 					.key(function(d){return d[labelColx]})
 					.rollup(function(d){return d[d.length - 1]})
-					.entries(data.rows)
+					.entries(this.data.rows)
 					.forEach(function(x){
 						//this.rows.push(x.value);
 						oo.push(x.value);
@@ -674,9 +708,9 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 				this.rows = oo;
 			}
 			else {
-				this.rows = data.rows;
+				this.rows = this.data.rows;
 			}		
-			
+*/			
 			this.render();
 		}
 		else {
