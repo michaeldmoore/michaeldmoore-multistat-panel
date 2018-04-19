@@ -122,6 +122,7 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 						"RecolorLowLimitBar": false,
 						"ShowBaseLine": true,
 						"ShowDate": false,
+						"FilterMultiples": false,
 						"ShowHighLimitLine": true,
 						"ShowLabels": true,
 						"ShowLeftAxis": true,
@@ -550,14 +551,6 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 							pulse();
 						}
 
-						//var tooltipDiv = svg.append("div")
-						//		.attr("class", "michaeldmoore-multistat-panel-tooltip")
-						//		//.style("height", "100px")
-						//		//.style("width", "100px")
-						//		//.style("left", "100px")
-						//		//.style("top", "100px")
-						//		.style("opacity", 0);
-
 						this.ctrl.renderingCompleted();
 					}
 				}, {
@@ -569,13 +562,31 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 							this.cols = [];
 						} else if (dataList[0].type == "table") {
 							var data = dataList[0];
-							this.rows = data.rows;
+
 							this.cols = [];
+							var labelColx = -1;
 							for (var i = 0; i < data.columns.length; i++) {
 								this.cols[i] = data.columns[i].text;
+								if (this.cols[i] == this.panel.LabelColName) labelColx = i;
+							}
+							this.cols0 = [''].concat(this.cols);
+
+							if (this.panel.FilterMultiples == true && labelColx != -1) {
+								var oo = [];
+								//this.rows = [];
+								d3.nest().key(function (d) {
+									return d[labelColx];
+								}).rollup(function (d) {
+									return d[d.length - 1];
+								}).entries(data.rows).forEach(function (x) {
+									//this.rows.push(x.value);
+									oo.push(x.value);
+								});
+								this.rows = oo;
+							} else {
+								this.rows = data.rows;
 							}
 
-							this.cols0 = [''].concat(this.cols);
 							this.render();
 						} else {
 							this.alertSrv.set('Multistat Data Error', 'Query type "' + dataList[0].Type + '", not supported', 'error', 5000);
