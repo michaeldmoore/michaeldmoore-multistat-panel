@@ -582,7 +582,7 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 
               this.render();
             } else {
-              this.alertSrv.set('Multistat Data Error', 'Query type "' + dataList[0].Type + '", not supported', 'error', 5000);
+              this.alertSrv.set('Multistat Data Error', 'Query type not supported - table format is the only supported query type.', 'error', 5000);
             }
           }
         }, {
