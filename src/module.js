@@ -187,7 +187,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 		
 			if (this.panel.FilterMultiples && labelCol != -1){
 				var oo = [];
-				//this.rows = [];
+				this.rows = [];
 				d3.nest()
 					.key(function(d){return d[labelCol]})
 					.rollup(function(d){return d[d.length - 1]})
@@ -203,6 +203,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			}		
 
 			
+			//var className = 'michaeldmoore-multistat-panel-' + this.panel.id;
 			this.elem.html("<svg class='" + this.className + "'  style='height:" + this.ctrl.height + "px; width:100%'></svg>");
 			var $container = this.elem.find('.' + this.className);
 
@@ -317,7 +318,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			}
 			
 			if(horizontal) {
-				var plotGroupHorizontal = function(panel, data, numRows, groupName, left, w) {
+				var plotGroupHorizontal = function(panel, svg, data, numRows, groupName, left, w) {
 					var groupNameOffset = groupName != '' ? 15 : 0;
 					lowSideMargin += groupNameOffset;
 
@@ -338,7 +339,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 				
 					// Draw background of alternating stripes 
 					var oddeven = false;
-					this.svg.append("g")
+					svg//.append("g")
 						.selectAll("rect")
 						.data(data)
 						.enter()
@@ -353,7 +354,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 								return oddeven ? OddRowColor : EvenRowColor;
 							});
 
-					function vLine(value, color) {	
+					function vLine(svg, value, color) {	
 						svg.append("line")
 							.style("stroke", color)
 							.attr("y1", lowSideMargin)
@@ -363,21 +364,22 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					}			
 
 					if(panel.ShowBaseLine)
-						vLine(baseLineValue, panel.BaseLineColor);
+						vLine(svg, baseLineValue, panel.BaseLineColor);
 
 					if(panel.ShowMaxLine)
-						vLine(maxLineValue, panel.MaxLineColor);
+						vLine(svg, maxLineValue, panel.MaxLineColor);
 
 					if(panel.ShowMinLine)
-						vLine(minLineValue, panel.MinLineColor);
+						vLine(svg, minLineValue, panel.MinLineColor);
 
 					if(panel.ShowHighLimitLine)
-						vLine(highLimitValue, panel.HighLimitLineColor);
+						vLine(svg, highLimitValue, panel.HighLimitLineColor);
 
 					if(panel.ShowLowLimitLine)
-						vLine(lowLimitValue, panel.LowLimitLineColor);
+						vLine(svg, lowLimitValue, panel.LowLimitLineColor);
 
-					this.svg.append("g")
+					svg
+						.append("g")
 						.selectAll("rect")
 						.data(data)
 						.enter()
@@ -415,7 +417,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 							tooltipHide();
 							});
 
-					var g = this.svg
+					var g = svg
 							.append("g")
 							.selectAll("text")
 							.data(data)
@@ -449,7 +451,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
 					// Add Low Side Group Names
 					if(groupName != '') {
-						svg.append("text")
+						svg
+							.append("text")
 							.text(groupName)
 							.attr("x", left + ((labelMargin + w - left)/2) - 5)
 							.attr("y", 5)
@@ -462,7 +465,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					
 					//Add Low Side Value Axis (X)
 					if (lowSideMargin > groupNameOffset) {	
-						var gg = this.svg.append("g")
+						var gg = svg
+								.append("g")
 								.attr("transform", 'translate(0,' + lowSideMargin + ')')
 								.attr("class", "michaeldmoore-multistat-panel-valueaxis")
 								.call(d3.axisTop(valueScale));
@@ -473,7 +477,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					
 					//Add High Side Value Axis (X)
 					if (highSideMargin > 0) {	
-						var gg = this.svg.append("g")
+						var gg = svg
+								.append("g")
 								.attr("transform", 'translate(0,' + (h - highSideMargin) + ')')
 								.attr("class", "michaeldmoore-multistat-panel-valueaxis")
 								.call(d3.axisBottom(valueScale));
@@ -507,12 +512,12 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					var numRows = d3.max(this.groupedRows, function(d) { return d.values.length;} );
 					
 					for(var i = 0; i < this.groupedRows.length; i++)
-						plotGroupHorizontal(this.panel, this.groupedRows[i].values, numRows, this.groupedRows[i].key, i * dw, (i * dw) + dw - gap);
+						plotGroupHorizontal(this.panel, this.svg, this.groupedRows[i].values, numRows, this.groupedRows[i].key, i * dw, (i * dw) + dw - gap);
 				}
 				else {
 					this.groupedRows = null;
 
-					plotGroupHorizontal(this.panel, this.rows, this.rows.length, '', 0, w);
+					plotGroupHorizontal(this.panel, this.svg, this.rows, this.rows.length, '', 0, w);
 				}
 				
 			}
@@ -569,7 +574,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					hLine(this.svg, lowLimitValue, this.panel.LowLimitLineColor);
 
 				
-				this.svg.append("g")
+				this.svg
+					.append("g")
 					.selectAll("rect")
 					.data(this.rows)
 					.enter()
@@ -608,7 +614,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 						});
 
 				
-				var g = this.svg.selectAll("text")
+				var g = this.svg
+					.selectAll("text")
 					.data(this.rows)
 					.enter()
 					.append("g");
@@ -639,7 +646,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 				}
 
 				if (lowSideMargin > 0) {	
-					var gg = this.svg.append("g")
+					var gg = this.svg
+						.append("g")
 						.attr('transform', 'translate(' + lowSideMargin + ', 0)')
 						.classed('michaeldmoore-multistat-panel-valueaxis', true)
 						.call(d3.axisLeft(valueScale).tickSizeInner(5).tickSizeOuter(10).ticks(5));
@@ -649,7 +657,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 				}
 				
 				if (highSideMargin > 0) {	
-					var gg = this.svg.append("g")
+					var gg = this.svg
+						.append("g")
 						.attr('transform', 'translate(' + (w - highSideMargin) + ', 0)')
 						.classed('michaeldmoore-multistat-panel-valueaxis', true)
 						.call(d3.axisRight(valueScale).tickSizeInner(5).tickSizeOuter(10).ticks(5));

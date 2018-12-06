@@ -258,7 +258,7 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 
 							if (this.panel.FilterMultiples && labelCol != -1) {
 								var oo = [];
-								//this.rows = [];
+								this.rows = [];
 								d3.nest().key(function (d) {
 									return d[labelCol];
 								}).rollup(function (d) {
@@ -272,6 +272,7 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 								this.rows = this.data.rows;
 							}
 
+							//var className = 'michaeldmoore-multistat-panel-' + this.panel.id;
 							this.elem.html("<svg class='" + this.className + "'  style='height:" + this.ctrl.height + "px; width:100%'></svg>");
 							var $container = this.elem.find('.' + this.className);
 
@@ -370,7 +371,7 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 							};
 
 							if (horizontal) {
-								var plotGroupHorizontal = function plotGroupHorizontal(panel, data, numRows, groupName, left, w) {
+								var plotGroupHorizontal = function plotGroupHorizontal(panel, svg, data, numRows, groupName, left, w) {
 									var groupNameOffset = groupName != '' ? 15 : 0;
 									lowSideMargin += groupNameOffset;
 
@@ -385,28 +386,29 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 
 									// Draw background of alternating stripes 
 									var oddeven = false;
-									this.svg.append("g").selectAll("rect").data(data).enter().append("rect").attr("class", "michaeldmoore-multistat-panel-row").attr("width", w).attr("height", labelScale.bandwidth()).attr("x", left).attr("y", function (d, i) {
+									svg //.append("g")
+									.selectAll("rect").data(data).enter().append("rect").attr("class", "michaeldmoore-multistat-panel-row").attr("width", w).attr("height", labelScale.bandwidth()).attr("x", left).attr("y", function (d, i) {
 										return labelScale(d[labelCol]);
 									}).attr("fill", function (d) {
 										oddeven = !oddeven;
 										return oddeven ? OddRowColor : EvenRowColor;
 									});
 
-									function vLine(value, color) {
+									function vLine(svg, value, color) {
 										svg.append("line").style("stroke", color).attr("y1", lowSideMargin).attr("x1", valueScale(value)).attr("y2", h - highSideMargin).attr("x2", valueScale(value));
 									}
 
-									if (panel.ShowBaseLine) vLine(baseLineValue, panel.BaseLineColor);
+									if (panel.ShowBaseLine) vLine(svg, baseLineValue, panel.BaseLineColor);
 
-									if (panel.ShowMaxLine) vLine(maxLineValue, panel.MaxLineColor);
+									if (panel.ShowMaxLine) vLine(svg, maxLineValue, panel.MaxLineColor);
 
-									if (panel.ShowMinLine) vLine(minLineValue, panel.MinLineColor);
+									if (panel.ShowMinLine) vLine(svg, minLineValue, panel.MinLineColor);
 
-									if (panel.ShowHighLimitLine) vLine(highLimitValue, panel.HighLimitLineColor);
+									if (panel.ShowHighLimitLine) vLine(svg, highLimitValue, panel.HighLimitLineColor);
 
-									if (panel.ShowLowLimitLine) vLine(lowLimitValue, panel.LowLimitLineColor);
+									if (panel.ShowLowLimitLine) vLine(svg, lowLimitValue, panel.LowLimitLineColor);
 
-									this.svg.append("g").selectAll("rect").data(data).enter().append("rect").attr("class", "michaeldmoore-multistat-panel-bar").attr("width", function (d) {
+									svg.append("g").selectAll("rect").data(data).enter().append("rect").attr("class", "michaeldmoore-multistat-panel-bar").attr("width", function (d) {
 										var ww = valueScale(d[valueCol]) - valueScale(baseLineValue);
 										if (ww < 0) ww = -ww;
 										return ww;
@@ -428,7 +430,7 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 										tooltipHide();
 									});
 
-									var g = this.svg.append("g").selectAll("text").data(data).enter().append("g");
+									var g = svg.append("g").selectAll("text").data(data).enter().append("g");
 
 									if (panel.ShowValues) {
 										g.append("text")
@@ -459,7 +461,7 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 
 									//Add Low Side Value Axis (X)
 									if (lowSideMargin > groupNameOffset) {
-										var gg = this.svg.append("g").attr("transform", 'translate(0,' + lowSideMargin + ')').attr("class", "michaeldmoore-multistat-panel-valueaxis").call(d3.axisTop(valueScale));
+										var gg = svg.append("g").attr("transform", 'translate(0,' + lowSideMargin + ')').attr("class", "michaeldmoore-multistat-panel-valueaxis").call(d3.axisTop(valueScale));
 										gg.selectAll('.tick text').attr('fill', panel.LowAxisColor);
 										gg.selectAll('.tick line').attr('stroke', panel.LowAxisColor);
 										gg.selectAll('path.domain').attr('stroke', panel.LowAxisColor);
@@ -467,7 +469,7 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 
 									//Add High Side Value Axis (X)
 									if (highSideMargin > 0) {
-										var gg = this.svg.append("g").attr("transform", 'translate(0,' + (h - highSideMargin) + ')').attr("class", "michaeldmoore-multistat-panel-valueaxis").call(d3.axisBottom(valueScale));
+										var gg = svg.append("g").attr("transform", 'translate(0,' + (h - highSideMargin) + ')').attr("class", "michaeldmoore-multistat-panel-valueaxis").call(d3.axisBottom(valueScale));
 										gg.selectAll('.tick text').attr('fill', panel.HighAxisColor);
 										gg.selectAll('.tick line').attr('stroke', panel.HighAxisColor);
 										gg.selectAll('path.domain').attr('stroke', panel.HighAxisColor);
@@ -495,12 +497,12 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 									});
 
 									for (var i = 0; i < this.groupedRows.length; i++) {
-										plotGroupHorizontal(this.panel, this.groupedRows[i].values, numRows, this.groupedRows[i].key, i * dw, i * dw + dw - gap);
+										plotGroupHorizontal(this.panel, this.svg, this.groupedRows[i].values, numRows, this.groupedRows[i].key, i * dw, i * dw + dw - gap);
 									}
 								} else {
 									this.groupedRows = null;
 
-									plotGroupHorizontal(this.panel, this.rows, this.rows.length, '', 0, w);
+									plotGroupHorizontal(this.panel, this.svg, this.rows, this.rows.length, '', 0, w);
 								}
 							} else {
 								var hLine = function hLine(svg, value, color) {
