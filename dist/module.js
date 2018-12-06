@@ -92,8 +92,8 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 						"DateTimeColName": "date",
 						"DateFormat": "YYYY-MM-DD HH:mm:ss",
 						"TooltipDateFormat": "YYYY-MM-DD HH:mm:ss",
-						"FlashHighLimitBar": true,
-						"FlashLowLimitBar": true,
+						"FlashHighLimitBar": false,
+						"FlashLowLimitBar": false,
 						"HighAxisColor": "white",
 						"HighBarColor": "rgb(120, 128, 0)",
 						"HighLimitBarColor": "red",
@@ -154,15 +154,19 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 					_this.events.on('data-received', _this.onDataReceived.bind(_this));
 					_this.events.on('data-error', _this.onDataError.bind(_this));
 					_this.events.on('init-edit-mode', _this.onInitEditMode.bind(_this));
+
+					_this.className = 'michaeldmoore-multistat-panel-' + _this.panel.id;
+					_this.svg = d3.select('.' + _this.className).append('svg');
 					return _this;
 				}
 
 				_createClass(MultistatPanelCtrl, [{
 					key: 'onDataError',
 					value: function onDataError(err) {
-						this.alertSrv.set('Multistat Data Error', err, 'error', 5000);
+						this.alertSrv.set('Multistat Data Error', err.data.message == 'Found no column named time' ? 'Time-Series queries not yet supported' : err.data.message, 'error', 5000);
 						this.seriesList = [];
-						this.render([]);
+						this.data = [];
+						this.render();
 					}
 				}, {
 					key: 'onInitEditMode',
@@ -173,6 +177,27 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 						this.addEditorTab('Columns', 'public/plugins/michaeldmoore-multistat-panel/columns.html', 2);
 						this.addEditorTab('Layout', 'public/plugins/michaeldmoore-multistat-panel/layout.html', 3);
 						this.addEditorTab('Lines & Limits', 'public/plugins/michaeldmoore-multistat-panel/linesandlimits.html', 4);
+					}
+				}, {
+					key: 'onDataReceived',
+					value: function onDataReceived(data) {
+						this.cols = [];
+						if (data.length == 0) {
+							this.elem.html("<div style='position:absolute;top:50%;text-align:center;font-size:0.875rem;'>No data to show</div>");
+							this.data = data;
+							this.rows = null;
+							this.render();
+						} else if (data[0].type == "table") {
+							this.data = data[0];
+
+							for (var i = 0; i < this.data.columns.length; i++) {
+								this.cols[i] = this.data.columns[i].text;
+							}this.cols0 = [''].concat(this.cols);
+
+							this.render();
+						} else {
+							this.alertSrv.set('Multistat Data Error', 'Query type "' + data[0].type + '", not supported', 'error', 5000);
+						}
 					}
 				}, {
 					key: 'buildDateHtml',
@@ -197,17 +222,24 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 				}, {
 					key: 'onRender',
 					value: function onRender() {
-						if (this.data != null) {
-							var pulse = function pulse() {
+						if (this.data != null && this.data.rows != null) {
+							var pulseHigh = function pulseHigh(svg) {
 								var highFlashRects = svg.selectAll("rect.michaeldmoore-multistat-panel-bar.highflash");
-								(function highRepeat() {
-									highFlashRects.transition().duration(HighLimitBarFlashTimeout).attr("fill", HighLimitBarColor).transition().duration(HighLimitBarFlashTimeout).attr("fill", HighLimitBarFlashColor).on("end", highRepeat);
-								})();
 
+								if ($.isNumeric(HighLimitBarFlashTimeout) && highFlashRects._groups.length > 0 && highFlashRects._groups[0].length > 0) {
+									highFlashRects.transition().on("start", function highRepeat() {
+										d3.active(this).style("fill", HighLimitBarFlashColor).duration(HighLimitBarFlashTimeout).transition().style("fill", HighLimitBarColor).duration(HighLimitBarFlashTimeout).transition().on("start", highRepeat);
+									});
+								}
+							};
+
+							var pulseLow = function pulseLow(svg) {
 								var lowFlashRects = svg.selectAll("rect.michaeldmoore-multistat-panel-bar.lowflash");
-								(function lowRepeat() {
-									lowFlashRects.transition().duration(LowLimitBarFlashTimeout).attr("fill", LowLimitBarColor).transition().duration(LowLimitBarFlashTimeout).attr("fill", LowLimitBarFlashColor).on("end", lowRepeat);
-								})();
+								if ($.isNumeric(LowLimitBarFlashTimeout) && lowFlashRects._groups.length > 0 && lowFlashRects._groups[0].length > 0) {
+									lowFlashRects.transition().on("start", function lowRepeat() {
+										d3.active(this).style("fill", LowLimitBarFlashColor).duration(LowLimitBarFlashTimeout).transition().style("fill", LowLimitBarColor).duration(LowLimitBarFlashTimeout).transition().on("start", lowRepeat);
+									});
+								}
 							};
 
 							var cols = this.cols;
@@ -240,9 +272,8 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 								this.rows = this.data.rows;
 							}
 
-							var className = 'michaeldmoore-multistat-panel-' + this.panel.id;
-							this.elem.html("<svg class='" + className + "'  style='height:" + this.ctrl.height + "px; width:100%'></svg>");
-							var $container = this.elem.find('.' + className);
+							this.elem.html("<svg class='" + this.className + "'  style='height:" + this.ctrl.height + "px; width:100%'></svg>");
+							var $container = this.elem.find('.' + this.className);
 
 							var h = $container.height();
 							var w = $container.width() - 15;
@@ -263,7 +294,10 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 							var lowSideMargin = this.panel.LowSideMargin >= 0 ? this.panel.LowSideMargin : 0;
 							var highSideMargin = this.panel.HighSideMargin >= 0 ? this.panel.HighSideMargin : 0;
 
-							var svg = d3.select('.' + className).append('svg');
+							this.svg.selectAll("rect.michaeldmoore-multistat-panel-bar.highflash").interrupt();
+							this.svg.selectAll("rect.michaeldmoore-multistat-panel-bar.lowflash").interrupt();
+
+							this.svg = d3.select('.' + this.className).append('svg');
 
 							var barPadding = this.panel.BarPadding;
 							var baseLineValue = this.panel.BaseLineValue;
@@ -294,10 +328,6 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 							var TZOffsetHours = this.panel.TZOffsetHours;
 							var GroupSortString = this.panel.GroupSortString;
 
-							if ($.isNumeric(HighLimitBarFlashTimeout) == false) HighLimitBarFlashTimeout = 200;
-
-							if ($.isNumeric(LowLimitBarFlashTimeout) == false) LowLimitBarFlashTimeout = 200;
-
 							var minValue = d3.min(this.rows, function (d) {
 								return Number(d[valueCol]);
 							});
@@ -317,10 +347,6 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 							if (maxLineValue < baseLineValue) maxLineValue = baseLineValue;
 
 							if ($.isNumeric(highLimitValue) && maxLineValue < highLimitValue) maxLineValue = highLimitValue;
-
-							var cc1 = d3.select("body");
-							var cc2 = cc1.selectAll(".michaeldmoore-multistat-panel-tooltip-" + this.panel.id);
-							cc2.remove();
 
 							var tooltipDiv = d3.select("body").append("div").attr("class", "michaeldmoore-multistat-panel-tooltip michaeldmoore-multistat-panel-tooltip-" + this.panel.id).style("opacity", 0);
 
@@ -359,7 +385,7 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 
 									// Draw background of alternating stripes 
 									var oddeven = false;
-									svg.append("g").selectAll("rect").data(data).enter().append("rect").attr("class", "michaeldmoore-multistat-panel-row").attr("width", w).attr("height", labelScale.bandwidth()).attr("x", left).attr("y", function (d, i) {
+									this.svg.append("g").selectAll("rect").data(data).enter().append("rect").attr("class", "michaeldmoore-multistat-panel-row").attr("width", w).attr("height", labelScale.bandwidth()).attr("x", left).attr("y", function (d, i) {
 										return labelScale(d[labelCol]);
 									}).attr("fill", function (d) {
 										oddeven = !oddeven;
@@ -380,7 +406,7 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 
 									if (panel.ShowLowLimitLine) vLine(lowLimitValue, panel.LowLimitLineColor);
 
-									svg.append("g").selectAll("rect").data(data).enter().append("rect").attr("class", "michaeldmoore-multistat-panel-bar").attr("width", function (d) {
+									this.svg.append("g").selectAll("rect").data(data).enter().append("rect").attr("class", "michaeldmoore-multistat-panel-bar").attr("width", function (d) {
 										var ww = valueScale(d[valueCol]) - valueScale(baseLineValue);
 										if (ww < 0) ww = -ww;
 										return ww;
@@ -402,7 +428,7 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 										tooltipHide();
 									});
 
-									var g = svg.append("g").selectAll("text").data(data).enter().append("g");
+									var g = this.svg.append("g").selectAll("text").data(data).enter().append("g");
 
 									if (panel.ShowValues) {
 										g.append("text")
@@ -433,7 +459,7 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 
 									//Add Low Side Value Axis (X)
 									if (lowSideMargin > groupNameOffset) {
-										var gg = svg.append("g").attr("transform", 'translate(0,' + lowSideMargin + ')').attr("class", "michaeldmoore-multistat-panel-valueaxis").call(d3.axisTop(valueScale));
+										var gg = this.svg.append("g").attr("transform", 'translate(0,' + lowSideMargin + ')').attr("class", "michaeldmoore-multistat-panel-valueaxis").call(d3.axisTop(valueScale));
 										gg.selectAll('.tick text').attr('fill', panel.LowAxisColor);
 										gg.selectAll('.tick line').attr('stroke', panel.LowAxisColor);
 										gg.selectAll('path.domain').attr('stroke', panel.LowAxisColor);
@@ -441,7 +467,7 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 
 									//Add High Side Value Axis (X)
 									if (highSideMargin > 0) {
-										var gg = svg.append("g").attr("transform", 'translate(0,' + (h - highSideMargin) + ')').attr("class", "michaeldmoore-multistat-panel-valueaxis").call(d3.axisBottom(valueScale));
+										var gg = this.svg.append("g").attr("transform", 'translate(0,' + (h - highSideMargin) + ')').attr("class", "michaeldmoore-multistat-panel-valueaxis").call(d3.axisBottom(valueScale));
 										gg.selectAll('.tick text').attr('fill', panel.HighAxisColor);
 										gg.selectAll('.tick line').attr('stroke', panel.HighAxisColor);
 										gg.selectAll('path.domain').attr('stroke', panel.HighAxisColor);
@@ -477,7 +503,7 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 									plotGroupHorizontal(this.panel, this.rows, this.rows.length, '', 0, w);
 								}
 							} else {
-								var hLine = function hLine(value, color) {
+								var hLine = function hLine(svg, value, color) {
 									svg.append("line").style("stroke", color).attr("x1", lowSideMargin).attr("y1", valueScale(value)).attr("x2", w - highSideMargin).attr("y2", valueScale(value));
 								};
 
@@ -489,7 +515,7 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 
 								// Draw background of alternating stripes 
 								var oddeven = false;
-								svg //.append("g")
+								this.svg //.append("g")
 								.selectAll("rect").data(this.rows).enter().append("rect").attr("class", "michaeldmoore-multistat-panel-row").attr("width", labelScale.bandwidth()).attr("height", h).attr("x", function (d, i) {
 									return labelScale(d[labelCol]);
 								}).attr("y", 0).attr("fill", function (d) {
@@ -497,17 +523,17 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 									return oddeven ? OddRowColor : EvenRowColor;
 								});
 
-								if (this.panel.ShowBaseLine) hLine(baseLineValue, this.panel.BaseLineColor);
+								if (this.panel.ShowBaseLine) hLine(this.svg, baseLineValue, this.panel.BaseLineColor);
 
-								if (this.panel.ShowMaxLine) hLine(maxLineValue, this.panel.MaxLineColor);
+								if (this.panel.ShowMaxLine) hLine(this.svg, maxLineValue, this.panel.MaxLineColor);
 
-								if (this.panel.ShowMinLine) hLine(minLineValue, this.panel.MinLineColor);
+								if (this.panel.ShowMinLine) hLine(this.svg, minLineValue, this.panel.MinLineColor);
 
-								if (this.panel.ShowHighLimitLine) hLine(highLimitValue, this.panel.HighLimitLineColor);
+								if (this.panel.ShowHighLimitLine) hLine(this.svg, highLimitValue, this.panel.HighLimitLineColor);
 
-								if (this.panel.ShowLowLimitLine) hLine(lowLimitValue, this.panel.LowLimitLineColor);
+								if (this.panel.ShowLowLimitLine) hLine(this.svg, lowLimitValue, this.panel.LowLimitLineColor);
 
-								svg.append("g").selectAll("rect").data(this.rows).enter().append("rect").attr("class", "michaeldmoore-multistat-panel-bar").attr("height", function (d) {
+								this.svg.append("g").selectAll("rect").data(this.rows).enter().append("rect").attr("class", "michaeldmoore-multistat-panel-bar").attr("height", function (d) {
 									var hh = valueScale(d[valueCol]) - valueScale(baseLineValue);
 									if (hh < 0) hh = -hh;
 									return hh;
@@ -529,7 +555,7 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 									tooltipHide();
 								});
 
-								var g = svg.selectAll("text").data(this.rows).enter().append("g");
+								var g = this.svg.selectAll("text").data(this.rows).enter().append("g");
 
 								if (this.panel.ShowValues) {
 									g.append("text").text(function (d) {
@@ -554,44 +580,25 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 								}
 
 								if (lowSideMargin > 0) {
-									var gg = svg.append("g").attr('transform', 'translate(' + lowSideMargin + ', 0)').classed('michaeldmoore-multistat-panel-valueaxis', true).call(d3.axisLeft(valueScale).tickSizeInner(5).tickSizeOuter(10).ticks(5));
+									var gg = this.svg.append("g").attr('transform', 'translate(' + lowSideMargin + ', 0)').classed('michaeldmoore-multistat-panel-valueaxis', true).call(d3.axisLeft(valueScale).tickSizeInner(5).tickSizeOuter(10).ticks(5));
 									gg.selectAll('.tick text').attr('fill', this.panel.LowAxisColor);
 									gg.selectAll('.tick line').attr('stroke', this.panel.LowAxisColor);
 									gg.selectAll('path.domain').attr('stroke', this.panel.LowAxisColor);
 								}
 
 								if (highSideMargin > 0) {
-									var gg = svg.append("g").attr('transform', 'translate(' + (w - highSideMargin) + ', 0)').classed('michaeldmoore-multistat-panel-valueaxis', true).call(d3.axisRight(valueScale).tickSizeInner(5).tickSizeOuter(10).ticks(5));
+									var gg = this.svg.append("g").attr('transform', 'translate(' + (w - highSideMargin) + ', 0)').classed('michaeldmoore-multistat-panel-valueaxis', true).call(d3.axisRight(valueScale).tickSizeInner(5).tickSizeOuter(10).ticks(5));
 									gg.selectAll('.tick text').attr('fill', this.panel.HighAxisColor);
 									gg.selectAll('.tick line').attr('stroke', this.panel.HighAxisColor);
 									gg.selectAll('path.domain').attr('stroke', this.panel.HighAxisColor);
 								}
 							}
 
-							pulse();
-						}
+							pulseHigh(this.svg);
+							pulseLow(this.svg);
+						} else this.elem.html("<div style='position:absolute;top:50%;text-align:center;font-size:0.875rem;'>No data to show!!</div>");
 
 						this.ctrl.renderingCompleted();
-					}
-				}, {
-					key: 'onDataReceived',
-					value: function onDataReceived(data) {
-						this.cols = [];
-						if (data.length == 0) {
-							this.elem.html("<div style='position:absolute;top:50%;text-align:center;font-size:0.875rem;'>No data to show</div>");
-							this.data = data;
-							this.rows = null;
-						} else if (data[0].type == "table") {
-							this.data = data[0];
-
-							for (var i = 0; i < this.data.columns.length; i++) {
-								this.cols[i] = this.data.columns[i].text;
-							}this.cols0 = [''].concat(this.cols);
-
-							this.render();
-						} else {
-							this.alertSrv.set('Multistat Data Error', 'Query type "' + dataList[0].Type + '", not supported', 'error', 5000);
-						}
 					}
 				}, {
 					key: 'onConfigChanged',
