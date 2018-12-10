@@ -2,11 +2,11 @@
 
 
 
-**Custom multistat panel for grafana, inspired by the built-in SingleStat panel**
+**Custom multistat panel for Grafana, inspired by the built-in SingleStat panel**
 
 
 
-This panel was developed for as a table-like panel for presenting bar charts, providing some useful additions particularly suited to process control/monitoring dashboards.  Singlestat displays a single metric from time series data set, with optional threshold-related coloring etc.  Multistat builds on this base, displaying query data in the form of a bar graph  with adding optional upper and lower hard limits.  Plus a lot, lot more....
+This panel was developed for as a table-like panel for presenting bar charts, providing some useful additions particularly suited to process control/monitoring dashboards.  SingleStat displays a single metric from time series data set, with optional threshold-related coloring etc.  Multistat builds on this base, displaying query data in the form of a bar graph  with adding optional upper and lower hard limits.  Plus a lot, lot more....
 
 
 
@@ -54,7 +54,7 @@ Multistat has a wealth of configurable options.  just about everything displayed
 
 * Orientation - Horizontal or Vertical bars
 
-* Sorting (Dynamic, by Name, Value (or UpdateTime), ascending or descending)
+* Sorting (Dynamic, by Name, Value (or Update Time), ascending or descending)
 
 * Query result field name mapping - define which fields represent the labels and which represent values
 
@@ -80,8 +80,8 @@ Multistat has a wealth of configurable options.  just about everything displayed
 
 
 
-`Note : With all these options, the author accepts no responsibility for inducing
-nausea, epilepsy or generally violating the bounds of good taste)`
+`Note : With all these options, the author accepts no responsibility for`
+`inducing nausea, epilepsy or generally violating the bounds of good taste)`
 
 
 
@@ -101,7 +101,7 @@ Multistat queries are expected to be something along the lines of ''Get the work
 
 
 
-If no query is defined, or the data source is unavaliable, Multistat displays a simple "No data" warning message.
+If no query is defined, or the data source is unavailable, Multistat displays a simple "No data" warning message.
 
 ![no-data](https://user-images.githubusercontent.com/3724718/30006554-7b72f5fc-90af-11e7-8b79-d331f60d0388.png)
 
@@ -113,7 +113,7 @@ Multistat can only display a single bar for each label.  Ideally, query results 
 
 
 
-For this discussion, I created some test data and a stored procedure in mySQL, returning the latest updates from a set of hypothetical sensors, returning a set of values, like this:
+For this discussion, I created some test data and a stored procedure in MySQL, returning the latest updates from a set of hypothetical sensors, returning a set of values, like this:
 
 
 
@@ -225,17 +225,17 @@ Putting it all together, the displays can make a truly unforgettable and un-igno
 
 **Known Issues**
 
- This is a version 1.1.0 release, as such there are a few known issues that need to be added or fixed.
+ This is a version 1.2.0 release, as such there are a few known issues that need to be added or fixed.
 
  * Adding an auto-test data set with random walk values (for demos and testing)
 
 
- * Support for time-series data sets, with options for setting the metric to current, average, max, min etc.
+ * Support for time-series data sets, with options for setting the metric to first, last, average, max, min etc.
 
  * Setting/displaying the units of measurement
 
 
 
 
-If you find this useful, and/or if you can think of additional features that you would find useful - make an entry on the project's [github/issues page](https://github.com/michaeldmoore/michaeldmoore-multistat-panel/issues)
+If you find this useful, and/or if you can think of additional features that you would find useful - make an entry on the project's [GitHub/issues page](https://github.com/michaeldmoore/michaeldmoore-multistat-panel/issues)
 

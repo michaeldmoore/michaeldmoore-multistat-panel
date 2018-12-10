@@ -17,20 +17,12 @@
         <div class="gf-form-select-wrapper">
           <select class="gf-form-input michaeldmoore-multistat-panel-w12" ng-model="ctrl.panel.ValueColName" ng-options="f for f in ctrl.cols" ng-change="ctrl.render()"></select>
         </div>
-	    <label class="gf-form-label width-8">Decimals</label>
+	    <label class="gf-form-label width-9">Decimals</label>
 	    <input type="number" class="gf-form-input width-3" data-placement="right" 
 			bs-tooltip="'Number of decimal places for value in tool tip'" ng-model="ctrl.panel.ValueDecimals" ng-change="ctrl.render()" ng-model-onblur>		
-			
-			
-	    <div class="gf-form-inline">
-	      <gf-form-switch class="gf-form" label-class="width-9" label="Filter Multiples" checked="ctrl.panel.FilterMultiples" on-change="ctrl.render()"></gf-form-switch>
-	      <div class="gf-form" ng-if="ctrl.panel.FilterMultiples">
-            <label class="gf-form-label query-keyword" ng-click="ctrl.showFilterMultiplesHelp = !ctrl.showFilterMultiplesHelp">
-              Show Help
-              <i class="fa fa-caret-down" ng-show="ctrl.showFilterMultiplesHelp"></i>
-              <i class="fa fa-caret-right" ng-hide="ctrl.showFilterMultiplesHelp"></i>
-            </label>
-	      </div>
+	    <label class="gf-form-label width-9">Aggregation</label>
+        <div class="gf-form-select-wrapper">
+          <select class="gf-form-input michaeldmoore-multistat-panel-w6" ng-model="ctrl.panel.Aggregate" ng-options="f for f in ctrl.aggregations" ng-change="ctrl.render()"></select>
         </div>			
 	  </div>
 	</div>
@@ -54,7 +46,7 @@ the input rows, retaining only the last record for any individual label.
 	  </div>
 	  
   	  <div class="gf-form" ng-if="ctrl.panel.DateTimeColName != ''">
-	    <label class="gf-form-label width-8">TZ Offset Hrs</label>
+	    <label class="gf-form-label width-9">TZ Offset Hrs</label>
 	    <input type="number" class="gf-form-input width-3" data-placement="right" 
 			bs-tooltip="'Number of decimal places for value in tool tip'" ng-model="ctrl.panel.TZOffsetHours" ng-change="ctrl.render()" ng-model-onblur>		
 
@@ -94,7 +86,7 @@ Setting the format string to the reserved keyword "ELAPSED" displays the time as
           <select class="gf-form-input michaeldmoore-multistat-panel-w12" ng-model="ctrl.panel.SortColName" ng-options="f for f in ctrl.cols0" ng-change="ctrl.render()"></select>
         </div>
 	    <div class="gf-form-select-wrapper" ng-if="ctrl.panel.SortColName != ''">
-		  <select class="gf-form-input michaeldmoore-multistat-panel-w8" ng-model="ctrl.panel.SortDirection" ng-options="f for f in ctrl.sortDirections" ng-change="ctrl.render()"></select>
+		  <select class="gf-form-input michaeldmoore-multistat-panel-w9" ng-model="ctrl.panel.SortDirection" ng-options="f for f in ctrl.sortDirections" ng-change="ctrl.render()"></select>
 	    </div>
 	  </div>
     </div>

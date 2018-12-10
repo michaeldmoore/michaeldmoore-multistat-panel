@@ -60,7 +60,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			"RecolorLowLimitBar": false,
 			"ShowBaseLine": true,
 			"ShowDate": false,
-			"FilterMultiples": false,
+			"Aggregate": "Last",
 			"ShowHighLimitLine": true,
 			"ShowLabels": true,
 			"ShowLeftAxis": true,
@@ -106,7 +106,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
     onInitEditMode() {
 		this.metricNames = ['min', 'max', 'avg', 'current', 'total', 'name', 'first', 'delta', 'diff', 'range'];
-		this.sortDirections = ['none', 'ascending', 'decending'];
+		this.sortDirections = ['none', 'ascending', 'descending'];
+		this.aggregations = ['all', 'last', 'first', 'mean', 'max', 'min'];
         this.fontSizes = ['20%', '30%', '50%', '70%', '80%', '100%', '110%', '120%', '150%', '170%', '200%'];
         this.addEditorTab('Columns', 'public/plugins/michaeldmoore-multistat-panel/columns.html', 2);
         this.addEditorTab('Layout', 'public/plugins/michaeldmoore-multistat-panel/layout.html', 3);
@@ -185,25 +186,73 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			}
 
 		
-			if (this.panel.FilterMultiples && labelCol != -1){
+			if (this.panel.Aggregate != 'all' && labelCol != -1){
 				var oo = [];
 				this.rows = [];
-				d3.nest()
-					.key(function(d){return d[labelCol]})
-					.rollup(function(d){return d[d.length - 1]})
-					.entries(this.data.rows)
-					.forEach(function(x){
-						//this.rows.push(x.value);
-						oo.push(x.value);
-					});
-				this.rows = oo;
+				switch(this.panel.Aggregate) {
+					case 'first':
+						this.rows = d3.nest()
+							.key(function(d){return d[labelCol]})
+							.rollup(function(d){return d[0]})
+							.entries(this.data.rows)
+							.forEach(function(x){oo.push(x.value); });
+						this.rows = oo;
+					break;
+
+					case 'last':
+						this.rows = d3.nest()
+							.key(function(d){return d[labelCol]})
+							.rollup(function(d){return d[d.length - 1]})
+							.entries(this.data.rows)
+							.forEach(function(x){oo.push(x.value); });
+						this.rows = oo;
+					break;
+
+					case 'mean':
+						this.rows = d3.nest()
+							.key(function(d){return d[labelCol]})
+							.rollup(function(d){
+								var dd = Object.values(Object.assign({}, d[d.length - 1]));
+								dd[valueCol] = d3.mean(d, function(d) { return d[valueCol];});
+								return dd;
+								})
+							.entries(this.data.rows)
+							.forEach(function(x){oo.push(x.value); });
+						this.rows = Array.from(oo);
+					break;
+
+					case 'max':
+						this.rows = d3.nest()
+							.key(function(d){return d[labelCol]})
+							.rollup(function(d){
+								var dd = Object.values(Object.assign({}, d[d.length - 1]));
+								dd[valueCol] = d3.max(d, function(d) { return d[valueCol];});
+								return dd;
+								})
+							.entries(this.data.rows)
+							.forEach(function(x){oo.push(x.value); });
+						this.rows = Array.from(oo);
+					break;
+
+					case 'min':
+						this.rows = d3.nest()
+							.key(function(d){return d[labelCol]})
+							.rollup(function(d){
+								var dd = Object.values(Object.assign({}, d[d.length - 1]));
+								dd[valueCol] = d3.min(d, function(d) { return d[valueCol];});
+								return dd;
+								})
+							.entries(this.data.rows)
+							.forEach(function(x){oo.push(x.value); });
+						this.rows = Array.from(oo);
+					break;
+				}
 			}
 			else {
 				this.rows = this.data.rows;
 			}		
 
 			
-			//var className = 'michaeldmoore-multistat-panel-' + this.panel.id;
 			this.elem.html("<svg class='" + this.className + "'  style='height:" + this.ctrl.height + "px; width:100%'></svg>");
 			var $container = this.elem.find('.' + this.className);
 
@@ -324,7 +373,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
 					var valueScale = d3.scaleLinear()
 								.domain([minLineValue, maxLineValue])
-								.range([left + labelMargin, w])
+								.range([left + labelMargin, left + w])
 								.nice();
 					
 					var labels = data.map(function(d){ return d[labelCol]; });
@@ -339,7 +388,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 				
 					// Draw background of alternating stripes 
 					var oddeven = false;
-					svg//.append("g")
+					svg.append("g")
 						.selectAll("rect")
 						.data(data)
 						.enter()
@@ -512,7 +561,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					var numRows = d3.max(this.groupedRows, function(d) { return d.values.length;} );
 					
 					for(var i = 0; i < this.groupedRows.length; i++)
-						plotGroupHorizontal(this.panel, this.svg, this.groupedRows[i].values, numRows, this.groupedRows[i].key, i * dw, (i * dw) + dw - gap);
+						plotGroupHorizontal(this.panel, this.svg, this.groupedRows[i].values, numRows, this.groupedRows[i].key, i * dw, /*(i * dw) +*/ dw - gap);
 				}
 				else {
 					this.groupedRows = null;
