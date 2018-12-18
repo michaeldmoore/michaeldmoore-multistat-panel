@@ -94,6 +94,8 @@ The Grafana-standard Metrics tab allows the user to specify a query, to be issue
 This area is under continued active development.  Currently, Multistat only supports **Table** data queries.  Each row returned will be displayed as a bar, auto-sized to use the available space.  The panel does not provide scroll bars, so any query returning more rows than can comfortably fit in the allotted panel area will be unreadable. 
 
 
+**Note - getting appropriately formatted data can be challenging, especially while becoming familiar with all the options offered by Multistat.  For this end - and for general purpose Grafana plugin testing - I've created a simple data source working in cojunction with the standard SimpleJSON datasource to import simple CSV files which can be easily edited to generate any kind of table or time series data sets.  See here for details, including set up instructions : https://github.com/michaeldmoore/CSVServer **
+
 
 **Table Queries**
 
