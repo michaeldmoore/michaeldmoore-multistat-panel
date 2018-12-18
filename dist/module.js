@@ -514,7 +514,9 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 
 									// Add Low Side Group Names
 									if (groupName != '') {
-										svg.append("text").text(groupName).attr("x", left + (labelMargin + w - left) / 2 - 5).attr("y", 5).attr("font-family", "sans-serif").attr("font-size", panel.LabelFontSize).attr("fill", panel.LabelColor).attr("text-anchor", "middle").attr("dominant-baseline", "central");
+										svg.append("text").text(groupName)
+										//.attr("x", left + ((labelMargin + w - left)/2) - 5)
+										.attr("x", left + (labelMargin + w) / 2 - 5).attr("y", 5).attr("font-family", "sans-serif").attr("font-size", panel.LabelFontSize).attr("fill", panel.LabelColor).attr("text-anchor", "middle").attr("dominant-baseline", "central");
 									}
 
 									//Add Low Side Value Axis (X)
@@ -555,7 +557,7 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 									});
 
 									for (var i = 0; i < this.groupedRows.length; i++) {
-										plotGroupHorizontal(this.panel, this.svg, this.groupedRows[i].values, numRows, this.groupedRows[i].key, i * dw, /*(i * dw) +*/dw - gap);
+										plotGroupHorizontal(this.panel, this.svg, this.groupedRows[i].values, numRows, this.groupedRows[i].key, i * dw, dw - gap);
 									}
 								} else {
 									this.groupedRows = null;

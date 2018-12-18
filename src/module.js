@@ -503,7 +503,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 						svg
 							.append("text")
 							.text(groupName)
-							.attr("x", left + ((labelMargin + w - left)/2) - 5)
+							//.attr("x", left + ((labelMargin + w - left)/2) - 5)
+							.attr("x", left + ((labelMargin + w)/2) - 5)
 							.attr("y", 5)
 							.attr("font-family", "sans-serif")
 							.attr("font-size", panel.LabelFontSize)
@@ -561,7 +562,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					var numRows = d3.max(this.groupedRows, function(d) { return d.values.length;} );
 					
 					for(var i = 0; i < this.groupedRows.length; i++)
-						plotGroupHorizontal(this.panel, this.svg, this.groupedRows[i].values, numRows, this.groupedRows[i].key, i * dw, /*(i * dw) +*/ dw - gap);
+						plotGroupHorizontal(this.panel, this.svg, this.groupedRows[i].values, numRows, this.groupedRows[i].key, i * dw, dw - gap);
 				}
 				else {
 					this.groupedRows = null;
