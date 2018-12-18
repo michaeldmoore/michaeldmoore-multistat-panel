@@ -60,7 +60,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			"RecolorLowLimitBar": false,
 			"ShowBaseLine": true,
 			"ShowDate": false,
-			"Aggregate": "Last",
+			"Aggregate": "last",
 			"ShowHighLimitLine": true,
 			"ShowLabels": true,
 			"ShowLeftAxis": true,
@@ -133,7 +133,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			this.render();
 		}
 		else {
-          this.alertSrv.set('Multistat Data Error', 'Query type "' + data[0].type + '", not supported', 'error', 5000);
+          this.alertSrv.set('Non-Table type data received', 'Multistat does not support Time Series data sets', 'error', 5000);
 		}
     }
 
