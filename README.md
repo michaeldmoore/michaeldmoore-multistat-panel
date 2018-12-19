@@ -40,15 +40,14 @@ Multistat takes it's data from a table query - returning, at minimum, 2 fields (
 
 
 
-These queries should return a relatively small number of rows - Multistat does not use scroll bars - all bars are auto-scaled to fit the display window (scroll bars are useless in a monitoring dashboard).
+These queries should return a relatively small number of rows - Multistat does not use scroll bars - all bars are auto-scaled to fit the display window (scroll bars are useless in a monitoring dashboard).  
+*For maximum efficiency, each label should appear once only in the data set - Mutilstat has an option to aggregate values on a per-label basis - say to select the latest timestamped value (or the first, or mean etc.) - at the expense of CPU and network traffic.
 
 
 
 Multistat has a wealth of configurable options.  just about everything displayed can be adjusted and hidden using the extensive set of configuration options, described in detail below.
 
-![image](https://user-images.githubusercontent.com/3724718/38972936-38b6ec76-4358-11e8-9e00-756707ef8f04.png)
-
-
+![image](https://user-images.githubusercontent.com/3724718/50191698-95cc9800-02f4-11e9-96cd-a0c5da672278.png)
 
 **Features:**
 
@@ -109,45 +108,63 @@ If no query is defined, or the data source is unavailable, Multistat displays a 
 
 
 
-**Queries should return just one value per label**
+**Queries *should* return just one value per label**
 
-Multistat can only display a single bar for each label.  Ideally, query results *should be written* to return a single value per label.  When the query returns multiple values per label, Multistat uses the last one - assuming the query contains an date/time order by clause, this works out to be the most recent value, presumably the one users will be interested in.  For efficiency though, it is much better to write a query that only returns the required data.
-
-
-
-For this discussion, I created some test data and a stored procedure in MySQL, returning the latest updates from a set of hypothetical sensors, returning a set of values, like this:
+Multistat can only display a single bar for each label.  Ideally, query results *should be written* to return a single value per label.  When this is not possible, and the query returns multiple values per label, Multistat uses an aggregation operator to select one of these (first, last, mean, min or max).  *one more - all - will eliminate the aggregator altogether,  This can create confusing displays as multiple values appear overlying the position of such bars.  You have been warned.  For efficiency though, it is much better to write a query that only returns the required data.
 
 
 
-![image](https://user-images.githubusercontent.com/3724718/38958649-be730336-4312-11e8-8903-8a6544d0bd7f.png)
+For this discussion, I created a test data set in a CSV file (demo.csv) distributed with the CSVServer add-on to SinpleJSON data source.  I highly recommend installing this so you can follow along and see how the various configuration options work before worrying about live real-world data sets.  The demo CSV file contains the following data:
 
-Note, this query returns the required label and values fields, plus, in this case, a DateTime field indicating when this value was last recorded, plus a region field (that will be useful in grouping).   The field names can be anything; everything is defined in the configuration tabs.
+```
+time,sensor,area,quantity
+2018-12-18 00:21:05.000,AAA,West,1.100
+2018-12-18 00:21:04.000,AAA,West,1.000
+2018-12-18 00:21:03.000,AAA,West,0.950
+2018-12-18 00:21:02.000,AAA,West,0.900
+2018-12-18 00:21:01.000,AAA,West,0.850
+2018-12-18 00:21:00.000,AAA,West,0.800
+2018-12-18 00:21:07.000,AAA,West,1.234
+2018-12-18 00:21:07.000,BBB,East,0.662
+2018-12-18 00:21:07.000,CCC,East,0.344
+2018-12-18 00:21:07.000,EEE,West,0.357
+2018-12-18 00:21:07.000,GGG,West,0.563
+2018-12-18 00:21:07.000,HHH,West,0.234
+2018-12-18 00:21:07.000,III,West,0.840
+2018-12-18 00:21:07.000,JJJ,East,0.193
+2018-12-18 00:21:07.000,KKK,West,0.262
+2018-12-18 00:21:07.000,LLL,North,0.802
+2018-12-18 00:21:07.000,MMM,East,0.211
+2018-12-18 00:21:07.000,PPP,North,0.300
+2018-12-18 00:21:07.000,QQQ,North,0.731
+2018-12-18 00:21:07.000,RRR,North,1.101
+2018-12-18 00:21:07.000,SSS,East,0.811
+2018-12-18 00:21:07.000,WWW,East,0.213
+2018-12-18 00:21:07.000,YYY,East,0.844
+2018-12-18 00:21:07.000,ZZZ,North,0.928
+```
+
+Note, sensor AAA in this data set has multiple values, each a few hours apart.  All the other sensors have a single row - this will allow the aggregation feature to be demonstrated later in this note. Each row nthis data set includes a date/time, a label and a value, plus a region field (that will be useful in grouping).   The field names can be anything; everything is defined in the configuration tabs. Additional fields, if any, will appear in the tool-tip pop-up display, if enabled.
 
 
+As you can see, multistat is configured using a number of option tabs.  Let's examine each of these in sequence.
 
 First, the data source and query is setup using the standard **Metrics** tab
 
-![image](https://user-images.githubusercontent.com/3724718/38960019-b7e3ba92-4317-11e8-91b8-b480c367f1d7.png)
+![image](https://user-images.githubusercontent.com/3724718/50192332-5b182f00-02f7-11e9-805c-2137c832d7f6.png)
 
-
-
-In the event that the query returns more than one value per label, set the 'Filter Multiples' check box - this tells the panel to group the return set by whatever field is defined as the 'value col', retaining only the last record for any given 'label'.  Note., this is a trade-off between the client and the server itself - sometimes it will be better to use this feature, and sometimes not.
-
-
+Note the data set format is set to 'Table' (Multistat does not support time series data sets)
 
 Note: The Query Inspector built into Grafana is a terrific resource for figuring out source data problems.  Here's what we get from my demo query:
 
-![image](https://user-images.githubusercontent.com/3724718/38960473-88d4ab42-4319-11e8-9d34-f9187731e46c.png)
-
+![image](https://user-images.githubusercontent.com/3724718/50192518-3e302b80-02f8-11e9-8e34-eb039eb23bce.png)
 etc.
 
 
 
 The data is mapped using the **Columns** configuration tab:
 
-![image](https://user-images.githubusercontent.com/3724718/38960879-f0edfe6c-431a-11e8-8a74-d63d229259d0.png)
-
-
+![image](https://user-images.githubusercontent.com/3724718/50192572-733c7e00-02f8-11e9-8e92-1e1456567dea.png)
 
 Here, you can see how the 4 key fields in the query result set get mapped to the Multistat fields.  In this case, the label is associated with the query field 'sensor', Value as 'value', with 2 decimal places. Note too, that the bars are set to be sorted in ascending 'value' order.
 
@@ -159,8 +176,7 @@ The 'Show as-of Date' setting controls whether or not the last update time is to
 
 The **Layout** tab
 
-![image](https://user-images.githubusercontent.com/3724718/38961239-87444cd0-431c-11e8-8130-2e81ea2ed8f7.png)
-
+![image](https://user-images.githubusercontent.com/3724718/50192633-ba2a7380-02f8-11e9-8e61-4e29cd2de49f.png)
 This is made up of two sections - Layout and Options.
 
 
@@ -189,8 +205,7 @@ Font size and color is selectable for the labels and values too, plus a switch t
 
 The **Lines and Limits** tab
 
-![image](https://user-images.githubusercontent.com/3724718/38961668-6ad56d98-431e-11e8-82c1-70c70be84fcf.png)
-
+![image](https://user-images.githubusercontent.com/3724718/50192702-f958c480-02f8-11e9-8700-d180077d99d7.png)
 
 
 On this tab, you can override the auto-defaults to control upper and lower extents (these automatically extend when the values displayed fall outside these settings), plus optionally display these values as colored reference lines.
