@@ -242,14 +242,9 @@ Putting it all together, the displays can make a truly unforgettable and un-igno
 
 **Known Issues**
 
- This is a version 1.2.0 release, as such there are a few known issues that need to be added or fixed.
+ This is a version 1.2.0 release, as such there may be a few known issues that need to be added or fixed.
 
- * Adding an auto-test data set with random walk values (for demos and testing)
-
-
- * Support for time-series data sets, with options for setting the metric to first, last, average, max, min etc.
-
- * Setting/displaying the units of measurement
+ * Value label positioning.  position labels intelligently as opposed to slightly below the top of each bar.
 
 
 
