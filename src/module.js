@@ -350,7 +350,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					if (cc == DateTimeColName)
 						dd = moment(dd).add(TZOffsetHours, 'h').format(TooltipDateFormat);
 					else if (cc == ValueColName && $.isNumeric(dd))
-						dd = dd.toFixed(ValueDecimals);
+						dd = Number(dd).toFixed(ValueDecimals);
 					
 					html += "<tr><td>" + cc + "</td><td>" + dd + "</td></tr>";
 				}
@@ -476,7 +476,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					if (panel.ShowValues) {
 						g.append("text")
 						//.text(function(d) {return formatDecimal(d[valueCol])})
-						.text(function(d) {return d[valueCol].toFixed(ValueDecimals)})
+						.text(function(d) {return Number(d[valueCol]).toFixed(ValueDecimals)})
 						.attr("x", function(d){return valueScale(d[valueCol]) + ((d[valueCol] > baseLineValue) ? - 5 : + 5)})
 						.attr("y", function(d,i){return labelScale(d[labelCol]) + (labelScale.bandwidth() / 2)})
 						.attr("font-family", "sans-serif")
@@ -672,7 +672,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					
 				if (this.panel.ShowValues) {
 					g.append("text")
-					.text(function(d) {return d[valueCol].toFixed(ValueDecimals)})
+					.text(function(d) {return Number(d[valueCol]).toFixed(ValueDecimals)})
 					.attr("x", function(d, i) { return labelScale(d[labelCol]) + (labelScale.bandwidth() / 2); })
 					.attr("y", function(d){
 						return valueScale(d[valueCol]) + ((d[valueCol] > baseLineValue) ? 5 : -5);

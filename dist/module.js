@@ -417,7 +417,7 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 									var cc = c[i];
 									var dd = d[i];
 
-									if (cc == DateTimeColName) dd = moment(dd).add(TZOffsetHours, 'h').format(TooltipDateFormat);else if (cc == ValueColName && $.isNumeric(dd)) dd = dd.toFixed(ValueDecimals);
+									if (cc == DateTimeColName) dd = moment(dd).add(TZOffsetHours, 'h').format(TooltipDateFormat);else if (cc == ValueColName && $.isNumeric(dd)) dd = Number(dd).toFixed(ValueDecimals);
 
 									html += "<tr><td>" + cc + "</td><td>" + dd + "</td></tr>";
 								}
@@ -494,7 +494,7 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 										g.append("text")
 										//.text(function(d) {return formatDecimal(d[valueCol])})
 										.text(function (d) {
-											return d[valueCol].toFixed(ValueDecimals);
+											return Number(d[valueCol]).toFixed(ValueDecimals);
 										}).attr("x", function (d) {
 											return valueScale(d[valueCol]) + (d[valueCol] > baseLineValue ? -5 : +5);
 										}).attr("y", function (d, i) {
@@ -621,7 +621,7 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 
 								if (this.panel.ShowValues) {
 									g.append("text").text(function (d) {
-										return d[valueCol].toFixed(ValueDecimals);
+										return Number(d[valueCol]).toFixed(ValueDecimals);
 									}).attr("x", function (d, i) {
 										return labelScale(d[labelCol]) + labelScale.bandwidth() / 2;
 									}).attr("y", function (d) {
