@@ -15,9 +15,21 @@
 	</div>
 
 	<div class="gf-form" ng-if="ctrl.panel.Horizontal">
+      <label class="gf-form-label michaeldmoore-multistat-panel-w9">Columns Per Row</label>
+	  <input type="number" class="gf-form-input michaeldmoore-multistat-panel-w4" placeholder="0" data-placement="right" 
+	    bs-tooltip="'Set to value > 0 to break display into multiple row/columns'" ng-model="ctrl.panel.GroupCols" ng-change="ctrl.render()" ng-model-onblur>
+	</div>
+	
+	<div class="gf-form" ng-if="ctrl.panel.Horizontal">
+	  <label class="gf-form-label michaeldmoore-multistat-panel-w9">Group Name Filter</label>
+      <input type="string" class="gf-form-input width-30" data-placement="right" 
+	    bs-tooltip="'RegEX pattern for filtering groups by name - leave blank for no filtering\ne.g. use partial string matches seperated by pipe (|) chars.'" ng-model="ctrl.panel.GroupNameFilter" ng-change="ctrl.render()" ng-model-onchange />	
+	</div>
+
+	<div class="gf-form" ng-if="ctrl.panel.Horizontal">
 	  <label class="gf-form-label michaeldmoore-multistat-panel-w9">Group Sort Order</label>
       <input type="string" class="gf-form-input width-30" data-placement="right" 
-	    bs-tooltip="'Comma seperated group name order - e.g. North,South,East,West'" ng-model="ctrl.panel.GroupSortString" ng-change="ctrl.render()" ng-model-onchange />	  
+	    bs-tooltip="'Comma seperated group name order - e.g. North,South,East,West'" ng-model="ctrl.panel.GroupSortString" ng-change="ctrl.render()" ng-model-onchange />	
 	</div>
 
     <div class="gf-form">
@@ -26,10 +38,10 @@
 	    bs-tooltip="'Set to 0 for no bottom margin'" ng-model="ctrl.panel.LabelMargin" ng-change="ctrl.render()" ng-model-onblur>
 	  <label class="gf-form-label michaeldmoore-multistat-panel-w9">Low Side Margin</label>
 	  <input type="number" class="gf-form-input michaeldmoore-multistat-panel-w4" placeholder="auto" data-placement="right" 
-	    bs-tooltip="'Set to 0 for no left side axis'" ng-model="ctrl.panel.LowSideMargin" ng-change="ctrl.render()" ng-model-onblur>
+	    bs-tooltip="'Set to 0 for no low side axis'" ng-model="ctrl.panel.LowSideMargin" ng-change="ctrl.render()" ng-model-onblur>
 	  <label class="gf-form-label michaeldmoore-multistat-panel-w9">High Side Margin</label>
 	  <input type="number" class="gf-form-input michaeldmoore-multistat-panel-w4" placeholder="auto" data-placement="right" 
-	    bs-tooltip="'Set to 0 for no right side axis'" ng-model="ctrl.panel.HighSideMargin" ng-change="ctrl.render()" ng-model-onblur>
+	    bs-tooltip="'Set to 0 for no high side axis'" ng-model="ctrl.panel.HighSideMargin" ng-change="ctrl.render()" ng-model-onblur>
     </div>
 	
 
@@ -77,7 +89,7 @@
   <div class="section gf-form-group">
 	<h5 class="section-heading">Options</h5>
 	<div class="gf-form">
-      <gf-form-switch class="gf-form" label-class="width-8" label="Show Values" checked="ctrl.panel.ShowValues" on-change="ctrl.render()"></gf-form-switch>
+      <gf-form-switch class="gf-form" label-class="width-10" label="Show Values" checked="ctrl.panel.ShowValues" on-change="ctrl.render()"></gf-form-switch>
 	  <div class="gf-form-inline" ng-if="ctrl.panel.ShowValues">
         <label class="gf-form-label michaeldmoore-multistat-panel-w7">Font size</label>
         <div class="gf-form-select-wrapper">
@@ -87,11 +99,29 @@
 	    <span class="gf-form-label michaeldmoore-annunciator-panel-w4">
 		  <spectrum-picker ng-model="ctrl.panel.ValueColor" ng-change="ctrl.render()" ></spectrum-picker>
 	    </span>
+        <label class="gf-form-label michaeldmoore-multistat-panel-w7">Position</label>
+        <div class="gf-form-select-wrapper">
+          <select class="gf-form-input michaeldmoore-multistat-panel-w12" ng-model="ctrl.panel.ValuePosition" ng-options="f for f in ctrl.valuePositions" ng-change="ctrl.render()"></select>
+        </div>
+	  </div>
+	</div>
+
+	<div class="gf-form"  ng-if="ctrl.panel.Horizontal">
+      <gf-form-switch class="gf-form" label-class="width-10" label="Show Group Labels" checked="ctrl.panel.ShowGroupLabels" on-change="ctrl.render()"></gf-form-switch>
+	  <div class="gf-form-inline" ng-if="ctrl.panel.ShowGroupLabels">
+        <label class="gf-form-label michaeldmoore-multistat-panel-w7">Font size</label>
+        <div class="gf-form-select-wrapper">
+          <select class="gf-form-input michaeldmoore-multistat-panel-w6" ng-model="ctrl.panel.GroupLabelFontSize" ng-options="f for f in ctrl.fontSizes" ng-change="ctrl.render()"></select>
+        </div>
+	    <label class="gf-form-label michaeldmoore-multistat-panel-w6">Color</label>
+	    <span class="gf-form-label michaeldmoore-annunciator-panel-w4">
+		  <spectrum-picker ng-model="ctrl.panel.GroupLabelColor" ng-change="ctrl.render()" ></spectrum-picker>
+	    </span>
 	  </div>
 	</div>
 
 	<div class="gf-form">
-      <gf-form-switch class="gf-form" label-class="width-8" label="Show Labels" checked="ctrl.panel.ShowLabels" on-change="ctrl.render()"></gf-form-switch>
+      <gf-form-switch class="gf-form" label-class="width-10" label="Show Labels" checked="ctrl.panel.ShowLabels" on-change="ctrl.render()"></gf-form-switch>
 	  <div class="gf-form-inline" ng-if="ctrl.panel.ShowLabels">
         <label class="gf-form-label michaeldmoore-multistat-panel-w7">Font size</label>
         <div class="gf-form-select-wrapper">
@@ -101,11 +131,15 @@
 	    <span class="gf-form-label michaeldmoore-annunciator-panel-w4">
 		  <spectrum-picker ng-model="ctrl.panel.LabelColor" ng-change="ctrl.render()" ></spectrum-picker>
 	    </span>
+	    <label class="gf-form-label michaeldmoore-multistat-panel-w7">Out of Range</label>
+	    <span class="gf-form-label michaeldmoore-annunciator-panel-w4">
+		  <spectrum-picker ng-model="ctrl.panel.OutOfRangeLabelColor" ng-change="ctrl.render()" ></spectrum-picker>
+	    </span>
 	  </div>
 	</div>
 
 	<div class="gf-form">
-      <gf-form-switch class="gf-form" label-class="width-8" label="Tooltips" checked="ctrl.panel.ShowTooltips" on-change="ctrl.render()"></gf-form-switch>
+      <gf-form-switch class="gf-form" label-class="width-10" label="Tooltips" checked="ctrl.panel.ShowTooltips" on-change="ctrl.render()"></gf-form-switch>
 	  
 	  <div class="gf-form" ng-if="ctrl.panel.ShowTooltips">
 		<label class="gf-form-label width-7">Date Format</label>

@@ -42,8 +42,12 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			"HighSideMargin": 20,
 			"Horizontal": false,
 			"LabelColName": "sensor",
+			"LabelNameFilter": "",
 			"LabelColor": "white",
+			"OutOfRangeLabelColor": "red",
+			"GroupLabelColor": "white",
 			"LabelFontSize": "100%",
+			"GroupLabelFontSize": "200%",
 			"LabelMargin": null,
 			"LowAxisColor": "white",
 			"LowBarColor": "teal",
@@ -63,6 +67,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			"Aggregate": "last",
 			"ShowHighLimitLine": true,
 			"ShowLabels": true,
+			"ShowGroupLabels": true,
 			"ShowLeftAxis": true,
 			"ShowLowLimitLine": false,
 			"ShowMaxLine": false,
@@ -79,7 +84,11 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			"ValueFontSize": "100%",
 			"OddRowColor": "rgba(33, 33, 34, 0.92)",
 			"EvenRowColor": "rgba(61, 61, 64, 0.78)",
-			"GroupSortString": ""
+			"GroupSortString": "",
+			"GroupCols": 0,
+			"GroupNameFilter": "",
+			"ScaleFactor": 1.0,
+			"ValuePosition": "top"
 			};
 
         var panel = {};
@@ -108,7 +117,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 		this.metricNames = ['min', 'max', 'avg', 'current', 'total', 'name', 'first', 'delta', 'diff', 'range'];
 		this.sortDirections = ['none', 'ascending', 'descending'];
 		this.aggregations = ['all', 'last', 'first', 'mean', 'max', 'min'];
-        this.fontSizes = ['20%', '30%', '50%', '70%', '80%', '100%', '110%', '120%', '150%', '170%', '200%'];
+        this.fontSizes = ['20%', '30%', '50%', '70%', '80%', '100%', '110%', '120%', '150%', '170%', '200%', '250%', '300%', '350%', '400%'];
+		this.valuePositions = ['bar base', 'bar end', 'top'];
         this.addEditorTab('Columns', 'public/plugins/michaeldmoore-multistat-panel/columns.html', 2);
         this.addEditorTab('Layout', 'public/plugins/michaeldmoore-multistat-panel/layout.html', 3);
         this.addEditorTab('Lines-and-Limits', 'public/plugins/michaeldmoore-multistat-panel/linesandlimits.html', 4);
@@ -185,6 +195,22 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					groupCol = i;
 			}
 
+			if (this.panel.LabelNameFilter.length > 0 && labelCol != -1)
+			{
+				var regex = new RegExp(this.panel.LabelNameFilter, "");
+				this.matchingRows = [];
+				for(var i = 0; i < this.data.rows.length; i++)
+				{
+					var dd = this.data.rows[i];
+					var label = dd[labelCol];
+					if (label.match(regex) != null)
+						this.matchingRows.push(dd);
+				}
+			}
+			else
+				this.matchingRows = this.data.rows;
+			
+		
 		
 			if (this.panel.Aggregate != 'all' && labelCol != -1){
 				var oo = [];
@@ -194,7 +220,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 						this.rows = d3.nest()
 							.key(function(d){return d[labelCol]})
 							.rollup(function(d){return d[0]})
-							.entries(this.data.rows)
+							.entries(this.matchingRows)
 							.forEach(function(x){oo.push(x.value); });
 						this.rows = oo;
 					break;
@@ -203,7 +229,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 						this.rows = d3.nest()
 							.key(function(d){return d[labelCol]})
 							.rollup(function(d){return d[d.length - 1]})
-							.entries(this.data.rows)
+							.entries(this.matchingRows)
 							.forEach(function(x){oo.push(x.value); });
 						this.rows = oo;
 					break;
@@ -216,7 +242,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 								dd[valueCol] = d3.mean(d, function(d) { return d[valueCol];});
 								return dd;
 								})
-							.entries(this.data.rows)
+							.entries(this.matchingRows)
 							.forEach(function(x){oo.push(x.value); });
 						this.rows = Array.from(oo);
 					break;
@@ -229,7 +255,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 								dd[valueCol] = d3.max(d, function(d) { return d[valueCol];});
 								return dd;
 								})
-							.entries(this.data.rows)
+							.entries(this.matchingRows)
 							.forEach(function(x){oo.push(x.value); });
 						this.rows = Array.from(oo);
 					break;
@@ -242,17 +268,16 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 								dd[valueCol] = d3.min(d, function(d) { return d[valueCol];});
 								return dd;
 								})
-							.entries(this.data.rows)
+							.entries(this.matchingRows)
 							.forEach(function(x){oo.push(x.value); });
 						this.rows = Array.from(oo);
 					break;
 				}
 			}
 			else {
-				this.rows = this.data.rows;
+				this.rows = this.matchingRows;
 			}		
 
-			
 			this.elem.html("<svg class='" + this.className + "'  style='height:" + this.ctrl.height + "px; width:100%'></svg>");
 			var $container = this.elem.find('.' + this.className);
 
@@ -271,7 +296,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			
 			var horizontal = this.panel.Horizontal;
 			
-			var labelMargin = ($.isNumeric(this.panel.LabelMargin) && this.panel.LabelMargin >= 0) ? this.panel.LabelMargin : (horizontal ? 100 : 20);
+			var labelMargin = ($.isNumeric(this.panel.LabelMargin) && this.panel.LabelMargin >= 0) ? this.panel.LabelMargin : null;
 			var lowSideMargin = this.panel.LowSideMargin >= 0 ? this.panel.LowSideMargin : 0;
 			var highSideMargin = this.panel.HighSideMargin >= 0 ? this.panel.HighSideMargin : 0;
 
@@ -280,7 +305,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
 			this.svg = d3.select('.' + this.className).append('svg');	
 			
-
+			var id = this.panel.id;
 			var barPadding = this.panel.BarPadding;
 			var baseLineValue = this.panel.BaseLineValue;
 			var minLineValue = this.panel.MinLineValue;
@@ -309,13 +334,19 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			var EvenRowColor = this.panel.EvenRowColor;
 			var TZOffsetHours = this.panel.TZOffsetHours;
 			var GroupSortString = this.panel.GroupSortString;
+			var GroupCols = this.panel.GroupCols;
+			var GroupNameFilter = this.panel.GroupNameFilter;
+			var ScaleFactor = Number(this.panel.ScaleFactor);
+			var LabelColor = this.panel.LabelColor;
+			var OutOfRangeLabelColor = this.panel.OutOfRangeLabelColor;
+			var ValuePosition = this.panel.ValuePosition;
 			
-			var minValue = d3.min(this.rows, function(d) { return Number(d[valueCol]); });
-			if ($.isNumeric(minLineValue) == false || minLineValue > minValue)
+			var minValue = d3.min(this.rows, function(d) { return Number(d[valueCol]) * ScaleFactor; });
+			if ($.isNumeric(minLineValue) == false)
 				minLineValue = minValue;
 			
-			var maxValue = d3.max(this.rows, function(d) { return Number(d[valueCol]); });
-			if ($.isNumeric(maxLineValue) == false || maxLineValue < maxValue)
+			var maxValue = d3.max(this.rows, function(d) { return Number(d[valueCol]) * ScaleFactor; });
+			if ($.isNumeric(maxLineValue) == false)
 				maxLineValue = maxValue;				
 			
 			if ($.isNumeric(baseLineValue) == false)
@@ -333,12 +364,12 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			if ($.isNumeric(highLimitValue) && maxLineValue < highLimitValue)
 				maxLineValue = highLimitValue;
 
-			var tooltipDiv = d3.select("body").append("div")
-				.attr("class", "michaeldmoore-multistat-panel-tooltip michaeldmoore-multistat-panel-tooltip-" + this.panel.id)
+			d3.select("body").append("div")
+				.attr("class", "michaeldmoore-multistat-panel-tooltip michaeldmoore-multistat-panel-tooltip-" + id)
 				.style("opacity", 0);
 			
-			
-			var tooltipShow = function(d, c){
+			var tooltipShow = function(d, c, id){
+				var tooltipDiv = d3.select(".michaeldmoore-multistat-panel-tooltip-" + id);
 				tooltipDiv.transition()
 				.duration(200)
 				.style("opacity", .9);
@@ -360,22 +391,49 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 				.style("top", (d3.event.pageY - 28) + "px");
 			}
 
-			var tooltipHide = function() {
+			var tooltipHide = function(id) {
+				var tooltipDiv = d3.selectAll(".michaeldmoore-multistat-panel-tooltip-" + id);
 				tooltipDiv.transition()		
 				.duration(500)		
 				.style("opacity", 0);	
 			}
 			
-			if(horizontal) {
-				var plotGroupHorizontal = function(panel, svg, data, numRows, groupName, left, w) {
-					var groupNameOffset = groupName != '' ? 15 : 0;
-					lowSideMargin += groupNameOffset;
-
-					var valueScale = d3.scaleLinear()
-								.domain([minLineValue, maxLineValue])
-								.range([left + labelMargin, left + w])
-								.nice();
+			function scaleAndClipValue(d) {
+				var val = d * ScaleFactor;
+				if (val > maxLineValue)
+					val = maxLineValue;
+				if (val < minLineValue)
+					val = minLineValue;
+				
+				return val;
+			}			
 					
+
+			if(horizontal) {
+				var plotGroupHorizontal = function(panel, svg, data, numRows, groupName, groupNameOffset, left, w, hh, dh) {
+
+					// draw border rectangle
+					/*svg.append("rect")
+						.attr("width", w)
+						.attr("height", dh)
+						.attr("x", left)
+						.attr("y", hh)
+						.attr("stroke", "yellow");*/
+
+						//panel.GroupLabelFontSize
+					
+					hh += groupNameOffset;
+					dh -= groupNameOffset;
+					w -= 10;
+
+					// draw border rectangle
+					/*svg.append("rect")
+						.attr("width", w)
+						.attr("height", dh)
+						.attr("x", left)
+						.attr("y", hh)
+						.attr("stroke", "white");*/
+						
 					var labels = data.map(function(d){ return d[labelCol]; });
 					while (labels.length < numRows)
 						labels = labels.concat('_' + Math.random().toString(36).substr(2, 9));
@@ -383,32 +441,118 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
 					var labelScale = d3.scaleBand()
 								.domain(labels)
-								.rangeRound([lowSideMargin, h - highSideMargin])
+								.rangeRound([hh + highSideMargin, hh + dh - lowSideMargin])
+								.padding(barPadding / 100);
+				
+					var stripedata = data.concat(d3.range(data.length, numRows));
+					
+					var stripeScale = d3.scaleBand()
+								.domain(stripedata)
+								.rangeRound([hh + highSideMargin, hh + dh - lowSideMargin])
 								.padding(barPadding / 100);
 				
 					// Draw background of alternating stripes 
 					var oddeven = false;
 					svg.append("g")
 						.selectAll("rect")
-						.data(data)
+						.data(stripedata)
 						.enter()
 						.append("rect")
 						.attr("class", "michaeldmoore-multistat-panel-row")
 						.attr("width", w)
 						.attr("height", labelScale.bandwidth())
 						.attr("x", left)
-						.attr("y", function(d,i){return labelScale(d[labelCol])})
+						.attr("y", function(d){return stripeScale(d)})
 						.attr("fill", function(d) { 
 								oddeven = !oddeven;
 								return oddeven ? OddRowColor : EvenRowColor;
+							})
+						.on("mouseover", function(d, i) {
+							if (showTooltips && i < data.length)
+								tooltipShow(d, cols, id);
+							})
+						.on("mouseout", function() { 
+							tooltipHide(id);
 							});
 
+
+
+
+					var gg = svg
+						.append("g")
+						.selectAll("text")
+						.data(data)
+						.enter()
+						.append("g");
+
+					if (panel.ShowValues && panel.ValuePosition == "top") {
+						var maxValueWidth = 0;
+						gg.append("text")
+						.text(function(d) {return (Number(d[valueCol]) * ScaleFactor).toFixed(ValueDecimals)})
+						.attr("x", left + w)
+						.attr("y", function(d,i){return labelScale(d[labelCol]) + (labelScale.bandwidth() / 2)})
+						.attr("font-family", "sans-serif")
+						.attr("font-size", panel.ValueFontSize)
+						.attr("fill", panel.ValueColor)
+						.attr("text-anchor", "end")
+						.attr("dominant-baseline", "central")
+						.each(function(d,i) {
+							var thisWidth = this.getComputedTextLength();
+							maxValueWidth = d3.max([maxValueWidth, thisWidth]);
+						});
+						w -= maxValueWidth;
+					}
+					
+					
+					if (panel.ShowLabels) {
+						var maxLabelWidth = 0;
+						gg.append("text")
+						.text(function(d) { return d[labelCol]; })
+						.attr("x", left)
+						.attr("y", function(d,i){return labelScale(d[labelCol]) + (labelScale.bandwidth() / 2)})
+						.attr("font-family", "sans-serif")
+						.attr("font-size", panel.LabelFontSize)
+						.attr("fill", function(d,i){return d[valueCol] * ScaleFactor > maxLineValue || d[valueCol] * ScaleFactor < minLineValue ? panel.OutOfRangeLabelColor : panel.LabelColor; })
+						.attr("text-anchor", "start")
+						.attr("dominant-baseline", "central")
+						.on("mouseover", function(d) {
+							if (showTooltips)
+								tooltipShow(d, cols, id);
+							})
+						.on("mouseout", function() { 
+							tooltipHide(id);
+							})
+						.each(function(d,i) {
+							var thisWidth = this.getComputedTextLength();
+							maxLabelWidth = d3.max([maxLabelWidth, thisWidth]);
+						});
+						
+						if ($.isNumeric(labelMargin)){
+							left += labelMargin;
+							w -= labelMargin;
+							}
+						else{
+							left += maxLabelWidth;
+							w -= maxLabelWidth;
+						}
+					}
+
+					
+					
+					
+					var valueScale = d3.scaleLinear()
+						.domain([minLineValue, maxLineValue])
+						.range([left + labelMargin, left + w])
+						.nice();
+				
+
+							
 					function vLine(svg, value, color) {	
 						svg.append("line")
 							.style("stroke", color)
-							.attr("y1", lowSideMargin)
+							.attr("y1", hh + highSideMargin)
 							.attr("x1", valueScale(value))
-							.attr("y2", h - highSideMargin)
+							.attr("y2", hh + dh - lowSideMargin)
 							.attr("x2", valueScale(value));
 					}			
 
@@ -434,36 +578,35 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 						.enter()
 						.append("rect")
 						.attr("class", "michaeldmoore-multistat-panel-bar")
-						.attr("width", function(d) { 
-							var ww = valueScale(d[valueCol]) - valueScale(baseLineValue);
-							if (ww < 0)
-								ww = -ww;
-							return ww; 
+						.attr("width", function(d) {
+							var val = scaleAndClipValue(d[valueCol]);
+							return Math.abs(valueScale(val) - valueScale(baseLineValue));
 							})
 						.attr("height", labelScale.bandwidth())
 						.attr("x", function(d) { 
-							return d3.min([valueScale(d[valueCol]), valueScale(baseLineValue)]); 
+							var val = scaleAndClipValue(d[valueCol]);
+							return d3.min([valueScale(val), valueScale(baseLineValue)]); 
 							})
 						.attr("y", function(d,i){return labelScale(d[labelCol])})
 						.attr("fill", function(d) { 
-							if (recolorHighLimitBar && (d[valueCol] > highLimitValue))
+							if (recolorHighLimitBar && (d[valueCol] * ScaleFactor > highLimitValue))
 								return HighLimitBarColor;
-							if (recolorLowLimitBar && (d[valueCol] < lowLimitValue))
+							if (recolorLowLimitBar && (d[valueCol] * ScaleFactor < lowLimitValue))
 								return LowLimitBarColor;
-							return (d[valueCol] > baseLineValue) ? highBarColor : lowBarColor;
+							return (d[valueCol] * ScaleFactor > baseLineValue) ? highBarColor : lowBarColor;
 							})
 						.classed("highflash", function(d) { 
-							return recolorHighLimitBar && flashHighLimitBar && (d[valueCol] > highLimitValue);
+							return recolorHighLimitBar && flashHighLimitBar && (d[valueCol] * ScaleFactor > highLimitValue);
 							})
 						.classed("lowflash", function(d) { 
-							return recolorLowLimitBar && flashLowLimitBar && (d[valueCol] < lowLimitValue);
+							return recolorLowLimitBar && flashLowLimitBar && (d[valueCol] * ScaleFactor < lowLimitValue);
 							})
 						.on("mouseover", function(d) {
 							if (showTooltips)
-								tooltipShow(d, cols);
+								tooltipShow(d, cols, id);
 							})
 						.on("mouseout", function() { 
-							tooltipHide();
+							tooltipHide(id);
 							});
 
 					var g = svg
@@ -473,77 +616,92 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 							.enter()
 							.append("g");
 					
-					if (panel.ShowValues) {
+					if (panel.ShowValues && panel.ValuePosition != "top") {
 						g.append("text")
-						//.text(function(d) {return formatDecimal(d[valueCol])})
-						.text(function(d) {return Number(d[valueCol]).toFixed(ValueDecimals)})
-						.attr("x", function(d){return valueScale(d[valueCol]) + ((d[valueCol] > baseLineValue) ? - 5 : + 5)})
+						.text(function(d) {return (Number(d[valueCol]) * ScaleFactor).toFixed(ValueDecimals)})
+						.attr("x", function(d){
+							if (panel.ValuePosition == "bar base")
+								return valueScale(baseLineValue) + 5;
+							else {
+								var val = scaleAndClipValue(d[valueCol]);
+								return valueScale(val) + ((val > baseLineValue) ? - 5 : + 5)
+							}})
 						.attr("y", function(d,i){return labelScale(d[labelCol]) + (labelScale.bandwidth() / 2)})
 						.attr("font-family", "sans-serif")
 						.attr("font-size", panel.ValueFontSize)
 						.attr("fill", panel.ValueColor)
-						.attr("text-anchor", function(d){return (d[valueCol] > baseLineValue) ? "end" : "start";})
+						.attr("text-anchor", function(d){
+							if (panel.ValuePosition == "bar base")
+								return "start";
+							else
+								return (d[valueCol] * ScaleFactor > baseLineValue) ? "end" : "start";
+							})
 						.attr("dominant-baseline", "central");
 					}
 
-					if (panel.ShowLabels) {
-						g.append("text")
-						.text(function(d) { return d[labelCol]; })
-						.attr("x", left + labelMargin - 5)
-						.attr("y", function(d,i){return labelScale(d[labelCol]) + (labelScale.bandwidth() / 2)})
-						.attr("font-family", "sans-serif")
-						.attr("font-size", panel.LabelFontSize)
-						.attr("fill", panel.LabelColor)
-						.attr("text-anchor", "end")
-						.attr("dominant-baseline", "central");
-					}
-
-					// Add Low Side Group Names
-					if(groupName != '') {
+					// Add Above-High Side Group Names
+					if(groupName != '' && panel.ShowGroupLabels) {
 						svg
 							.append("text")
 							.text(groupName)
-							//.attr("x", left + ((labelMargin + w - left)/2) - 5)
-							.attr("x", left + ((labelMargin + w)/2) - 5)
-							.attr("y", 5)
+							.attr("x", left + (labelMargin + w)/2)
+							.attr("y", hh - groupNameOffset/2)
 							.attr("font-family", "sans-serif")
-							.attr("font-size", panel.LabelFontSize)
-							.attr("fill", panel.LabelColor)
+							.attr("font-size", panel.GroupLabelFontSize)
+							.attr("fill", panel.GroupLabelColor)
+							.attr("background", "blue")
 							.attr("text-anchor", "middle")
 							.attr("dominant-baseline", "central");
 					}
 					
-					//Add Low Side Value Axis (X)
-					if (lowSideMargin > groupNameOffset) {	
+					//Add High Side Value Axis (X)
+					if (highSideMargin > 0) {
 						var gg = svg
 								.append("g")
-								.attr("transform", 'translate(0,' + lowSideMargin + ')')
+								.attr("transform", 'translate(1,' + (hh + highSideMargin) + ')')
 								.attr("class", "michaeldmoore-multistat-panel-valueaxis")
 								.call(d3.axisTop(valueScale));
-						gg.selectAll('.tick text').attr('fill', panel.LowAxisColor);
-						gg.selectAll('.tick line').attr('stroke', panel.LowAxisColor);
-						gg.selectAll('path.domain').attr('stroke', panel.LowAxisColor);
-					}
-					
-					//Add High Side Value Axis (X)
-					if (highSideMargin > 0) {	
-						var gg = svg
-								.append("g")
-								.attr("transform", 'translate(0,' + (h - highSideMargin) + ')')
-								.attr("class", "michaeldmoore-multistat-panel-valueaxis")
-								.call(d3.axisBottom(valueScale));
 						gg.selectAll('.tick text').attr('fill', panel.HighAxisColor);
 						gg.selectAll('.tick line').attr('stroke', panel.HighAxisColor);
 						gg.selectAll('path.domain').attr('stroke', panel.HighAxisColor);
 					}
 					
-					lowSideMargin -= groupNameOffset;				
+					//Add Low Side Value Axis (X)
+					if (lowSideMargin > 0) {	
+						var gg = svg
+								.append("g")
+								.attr("transform", 'translate(0,' + (hh + dh - lowSideMargin) + ')')
+								.attr("class", "michaeldmoore-multistat-panel-valueaxis")
+								.call(d3.axisBottom(valueScale));
+						gg.selectAll('.tick text').attr('fill', panel.LowAxisColor);
+						gg.selectAll('.tick line').attr('stroke', panel.LowAxisColor);
+						gg.selectAll('path.domain').attr('stroke', panel.LowAxisColor);
+					}
+							
 				}
+
+				var groupNameOffset = 0;
+				
+				if (this.panel.ShowGroupLabels)
+					groupNameOffset = Number(this.panel.GroupLabelFontSize.replace('%','')) * 0.15;
 
 				if (groupCol >= 0){
 					this.groupedRows = d3.nest()
 						.key(function(d){return d[groupCol]})
 						.entries(this.rows);
+
+					if (GroupNameFilter.length > 0)
+					{
+						var regex = new RegExp(GroupNameFilter, "");
+						var matchingGroups = [];
+						for(var i = 0; i < this.groupedRows.length; i++)
+						{
+							var groupName = this.groupedRows[i].key;
+							if (groupName.match(regex) != null)
+								matchingGroups.push(this.groupedRows[i]);
+						}
+						this.groupedRows = matchingGroups;
+					}
 						
 					this.groupedRows.sort(
 						function(a,b){
@@ -552,39 +710,79 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 							
 							if (aPos == bPos)
 								return a.key.localeCompare(b.key);
+							else if (aPos == -1)
+								return 1;
+							else if (bPos == -1)
+								return -1;
 							else
 								return aPos - bPos;
 						}
 					);
 					
-					var gap = 5;	
-					var dw = ((w + gap) / this.groupedRows.length);
-					var numRows = d3.max(this.groupedRows, function(d) { return d.values.length;} );
 					
+					
+					
+					var gap = 5;	
+					var gcols = (GroupCols <= 0 || GroupCols > this.groupedRows.length) ? this.groupedRows.length : GroupCols;
+					var dw = ((w + gap) / gcols);
+
+					
+					
+					// figure out the max data points in each row of groups...
+					var pointsPerRow = [];
+					for(var i = 0; i < this.groupedRows.length/gcols; i++)
+						pointsPerRow.push(0);
 					for(var i = 0; i < this.groupedRows.length; i++)
-						plotGroupHorizontal(this.panel, this.svg, this.groupedRows[i].values, numRows, this.groupedRows[i].key, i * dw, dw - gap);
+					{
+						var rr = Math.floor(i / gcols);
+						var u = this.groupedRows[i].values.length;
+						if (pointsPerRow[rr] < u)
+							pointsPerRow[rr] = u;
+					}
+
+					var totalPoints = 0;
+					for(var i = 0; i < pointsPerRow.length; i++)
+						totalPoints += pointsPerRow[i];
+					
+					var rowOverheadHeight = groupNameOffset + this.panel.LowSideMargin + this.panel.HighSideMargin;
+					var rowHeight = (h - (pointsPerRow.length * rowOverheadHeight)) / totalPoints;					
+
+					var numRows = Math.ceil(this.groupedRows.length / gcols);
+					var hh = 0;
+					for (var rr = 0; rr < numRows; rr++)
+					{
+						var nn = pointsPerRow[rr];
+						var dh = rowOverheadHeight + (nn * rowHeight);
+						hh += dh;
+						for (var cc = 0; cc < gcols; cc++)
+						{
+							var ii = cc + (rr * gcols);
+							if (ii < this.groupedRows.length)
+							{
+								plotGroupHorizontal(this.panel, this.svg, this.groupedRows[ii].values, nn, this.groupedRows[ii].key, groupNameOffset, cc * dw, dw - gap, hh - dh, dh);								
+							}
+						}
+					}
 				}
 				else {
 					this.groupedRows = null;
 
-					plotGroupHorizontal(this.panel, this.svg, this.rows, this.rows.length, '', 0, w);
+					plotGroupHorizontal(this.panel, this.svg, this.rows, this.rows.length, '', 0, 0, w, 0, h);
 				}
 				
 			}
 			else {
-				var valueScale = d3.scaleLinear()
-							.domain([maxLineValue, minLineValue])
-							.range([10, h - labelMargin])
-							.nice();
-				
 				var labelScale = d3.scaleBand()
 							.domain(this.rows.map(function(d){ return d[labelCol]; }))
 							.range([lowSideMargin, w - highSideMargin])
 							.padding(barPadding / 100);
 
+				var chartTop = 0;
+
 				// Draw background of alternating stripes 
 				var oddeven = false;
-				this.svg//.append("g")
+				//var svg = 
+				this.svg
 					.selectAll("rect")
 					.data(this.rows)
 					.enter()
@@ -593,12 +791,95 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					.attr("width", labelScale.bandwidth())
 					.attr("height", h)
 					.attr("x", function(d,i){return labelScale(d[labelCol])})
-					.attr("y", 0)
+					.attr("y", chartTop)
 					.attr("fill", function(d) { 
 							oddeven = !oddeven;
 							return oddeven ? OddRowColor : EvenRowColor;
+						})
+					.on("mouseover", function(d) {
+						if (showTooltips)
+							tooltipShow(d, cols, id);
+						})
+					.on("mouseout", function() { 
+						tooltipHide(id);
 						});
 		
+				
+				
+				var gg = this.svg
+					.selectAll("text")
+					.data(this.rows)
+					.enter()
+					.append("g");
+					
+				if (this.panel.ShowValues && this.panel.ValuePosition == "top") {
+					var maxValueHeight = 0;
+					gg.append("text")
+					.text(function(d) {return (Number(d[valueCol]) * ScaleFactor).toFixed(ValueDecimals)})
+					.attr("x", function(d, i) { return labelScale(d[labelCol]) + (labelScale.bandwidth() / 2); })
+					.attr("y", 0)
+					.attr("font-family", "sans-serif")
+					.attr("font-size", this.panel.ValueFontSize)
+					.attr("fill", this.panel.ValueColor)
+					.attr("text-anchor", "middle")
+					.attr("dominant-baseline", "text-before-edge")
+					.each(function(d,i) {
+						var thisHeight = this.getBBox().height;
+						maxValueHeight = d3.max([maxValueHeight, thisHeight]);
+					});
+					chartTop += maxValueHeight;
+				}
+
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				if (this.panel.ShowLabels) {
+					var maxLabelHeight = 0;
+					gg.append("text")
+					.text(function(d) { return d[labelCol]; })
+					.attr("x", function(d, i) { return labelScale(d[labelCol]) + (labelScale.bandwidth() / 2); })
+					.attr("y", h)//function(d) { return h - labelMargin + 14; })
+					.attr("font-family", "sans-serif")
+					.attr("font-size", this.panel.LabelFontSize)
+					.attr("fill", function(d,i){return d[valueCol] * ScaleFactor > maxLineValue || d[valueCol] * ScaleFactor < minLineValue ? OutOfRangeLabelColor : LabelColor; })
+					.attr("text-anchor", "middle")
+					.attr("dominant-baseline", "text-after-edge")
+					.on("mouseover", function(d) {
+						if (showTooltips)
+							tooltipShow(d, cols, id);
+						})
+					.on("mouseout", function() { 
+						tooltipHide(id);
+						})
+					.each(function(d,i) {
+						var thisHeight = this.getBBox().height;
+						maxLabelHeight = d3.max([maxLabelHeight, thisHeight]);
+					});
+					if ($.isNumeric(labelMargin)){
+						h -= labelMargin;
+					}
+					else{
+						h -= maxLabelHeight;
+					}
+				}
+				
+				
+				var valueScale = d3.scaleLinear()
+					.domain([maxLineValue, minLineValue])
+					.range([chartTop, h])
+					.nice();
+				
 				function hLine(svg, value, color) {	
 					svg.append("line")
 						.style("stroke", color)
@@ -608,6 +889,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 						.attr("y2", valueScale(value));
 				}			
 
+				
 				if(this.panel.ShowBaseLine)
 					hLine(this.svg, baseLineValue, this.panel.BaseLineColor);
 
@@ -623,77 +905,64 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 				if(this.panel.ShowLowLimitLine)
 					hLine(this.svg, lowLimitValue, this.panel.LowLimitLineColor);
 
-				
-				this.svg
-					.append("g")
-					.selectAll("rect")
-					.data(this.rows)
-					.enter()
-					.append("rect")	
+				gg.append("rect")	
 					.attr("class", "michaeldmoore-multistat-panel-bar")
 					.attr("height", function(d) { 
-						var hh = valueScale(d[valueCol]) - valueScale(baseLineValue);
-						if (hh < 0)
-							hh = -hh;
-						return hh; 
+						var val = scaleAndClipValue(d[valueCol]);
+						return Math.abs(valueScale(baseLineValue) - valueScale(val));
 						})
 					.attr("width", labelScale.bandwidth())
 					.attr("y", function(d) { 
-						return d3.min([valueScale(d[valueCol]), valueScale(baseLineValue)]); 
+						var val = scaleAndClipValue(d[valueCol]);
+						return d3.min([valueScale(val), valueScale(baseLineValue)]); 
 						})
 					.attr("x", function(d, i) { return labelScale(d[labelCol]) })
 					.attr("fill", function(d) { 
-						if (recolorHighLimitBar && (d[valueCol] > highLimitValue))
+						if (recolorHighLimitBar && (d[valueCol] * ScaleFactor > highLimitValue))
 							return HighLimitBarColor;
-						if (recolorLowLimitBar && (d[valueCol] < lowLimitValue))
+						if (recolorLowLimitBar && (d[valueCol] * ScaleFactor < lowLimitValue))
 							return LowLimitBarColor;
-						return (d[valueCol] > baseLineValue) ? highBarColor : lowBarColor;
+						return (d[valueCol] * ScaleFactor > baseLineValue) ? highBarColor : lowBarColor;
 						})
 					.classed("highflash", function(d) { 
-						return recolorHighLimitBar && flashHighLimitBar && (d[valueCol] > highLimitValue);
+						return recolorHighLimitBar && flashHighLimitBar && (d[valueCol] * ScaleFactor > highLimitValue);
 						})
 					.classed("lowflash", function(d) { 
-						return recolorLowLimitBar && flashLowLimitBar && (d[valueCol] < lowLimitValue);
+						return recolorLowLimitBar && flashLowLimitBar && (d[valueCol] * ScaleFactor < lowLimitValue);
 						})
 				    .on("mouseover", function(d) {
 						if (showTooltips)
-							tooltipShow(d, cols);
+							tooltipShow(d, cols, id);
 						})
 					.on("mouseout", function() { 
-						tooltipHide();
+						tooltipHide(id);
 						});
 
 				
-				var g = this.svg
-					.selectAll("text")
-					.data(this.rows)
-					.enter()
-					.append("g");
-					
-				if (this.panel.ShowValues) {
-					g.append("text")
-					.text(function(d) {return Number(d[valueCol]).toFixed(ValueDecimals)})
+				if (this.panel.ShowValues && this.panel.ValuePosition != "top") {
+					gg.append("text")
+					.text(function(d) {return (Number(d[valueCol]) * ScaleFactor).toFixed(ValueDecimals)})
 					.attr("x", function(d, i) { return labelScale(d[labelCol]) + (labelScale.bandwidth() / 2); })
 					.attr("y", function(d){
-						return valueScale(d[valueCol]) + ((d[valueCol] > baseLineValue) ? 5 : -5);
-					})						
+						if (ValuePosition == "bar base")
+							return valueScale(baseLineValue) + 5;
+						else {
+							var val = scaleAndClipValue(d[valueCol]);
+							return valueScale(val) + ((val > baseLineValue) ? - 5 : + 5)
+						}
+					})
 					.attr("font-family", "sans-serif")
 					.attr("font-size", this.panel.ValueFontSize)
 					.attr("fill", this.panel.ValueColor)
 					.attr("text-anchor", "middle")
-					.attr("dominant-baseline", function(d){return (d[valueCol] > baseLineValue) ? "text-before-edge" : "text-after-edge"});
+					.attr("dominant-baseline", function(d){
+						if (ValuePosition == "bar base")
+							return "text-after-edge";
+						else
+							return (d[valueCol] * ScaleFactor > baseLineValue) ? "text-before-edge" : "text-after-edge";
+					});
 				}
 
-				if (this.panel.ShowLabels) {
-					g.append("text")
-					.text(function(d) { return d[labelCol]; })
-					.attr("x", function(d, i) { return labelScale(d[labelCol]) + (labelScale.bandwidth() / 2); })
-					.attr("y", function(d) { return h - labelMargin + 14; })
-					.attr("font-family", "sans-serif")
-					.attr("font-size", this.panel.LabelFontSize)
-					.attr("fill", this.panel.LabelColor)
-					.attr("text-anchor", "middle");
-				}
 
 				if (lowSideMargin > 0) {	
 					var gg = this.svg
