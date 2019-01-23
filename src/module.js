@@ -88,7 +88,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			"GroupCols": 0,
 			"GroupNameFilter": "",
 			"ScaleFactor": 1.0,
-			"ValuePosition": "top"
+			"ValuePosition": "top",
+			"LableAngle": 0
 			};
 
         var panel = {};
@@ -121,7 +122,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 		this.valuePositions = ['bar base', 'bar end', 'top'];
         this.addEditorTab('Columns', 'public/plugins/michaeldmoore-multistat-panel/columns.html', 2);
         this.addEditorTab('Layout', 'public/plugins/michaeldmoore-multistat-panel/layout.html', 3);
-        this.addEditorTab('Lines-and-Limits', 'public/plugins/michaeldmoore-multistat-panel/linesandlimits.html', 4);
+        this.addEditorTab('Options', 'public/plugins/michaeldmoore-multistat-panel/options.html', 4);
+        this.addEditorTab('Lines-and-Limits', 'public/plugins/michaeldmoore-multistat-panel/linesandlimits.html', 5);
     }
 
 
@@ -621,10 +623,10 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 						.text(function(d) {return (Number(d[valueCol]) * ScaleFactor).toFixed(ValueDecimals)})
 						.attr("x", function(d){
 							if (panel.ValuePosition == "bar base")
-								return valueScale(baseLineValue) + 5;
+								return valueScale(baseLineValue);// + 5;
 							else {
 								var val = scaleAndClipValue(d[valueCol]);
-								return valueScale(val) + ((val > baseLineValue) ? - 5 : + 5)
+								return valueScale(val) + ((val > baseLineValue))// ? - 5 : + 5)
 							}})
 						.attr("y", function(d,i){return labelScale(d[labelCol]) + (labelScale.bandwidth() / 2)})
 						.attr("font-family", "sans-serif")
@@ -632,7 +634,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 						.attr("fill", panel.ValueColor)
 						.attr("text-anchor", function(d){
 							if (panel.ValuePosition == "bar base")
-								return "start";
+								return (d[valueCol] * ScaleFactor > baseLineValue) ? "start" : "end";
+								//return "start";
 							else
 								return (d[valueCol] * ScaleFactor > baseLineValue) ? "end" : "start";
 							})
@@ -830,31 +833,33 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					chartTop += maxValueHeight;
 				}
 
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
 				if (this.panel.ShowLabels) {
 					var maxLabelHeight = 0;
+					var labelAngle = this.panel.LableAngle; 
 					gg.append("text")
 					.text(function(d) { return d[labelCol]; })
-					.attr("x", function(d, i) { return labelScale(d[labelCol]) + (labelScale.bandwidth() / 2); })
-					.attr("y", h)//function(d) { return h - labelMargin + 14; })
+					//.attr("x", function(d, i) { return labelScale(d[labelCol]) + (labelScale.bandwidth() / 2); })
+					//.attr("y", h)//function(d) { return h - labelMargin + 14; })
 					.attr("font-family", "sans-serif")
 					.attr("font-size", this.panel.LabelFontSize)
 					.attr("fill", function(d,i){return d[valueCol] * ScaleFactor > maxLineValue || d[valueCol] * ScaleFactor < minLineValue ? OutOfRangeLabelColor : LabelColor; })
 					.attr("text-anchor", "middle")
 					.attr("dominant-baseline", "text-after-edge")
+					.attr("transform", function(d, i) { 
+						var bbox = this.getBBox();
+						//console.log("bbox=["+bbox.width+","+bbox.height+"]");
+						var s = Math.sin(labelAngle * Math.PI / 180);
+						var c = Math.cos(labelAngle * Math.PI / 180);
+						//console.log("s="+s+", c="+c);
+						var b = Math.abs(bbox.width * s) + Math.abs(bbox.height * c);
+						var a = Math.abs(bbox.width * c) + Math.abs(bbox.height * s);
+						
+						//console.log("bcr=["+a+","+b+"]");
+						//var thisHeight = this.getBBox().height;
+						var x =  labelScale(d[labelCol]) + (labelScale.bandwidth() / 2);
+						var y = h - b/2;
+						return "translate("+x+","+y+") rotate("+labelAngle+")";
+					})					
 					.on("mouseover", function(d) {
 						if (showTooltips)
 							tooltipShow(d, cols, id);
@@ -863,7 +868,15 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 						tooltipHide(id);
 						})
 					.each(function(d,i) {
-						var thisHeight = this.getBBox().height;
+						var bbox = this.getBBox();
+						//console.log("bbox=["+bbox.width+","+bbox.height+"]");
+						var s = Math.sin(labelAngle * Math.PI / 180);
+						var c = Math.cos(labelAngle * Math.PI / 180);
+						var b = Math.abs(bbox.width * s) + Math.abs(bbox.height * c);
+						var a = Math.abs(bbox.width * c) + Math.abs(bbox.height * s);
+
+						//var thisHeight = this.getBBox().height;
+						var thisHeight = b;
 						maxLabelHeight = d3.max([maxLabelHeight, thisHeight]);
 					});
 					if ($.isNumeric(labelMargin)){
@@ -945,10 +958,10 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					.attr("x", function(d, i) { return labelScale(d[labelCol]) + (labelScale.bandwidth() / 2); })
 					.attr("y", function(d){
 						if (ValuePosition == "bar base")
-							return valueScale(baseLineValue) + 5;
+							return valueScale(baseLineValue);// + 5;
 						else {
 							var val = scaleAndClipValue(d[valueCol]);
-							return valueScale(val) + ((val > baseLineValue) ? - 5 : + 5)
+							return valueScale(val);// + ((val > baseLineValue) ? - 5 : + 5)
 						}
 					})
 					.attr("font-family", "sans-serif")
@@ -957,7 +970,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					.attr("text-anchor", "middle")
 					.attr("dominant-baseline", function(d){
 						if (ValuePosition == "bar base")
-							return "text-after-edge";
+							//return "text-after-edge";
+							return (d[valueCol] * ScaleFactor > baseLineValue) ? "text-after-edge" : "text-before-edge";
 						else
 							return (d[valueCol] * ScaleFactor > baseLineValue) ? "text-before-edge" : "text-after-edge";
 					});
