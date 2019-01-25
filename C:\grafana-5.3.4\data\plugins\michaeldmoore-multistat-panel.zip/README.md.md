@@ -45,7 +45,10 @@ All this, and optional flashing too when bars surpass these limits.
 
 Multistat accepts Grafana table formatted data.  There is no support for time series formatted data - at least not in the current version.
 
-At a minimum, Multistat requires two fields - a takes it's data from a table query - returning, at minimum, 2 fields (names can be anything)
+At a minimum, Multistat requires two fields - a label (string) and a value (numeric).  Note though, that these can be called anything.  Multistat makes no assumptions regarding the names of the table data field is handles.
+
+Each distinct label will 
+takes it's data from a table query - returning, at minimum, 2 fields (names can be anything)
 
 * Label
 * Value
@@ -268,6 +271,6 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTU5Mjk3MzUyNywtMjY0MTA2MDcxLDgxMT
-YxNTA4NiwxNTk3NjQwMDU3LC0xMDU3MTk2ODM1XX0=
+eyJoaXN0b3J5IjpbODQ0Mjg1Nzk0LC0yNjQxMDYwNzEsODExNj
+E1MDg2LDE1OTc2NDAwNTcsLTEwNTcxOTY4MzVdfQ==
 -->
