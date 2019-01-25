@@ -243,18 +243,8 @@ Using the demo sample data, for example (which contains values for areas East, W
 
 The **Group Sort Order** field is another regular expression string, this time used to define the order the groups are presented in (reading like a book from top left, wrapping to the bottom right).  Matched group names are presented in order, followed by any remaining non-matched group names in the default (alphabetical) order.
 Left blank with our sample data, the groups will be arranged in alphabetical order - that is, East->North->West.  Setting this field to the regular expression 'West|North|East' overrides the alphabetical ordering, resulting in a more map-meaningful displays with the West group on the left and the East group on the right *(apologies to users in the Southern Hemisphere who might have a different perspective...)*
+![image](https://user-images.githubusercontent.com/3724718/51764732-841ca400-209b-11e9-8a0f-3527750d97fe.png)
 
-A group col setting can be used to define a field that displays multiple sets, or groups, of elements.  In this demo case, we're grouping on the 'region' field, which takes on 5 different values (East, West, North, South and Central).
-
-When grouping, by default, the groups are arranged in alphabetical order.  (See here, Central->East->North->South->West)
-
-![image](https://user-images.githubusercontent.com/3724718/39014353-f93f1894-43ce-11e8-8ad1-d10906f3ee3b.png)
-
-
-
-This default can be overridden by setting the Group Sort Order string - a comma delimited sequence of group names, like "North,East,West,South,Central"  that make it North->East->West->South->Central
-
-![image](https://user-images.githubusercontent.com/3724718/39014554-86a11ebc-43cf-11e8-997b-a0d3bab94f74.png)
 
 
 
@@ -316,8 +306,9 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTkxMjI2Njk0MiwtODk1MTMyMjk4LDEyOD
-Q5MDU2MzAsNTcwNjAzNTc3LDM5ODEyMzI1NywtMTA0MjI1ODQ0
-LDE0MjIyNDEwMTEsMTgxMjQ3OTg3MywtMjY0MTA2MDcxLDgxMT
-YxNTA4NiwxNTk3NjQwMDU3LC0xMDU3MTk2ODM1XX0=
+eyJoaXN0b3J5IjpbLTgzMTEwMDI2OCwxOTEyMjY2OTQyLC04OT
+UxMzIyOTgsMTI4NDkwNTYzMCw1NzA2MDM1NzcsMzk4MTIzMjU3
+LC0xMDQyMjU4NDQsMTQyMjI0MTAxMSwxODEyNDc5ODczLC0yNj
+QxMDYwNzEsODExNjE1MDg2LDE1OTc2NDAwNTcsLTEwNTcxOTY4
+MzVdfQ==
 -->
