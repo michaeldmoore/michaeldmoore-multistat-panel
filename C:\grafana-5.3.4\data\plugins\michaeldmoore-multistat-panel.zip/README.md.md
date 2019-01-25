@@ -237,8 +237,9 @@ Provided the Group Col (see the Columns Tab, above) is mapped to a field, this t
 
 The **Columns Per Row** setting controls how many sub-charts appear in each row.  When the data contains more groups than are defined here, additional rows of sub-charts are added, wrapping to fill the available space.  *Note: If Group Col is set to something inappropriate, such as (say) the value or datetime field, Multistat can generate a ridiculous number of sub-charts - auto-scaled to fit in the available area, resulting in an unreadable mess.  Don't panic - just choose a more meaningful grouping field, assuming your data has one.*
 
-The **Group Name Filter** field (*this is an advanced feature most users can ignore.  If in doubt, make sure this is blank.  Especially if the chart appears to be empty!).*  This field should be a regular expression string which is used to filter out non-matching group names, when needed.  Using the demo sample data, for example (which contains values for areas East, West and North), we could select just the East and West groups by using a value of 'East|West' (Note the Pipe character '|' separating a sequence of matching strings.  Regular expressions can be much, much more 
+The **Group Name Filter** field (*this is an advanced feature most users can ignore.  If in doubt, make sure this is blank.  Especially if the chart appears to be empty!).*  This field should be a regular expression string which is used to filter out non-matching group names, when needed.  Using the demo sample data, for example (which contains values for areas East, West and North), we could select just the East and West groups by using a value of 'East|West' (Note the Pipe character '|' separating a sequence of matching strings.  Regular expressions are amazingly powerful and can be much, much more complicated than this - but a simple set of pipe-delimited strings is usually enough in this application.
 
+The Group Sort Order field i
 A group col setting can be used to define a field that displays multiple sets, or groups, of elements.  In this demo case, we're grouping on the 'region' field, which takes on 5 different values (East, West, North, South and Central).
 
 When grouping, by default, the groups are arranged in alphabetical order.  (See here, Central->East->North->South->West)
@@ -311,7 +312,7 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMjA2MDE5ODc5NSwtODk1MTMyMjk4LDEyOD
+eyJoaXN0b3J5IjpbMTgwMzA1ODkyMSwtODk1MTMyMjk4LDEyOD
 Q5MDU2MzAsNTcwNjAzNTc3LDM5ODEyMzI1NywtMTA0MjI1ODQ0
 LDE0MjIyNDEwMTEsMTgxMjQ3OTg3MywtMjY0MTA2MDcxLDgxMT
 YxNTA4NiwxNTk3NjQwMDU3LC0xMDU3MTk2ODM1XX0=
