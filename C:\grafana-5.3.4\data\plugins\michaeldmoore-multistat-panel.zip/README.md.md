@@ -192,10 +192,11 @@ etc.
 
 The data is mapped using the **Columns** configuration tab:
 
-![image](https://user-images.githubusercontent.com/3724718/50192572-733c7e00-02f8-11e9-8e92-1e1456567dea.png)
-![image](https://user-images.githubusercontent.com/3724718/51728075-649e6080-2034-11e9-84f0-b6d434fcfea3.png)
+![image](https://user-images.githubusercontent.com/3724718/51728249-2ce3e880-2035-11e9-8ca6-5c51b97710c1.png)
 
-Here, you can see how the 4 key fields in the query result set get mapped to the Multistat fields.  In this case, the label is associated with the query field 'sensor', Value as 'value', with 2 decimal places. Note too, that the bars are set to be sorted in ascending 'value' order.
+
+
+Here, you can see how the 4 key fields in the query result set get mapped to the Multistat fields.  In this case, the label is associated with the query field 'sensor', Value as 'quantity', with 1 decimal place. Note too, that the bars are set to be sorted in ascending 'value' order.
 
 The DateTime col (optional) is mapped here to the 'date' field.  When set, the TZ Offset Hrs setting can be used to offset the display value to account for time-zone differences between the data source and the client.
 
@@ -282,7 +283,7 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEwNDIyNTg0NCwxNDIyMjQxMDExLDE4MT
-I0Nzk4NzMsLTI2NDEwNjA3MSw4MTE2MTUwODYsMTU5NzY0MDA1
-NywtMTA1NzE5NjgzNV19
+eyJoaXN0b3J5IjpbLTQzOTg4Mzg4LC0xMDQyMjU4NDQsMTQyMj
+I0MTAxMSwxODEyNDc5ODczLC0yNjQxMDYwNzEsODExNjE1MDg2
+LDE1OTc2NDAwNTcsLTEwNTcxOTY4MzVdfQ==
 -->
