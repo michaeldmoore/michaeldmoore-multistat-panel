@@ -226,6 +226,7 @@ The Horizontal checkbox switches the bar orientation from vertical to horizontal
 **High Bar Color** sets the regular color of bars who's values are above the baseline (normally 0, see the Lines-And-Limits tab). **Low Bar Color** does the same for bar descending below (or to the left) of the base line.  **Bar Padding** controls the width of the gap between bars, as a percentage of the bar width
 
 **Odd Row Color** and **Even Row Color** sets the colors of the alternating background stripes.  These seem to work best when semi-transparent colors are chosen (see the 
+![image](https://user-images.githubusercontent.com/3724718/51762854-83354380-2096-11e9-9491-d6ed8a70308f.png)
 
 A group col setting can be used to define a field that displays multiple sets, or groups, of elements.  In this demo case, we're grouping on the 'region' field, which takes on 5 different values (East, West, North, South and Central).
 
@@ -299,8 +300,8 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTI4NDkwNTYzMCw1NzA2MDM1NzcsMzk4MT
-IzMjU3LC0xMDQyMjU4NDQsMTQyMjI0MTAxMSwxODEyNDc5ODcz
-LC0yNjQxMDYwNzEsODExNjE1MDg2LDE1OTc2NDAwNTcsLTEwNT
-cxOTY4MzVdfQ==
+eyJoaXN0b3J5IjpbLTE0ODgzNDM4NzYsMTI4NDkwNTYzMCw1Nz
+A2MDM1NzcsMzk4MTIzMjU3LC0xMDQyMjU4NDQsMTQyMjI0MTAx
+MSwxODEyNDc5ODczLC0yNjQxMDYwNzEsODExNjE1MDg2LDE1OT
+c2NDAwNTcsLTEwNTcxOTY4MzVdfQ==
 -->
