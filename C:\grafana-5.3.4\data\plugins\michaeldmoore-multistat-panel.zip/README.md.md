@@ -193,6 +193,7 @@ etc.
 The data is mapped using the **Columns** configuration tab:
 
 ![image](https://user-images.githubusercontent.com/3724718/50192572-733c7e00-02f8-11e9-8e92-1e1456567dea.png)
+![image](https://user-images.githubusercontent.com/3724718/51728075-649e6080-2034-11e9-84f0-b6d434fcfea3.png)
 
 Here, you can see how the 4 key fields in the query result set get mapped to the Multistat fields.  In this case, the label is associated with the query field 'sensor', Value as 'value', with 2 decimal places. Note too, that the bars are set to be sorted in ascending 'value' order.
 
@@ -281,7 +282,7 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTQyMjI0MTAxMSwxODEyNDc5ODczLC0yNj
-QxMDYwNzEsODExNjE1MDg2LDE1OTc2NDAwNTcsLTEwNTcxOTY4
-MzVdfQ==
+eyJoaXN0b3J5IjpbLTEwNDIyNTg0NCwxNDIyMjQxMDExLDE4MT
+I0Nzk4NzMsLTI2NDEwNjA3MSw4MTE2MTUwODYsMTU5NzY0MDA1
+NywtMTA1NzE5NjgzNV19
 -->
