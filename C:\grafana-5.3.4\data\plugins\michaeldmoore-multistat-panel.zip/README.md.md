@@ -175,13 +175,13 @@ time,sensor,area,quantity
 Note, sensor AAA in this data set has multiple values, each a few hours apart.  All the other sensors have a single row - this will allow the aggregation feature to be demonstrated later in this note. Each row nthis data set includes a date/time, a label and a value, plus a region field (that will be useful in grouping).   The field names can be anything; everything is defined in the configuration tabs. Additional fields, if any, will appear in the tool-tip pop-up display, if enabled.
 
 
-As you can see, multistat is configured using a number of option tabs.  Let's examine each of these in sequence.
+As you can see, Multistat is configured using a number of option tabs.  Let's examine each of these in sequence.
 
 First, the data source and query is setup using the standard **Metrics** tab
 
 ![image](https://user-images.githubusercontent.com/3724718/50192332-5b182f00-02f7-11e9-805c-2137c832d7f6.png)
 
-Note the data set format is set to 'Table' (Multistat does not support time series data sets)
+Note the data set format is set to '**Table**' (Multistat does not support time series data sets)
 
 Note: The Query Inspector built into Grafana is a terrific resource for figuring out source data problems.  Here's what we get from my demo query:
 
@@ -281,7 +281,7 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTY2NjgxODU3OSwxODEyNDc5ODczLC0yNj
+eyJoaXN0b3J5IjpbMTQyMjI0MTAxMSwxODEyNDc5ODczLC0yNj
 QxMDYwNzEsODExNjE1MDg2LDE1OTc2NDAwNTcsLTEwNTcxOTY4
 MzVdfQ==
 -->
