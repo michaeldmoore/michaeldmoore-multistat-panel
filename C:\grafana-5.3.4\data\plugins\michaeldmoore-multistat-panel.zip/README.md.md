@@ -235,7 +235,7 @@ The **Grouping** tab
 
 Provided the Group Col (see the Columns Tab, above) is mapped to a field, this tab show settings for how the groups are to be displayed.  (When Group Col is not defined,  ALL the values appear in a single group)
 
-
+The Columns Per Row setting controls how many sub-charts appear in each row.  When the data contains more groups than are defined here, additional rows of sub-charts are added, wrapping to f
 A group col setting can be used to define a field that displays multiple sets, or groups, of elements.  In this demo case, we're grouping on the 'region' field, which takes on 5 different values (East, West, North, South and Central).
 
 When grouping, by default, the groups are arranged in alphabetical order.  (See here, Central->East->North->South->West)
@@ -308,8 +308,8 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTMxMzQzOTMyLC04OTUxMzIyOTgsMTI4ND
-kwNTYzMCw1NzA2MDM1NzcsMzk4MTIzMjU3LC0xMDQyMjU4NDQs
-MTQyMjI0MTAxMSwxODEyNDc5ODczLC0yNjQxMDYwNzEsODExNj
-E1MDg2LDE1OTc2NDAwNTcsLTEwNTcxOTY4MzVdfQ==
+eyJoaXN0b3J5IjpbLTUyNTMxNDUyOCwtODk1MTMyMjk4LDEyOD
+Q5MDU2MzAsNTcwNjAzNTc3LDM5ODEyMzI1NywtMTA0MjI1ODQ0
+LDE0MjIyNDEwMTEsMTgxMjQ3OTg3MywtMjY0MTA2MDcxLDgxMT
+YxNTA4NiwxNTk3NjQwMDU3LC0xMDU3MTk2ODM1XX0=
 -->
