@@ -210,6 +210,8 @@ This sample data set contains duplicate rows for some labels - the default setti
 
 The **Layout** tab
 
+![image](https://user-images.githubusercontent.com/3724718/51728892-78979180-2037-11e9-8c4e-1578ca7302b5.png)
+
 ![image](https://user-images.githubusercontent.com/3724718/50192633-ba2a7380-02f8-11e9-8e61-4e29cd2de49f.png)
 This is made up of two sections - Layout and Options.
 
@@ -287,7 +289,7 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMzk4MTIzMjU3LC0xMDQyMjU4NDQsMTQyMj
-I0MTAxMSwxODEyNDc5ODczLC0yNjQxMDYwNzEsODExNjE1MDg2
-LDE1OTc2NDAwNTcsLTEwNTcxOTY4MzVdfQ==
+eyJoaXN0b3J5IjpbMTk2ODAxMDcyMiwzOTgxMjMyNTcsLTEwND
+IyNTg0NCwxNDIyMjQxMDExLDE4MTI0Nzk4NzMsLTI2NDEwNjA3
+MSw4MTE2MTUwODYsMTU5NzY0MDA1NywtMTA1NzE5NjgzNV19
 -->
