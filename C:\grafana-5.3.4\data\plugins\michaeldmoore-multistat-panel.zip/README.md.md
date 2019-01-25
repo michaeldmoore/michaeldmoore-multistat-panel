@@ -51,6 +51,9 @@ Each distinct label will be displayed as a bar - the length being determined by 
 
 takes it's data from a table query - returning, at minimum, 2 fields (names can be anything)
 
+
+A timestamp field can be useful too -this can be in anything redily understood by jav
+
 * Label
 * Value
 * Timestamp (optional)
@@ -272,6 +275,6 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE0NTI5MTMyMjgsLTI2NDEwNjA3MSw4MT
+eyJoaXN0b3J5IjpbLTE3NDM3NjY2MDEsLTI2NDEwNjA3MSw4MT
 E2MTUwODYsMTU5NzY0MDA1NywtMTA1NzE5NjgzNV19
 -->
