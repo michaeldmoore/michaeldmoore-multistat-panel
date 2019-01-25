@@ -219,7 +219,9 @@ The Horizontal checkbox switches the bar orientation from vertical to horizontal
 
 **Label Margin** sets the area reserved for the labels can be set according to the length of the labels - or left blank, leaving the panel to calculate a reasonable value based on the actual data, orientation and chosen font size etc.   **Angle** controls the rotation angle for the label text, which can help preserve screen real-estate - particularly when long labels are present.  *Note - it is quite difficult for the control to predetermine the ideal center of rotation for these labels.  Depending on the data, this can make the charts hard to understand.  More work in future releases should improve this feature.  Still, if it helps in any specific case, feel free to use it.* 
 
-Low Side Margin and High Side Margin set the width of the two axis.  Set these to 0 to hide one or bo
+**Low Side Margin** and **High Side Margin** set the width of the two axis.  Set to 0 to hide one or both of them.
+
+High Axis Color and Low Axis Color set the colors for these axes, assuming they are vis
 
 A group col setting can be used to define a field that displays multiple sets, or groups, of elements.  In this demo case, we're grouping on the 'region' field, which takes on 5 different values (East, West, North, South and Central).
 
@@ -293,7 +295,7 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTExNjM0NDg1MjgsNTcwNjAzNTc3LDM5OD
+eyJoaXN0b3J5IjpbLTE3NDcyNTcxNDYsNTcwNjAzNTc3LDM5OD
 EyMzI1NywtMTA0MjI1ODQ0LDE0MjIyNDEwMTEsMTgxMjQ3OTg3
 MywtMjY0MTA2MDcxLDgxMTYxNTA4NiwxNTk3NjQwMDU3LC0xMD
 U3MTk2ODM1XX0=
