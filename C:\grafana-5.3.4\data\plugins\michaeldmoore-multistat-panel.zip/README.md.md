@@ -271,8 +271,9 @@ The **Lines and Limits** tab
 
 The **BaseLine** setting (default 0) differentiates between positive and negative values, each potentially having a different color.  This can be useful when monitoring deviations from some non-zero set point.  For example, Electrical generators (in North America, at least) operate at very close to 60Hz, with normally, only small deviations.  Setting a baseline at 60.0 and a Max/Min to (say) 60.10 and 59.90 would make an easily understood display in such an application.
 
-Values above the base line are generally draw using the High Bar color (see the 
+Values above the base line are generally draw using the High Bar color (see the Layout Tab).  Values below in the Low Bar color.
 
+High Limit and Low Limit, if set define additional 'warning' references.  Corresponding 
 
 **Threshold limits**
 
@@ -313,7 +314,7 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMjAwODQ0NjU0NSwtMTk0MzM0OTYwMCwtNz
+eyJoaXN0b3J5IjpbLTIzNjU2NzQ2OSwtMTk0MzM0OTYwMCwtNz
 QwMTg1NDgwLDEyMDA1NDY4OSwyMzg0MTk3MzAsMTkxMjI2Njk0
 MiwtODk1MTMyMjk4LDEyODQ5MDU2MzAsNTcwNjAzNTc3LDM5OD
 EyMzI1NywtMTA0MjI1ODQ0LDE0MjIyNDEwMTEsMTgxMjQ3OTg3
