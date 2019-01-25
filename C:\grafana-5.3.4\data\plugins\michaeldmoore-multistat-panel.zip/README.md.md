@@ -60,7 +60,8 @@ Any additional fields are retained and presented in optional tool-tip balloons. 
 ![image](https://user-images.githubusercontent.com/3724718/51726418-e8544f00-202c-11e9-89e8-2cce5c7bfb2a.png)
 
 **Duplicate labels in table data.**
-Each distinct label in the input data results in a distinct bar in Multistat.  Ideally, table data should be created by queries that return distinct data sets - that is, sets in which each label is presented in a single row.  When data sets are processed with multiple rows for a given label, Multistat needs to know which value to use (and hence, which values to ignore).  A configurable aggregation parameter tells Multistat how to handle this.  'Last' (and 'First') select the last (or first) row in the data for any given label, throwing out all the others.    The optional date/timestamp field helps too by presorting the data table before selecting the aggregation function.  The tool-tip then shows the set of field
+Each distinct label in the input data results in a distinct bar in Multistat.  Ideally, table data should be created by queries that return distinct data sets - that is, sets in which each label is presented in a single row.  When data sets are processed with multiple rows for a given label, Multistat needs to know which value to use (and hence, which values to ignore).  A configurable aggregation parameter tells Multistat how to handle this.  'Last' (and 'First') select the last (or first) row in the data for any given label, throwing out all the others.    The optional date/timestamp field helps too by presorting the data table before selecting the aggregation function.  The tool-tip then shows the set of fields for the selected data row, as expected.
+'Max' and 'Min' aggregation 
 
 
 These queries should return a relatively small number of rows - Multistat does not use scroll bars - all bars are auto-scaled to fit the display window (scroll bars are useless in a monitoring dashboard).  
@@ -276,7 +277,7 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMjU4Mzk0Nzg5LDE4MTI0Nzk4NzMsLTI2ND
-EwNjA3MSw4MTE2MTUwODYsMTU5NzY0MDA1NywtMTA1NzE5Njgz
-NV19
+eyJoaXN0b3J5IjpbLTEyODUyMzM2NTAsMTgxMjQ3OTg3MywtMj
+Y0MTA2MDcxLDgxMTYxNTA4NiwxNTk3NjQwMDU3LC0xMDU3MTk2
+ODM1XX0=
 -->
