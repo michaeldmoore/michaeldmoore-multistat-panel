@@ -278,7 +278,7 @@ Values above the base line are generally draw using the High Bar color (see the 
 
 As with all these settings, the user can display a reference line on the chart and set the colors to whatever makes sense in the application.   In the frequency example above, there might be high and Low Limits set at (say) 60.05 and 95.95 respectively.
 
-Additionally, exceedances can be configured to 'flash' - toggling between two colors and some pre-defined rate.
+For example...
 
 ![image](https://user-images.githubusercontent.com/3724718/38963541-547a9560-4327-11e8-912a-5fdca266fd5f.png)
 
@@ -303,8 +303,7 @@ Putting it all together, the displays can make a truly unforgettable and un-igno
 **Known Issues**
 
  This is a version 1.2.0 release, as such there may be a few known issues that need to be added or fixed.
-
- * Value label positioning.  position labels intelligently as opposed to slightly below the top of each bar.
+.
 
 
 
@@ -313,10 +312,10 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTU2OTE0NjIzLC0xOTQzMzQ5NjAwLC03ND
-AxODU0ODAsMTIwMDU0Njg5LDIzODQxOTczMCwxOTEyMjY2OTQy
-LC04OTUxMzIyOTgsMTI4NDkwNTYzMCw1NzA2MDM1NzcsMzk4MT
-IzMjU3LC0xMDQyMjU4NDQsMTQyMjI0MTAxMSwxODEyNDc5ODcz
-LC0yNjQxMDYwNzEsODExNjE1MDg2LDE1OTc2NDAwNTcsLTEwNT
-cxOTY4MzVdfQ==
+eyJoaXN0b3J5IjpbLTE0ODIwMTk5OTEsLTE5NDMzNDk2MDAsLT
+c0MDE4NTQ4MCwxMjAwNTQ2ODksMjM4NDE5NzMwLDE5MTIyNjY5
+NDIsLTg5NTEzMjI5OCwxMjg0OTA1NjMwLDU3MDYwMzU3NywzOT
+gxMjMyNTcsLTEwNDIyNTg0NCwxNDIyMjQxMDExLDE4MTI0Nzk4
+NzMsLTI2NDEwNjA3MSw4MTE2MTUwODYsMTU5NzY0MDA1NywtMT
+A1NzE5NjgzNV19
 -->
