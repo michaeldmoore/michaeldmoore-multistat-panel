@@ -543,7 +543,9 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 											return d[labelCol];
 										}).attr("font-family", "sans-serif").attr("font-size", panel.LabelFontSize).attr("fill", function (d, i) {
 											return d[valueCol] * ScaleFactor > maxLineValue || d[valueCol] * ScaleFactor < minLineValue ? panel.OutOfRangeLabelColor : panel.LabelColor;
-										}).attr("text-anchor", "start").attr("dominant-baseline", "central").attr("transform", function (d, i) {
+										}).attr("text-anchor", "middle")
+										//.attr("text-anchor", "start")
+										.attr("dominant-baseline", "central").attr("transform", function (d, i) {
 											var bbox = this.getBBox();
 											var s = Math.sin(labelAngle * Math.PI / 180);
 											var c = Math.cos(labelAngle * Math.PI / 180);
@@ -551,7 +553,7 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 											var a = Math.abs(bbox.width * c) + Math.abs(bbox.height * s);
 
 											var y = labelScale(d[labelCol]) + labelScale.bandwidth() / 2;
-											var x = left; // + b/2;
+											var x = left + a / 2;
 											return "translate(" + x + "," + y + ") rotate(" + labelAngle + ")";
 										}).on("mouseover", function (d) {
 											if (showTooltips) tooltipShow(d, cols, id);
@@ -782,6 +784,7 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 											maxValueHeight = d3.max([maxValueHeight, thisHeight]);
 										});
 										hh += maxValueHeight;
+										dh -= maxValueHeight;
 									}
 
 									if (panel.ShowLabels) {
@@ -791,7 +794,7 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 											return d[labelCol];
 										}).attr("font-family", "sans-serif").attr("font-size", panel.LabelFontSize).attr("fill", function (d, i) {
 											return d[valueCol] * ScaleFactor > maxLineValue || d[valueCol] * ScaleFactor < minLineValue ? OutOfRangeLabelColor : LabelColor;
-										}).attr("text-anchor", "middle").attr("dominant-baseline", "text-after-edge").attr("transform", function (d, i) {
+										}).attr("text-anchor", "middle").attr("dominant-baseline", "central").attr("transform", function (d, i) {
 											var bbox = this.getBBox();
 											var s = Math.sin(labelAngle * Math.PI / 180);
 											var c = Math.cos(labelAngle * Math.PI / 180);
@@ -941,7 +944,7 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 									var hh = dh;
 									for (var rr = 0; rr < numRows; rr++) {
 										var ww = 0;
-										for (var cc = 0; cc < GroupCols; cc++) {
+										for (var cc = 0; cc < gcols; cc++) {
 											var nn = pointsPerCol[cc];
 											var dw = colOverheadWidth + nn * colWidth;
 

@@ -6,7 +6,9 @@
 
 
 
-This panel was developed for as a table-like panel for presenting bar charts, providing some useful additions particularly suited to process control/monitoring dashboards.  SingleStat displays a single metric from time series data set, with optional threshold-related coloring etc.  Multistat builds on this base, displaying query data in the form of a bar graph  with adding optional upper and lower hard limits.  Plus a lot, lot more....
+This panel was developed for as a table-like panel for presenting bar charts, providing some useful additions particularly suited to process control/monitoring dashboards.  As such, Multistat displays never use scroll-bars (scroll bars are useless in monitoring dashboard).  
+
+SingleStat displays a single metric from time series data set, with optional threshold-related coloring etc.  Multistat builds on this base, but with multi-column table data sets, displaying query data in the form of bar graphs with optional upper and lower hard limits.  Plus a lot, lot more....
 
 
 
@@ -24,24 +26,50 @@ Horizontally...
 
 
 
-Or as horizontal groups (based on the data query)
-
-![image](https://user-images.githubusercontent.com/3724718/38958223-7b5a3106-4311-11e8-9172-a4786728a236.png)
-
+Or grouped on an attribute, again vertically
+![image](https://user-images.githubusercontent.com/3724718/51725178-7b3dbb00-2026-11e9-861f-d800897d17d3.png)
 
 
-Multistat takes it's data from a table query - returning, at minimum, 2 fields (names can be anything)
+... or horizontally
+![image](https://user-images.githubusercontent.com/3724718/51725236-c6f06480-2026-11e9-84f0-4d2f75a69d66.png)
+*(Note these last two examples are single Multistat panels.  A single set of configuration settings is automatically applied to each of the grouped sub-displays)*
 
-* Label
-* Value
-* Timestamp (optional)
-* Group By (optional, horizontal mode only)
+And (just about) *everything* is configurable...
+Max, Min, auto-scaling, base-lines, colors, rows and columns - (just about) everything...
+
+High and Low limits too, with optional bar coloring
+![image](https://user-images.githubusercontent.com/3724718/51725465-f3f14700-2027-11e9-8d61-592f644a5c20.png)
+
+All this, and optional flashing too when bars surpass these limits.
+
+**Data**
+
+Multistat accepts Grafana **table** formatted data.  There is **no support for time series** formatted data - *at least not in the current version*.
+
+As a minimum, Multistat requires table data with at least two fields per row - one, a label (string) and the other, a value (numeric).  Note though, that these fields can be called anything.  Multistat makes no assumptions regarding the names of the table data field it handles.
+
+Each distinct label will be displayed as a bar - the length being determined by it's numerical value.
+
+takes it's data from a table query - returning, at minimum, 2 fields (names can be anything)
 
 
+A **timestamp** field can be useful too - this can be in any commonly understood format (Multistat uses the popular **Moment.js** java script library for manipulating time/date strings - see https://momentjs.com/docs/#/displaying/ for details).  
 
+A **grouping** field can be useful too, to organize large data sets into more meaningful sections.  When grouping, the number of columns can be pre-configured, along with handy mechanisms for filtering and arranging the order each group is presented in.
 
-These queries should return a relatively small number of rows - Multistat does not use scroll bars - all bars are auto-scaled to fit the display window (scroll bars are useless in a monitoring dashboard).  
-*For maximum efficiency, each label should appear once only in the data set - Mutilstat has an option to aggregate values on a per-label basis - say to select the latest timestamped value (or the first, or mean etc.) - at the expense of CPU and network traffic.
+Any additional fields are retained and presented in optional tool-tip balloons.  Again, (just about) everything is configurable here...
+![image](https://user-images.githubusercontent.com/3724718/51726418-e8544f00-202c-11e9-89e8-2cce5c7bfb2a.png)
+
+**Duplicate labels in table data.**
+Each distinct label in the input data results in a distinct bar in Multistat.  Ideally, table data should be created by queries that return distinct data sets - that is, sets in which each label is presented in a single row.  When data sets are processed with multiple rows for a given label, Multistat needs to know which value to use (and hence, which values to ignore).  A configurable aggregation parameter tells Multistat how to handle this.  'Last' (and 'First') select the last (or first) row in the data for any given label, throwing out all the others.    The optional date/timestamp field helps too by presorting the data table before selecting the aggregation function.  The tool-tip then shows the set of fields for the selected data row, as expected.
+
+Setting the aggregation parameter to 'Max' or 'Min' works in a similar way, selecting the row for each label with the corresponding value - and secondly using the last or latest value in the event that there is a tie in the value.
+ 
+Setting the aggregation parameter to 'Mean' results in the arithmetic mean of all duplicate values to be used, as should be expected.  *A side effect of this though is that the fields presented in the tool-tip balloon in this case represent just one of the rows - actually the 'last' row, the value of which will not generally match the displayed 'mean' value for that label.*
+
+**Data set size - a performance consideration**
+As mentioned before, ideally the data set should contain a single row for each distinct label. This offloads the maximum amount of filtering and aggregation etc., to the database which is generally much more efficient for these tasks.
+In the event that the database cannot pre-filter the data in this way, the aggregation setting can still generate the required display, but at the cost of increased CPU and network load.  Generally, this is not significant - Multistat can easily handle queries with a few hundred labels, each with a hundred or more rows.  Note though that huge data sets - data sets with multiple megabytes of data etc. - these will negatively impact performance.  Particularly as refresh rates shorten.  In extreme cases, this can even make the browser become unresponsive.  **Beware of enormous data sets.**
 
 
 
@@ -67,9 +95,9 @@ Multistat has a wealth of configurable options.  just about everything displayed
 
 * Optional Left & Right value axes display (that is, upper & lower axes when in horizontal display mode)
 
-* Adjustable label margin size
+* Adjustable label margin size override
 
-* Overridable Min, Max and Baseline values (See below for discussion on baselines)
+* Min, Max and Baseline values (See below for discussion on baselines)
 
 * Optional High and Low value alarm limits and indicator lines
 
@@ -93,7 +121,7 @@ The Grafana-standard Metrics tab allows the user to specify a query, to be issue
 This area is under continued active development.  Currently, Multistat only supports **Table** data queries.  Each row returned will be displayed as a bar, auto-sized to use the available space.  The panel does not provide scroll bars, so any query returning more rows than can comfortably fit in the allotted panel area will be unreadable. 
 
 
-**Note - getting appropriately formatted data can be challenging, especially while becoming familiar with all the options offered by Multistat.  For this end - and for general purpose Grafana plugin testing - I've created a simple data source working in cojunction with the standard SimpleJSON datasource to import simple CSV files which can be easily edited to generate any kind of table or time series data sets.  See here for details, including set up instructions : https://github.com/michaeldmoore/CSVServer **
+*Note - getting appropriately formatted data can be challenging, especially while becoming familiar with all the options offered by Multistat.  For this end - and for general purpose Grafana plugin testing - I've created a simple NodeJS data source called **CSVServer**,  working in conjunction with the standard **SimpleJSON** datasource to import simple CSV files which can be easily edited to generate any kind of table or time series data sets.  See here for details, including set up instructions : https://github.com/michaeldmoore/CSVServer* 
 
 
 **Table Queries**
@@ -110,11 +138,11 @@ If no query is defined, or the data source is unavailable, Multistat displays a 
 
 **Queries *should* return just one value per label**
 
-Multistat can only display a single bar for each label.  Ideally, query results *should be written* to return a single value per label.  When this is not possible, and the query returns multiple values per label, Multistat uses an aggregation operator to select one of these (first, last, mean, min or max).  *one more - all - will eliminate the aggregator altogether,  This can create confusing displays as multiple values appear overlying the position of such bars.  You have been warned.  For efficiency though, it is much better to write a query that only returns the required data.
+Multistat can only display a single bar for each label.  Ideally, query results *should be written* to return a single value per label.  When this is not possible, and the query returns multiple values per label, Multistat uses an aggregation operator to select one of these (first, last, mean, min or max).  *one more - all - will eliminate the aggregator altogether,  Be careful - This can create confusing displays as multiple values appear overlying the position of such bars.  **You have been warned.**  For efficiency though, it is much better to write a query that only returns the required data.
 
 
 
-For this discussion, I created a test data set in a CSV file (demo.csv) distributed with the CSVServer add-on to SinpleJSON data source.  I highly recommend installing this so you can follow along and see how the various configuration options work before worrying about live real-world data sets.  The demo CSV file contains the following data:
+For this discussion, I created a test data set in a CSV file (demo.csv) distributed with the **CSVServer** add-on to SinpleJSON data source.  I highly recommend installing this so you can follow along and see how the various configuration options work before worrying about live real-world data sets.  The demo CSV file contains the following data:
 
 ```
 time,sensor,area,quantity
@@ -147,13 +175,13 @@ time,sensor,area,quantity
 Note, sensor AAA in this data set has multiple values, each a few hours apart.  All the other sensors have a single row - this will allow the aggregation feature to be demonstrated later in this note. Each row nthis data set includes a date/time, a label and a value, plus a region field (that will be useful in grouping).   The field names can be anything; everything is defined in the configuration tabs. Additional fields, if any, will appear in the tool-tip pop-up display, if enabled.
 
 
-As you can see, multistat is configured using a number of option tabs.  Let's examine each of these in sequence.
+As you can see, Multistat is configured using a number of option tabs.  Let's examine each of these in sequence.
 
 First, the data source and query is setup using the standard **Metrics** tab
 
 ![image](https://user-images.githubusercontent.com/3724718/50192332-5b182f00-02f7-11e9-805c-2137c832d7f6.png)
 
-Note the data set format is set to 'Table' (Multistat does not support time series data sets)
+Note the data set format is set to '**Table**' (Multistat does not support time series data sets)
 
 Note: The Query Inspector built into Grafana is a terrific resource for figuring out source data problems.  Here's what we get from my demo query:
 
@@ -164,61 +192,93 @@ etc.
 
 The data is mapped using the **Columns** configuration tab:
 
-![image](https://user-images.githubusercontent.com/3724718/50192572-733c7e00-02f8-11e9-8e92-1e1456567dea.png)
+![image](https://user-images.githubusercontent.com/3724718/51728249-2ce3e880-2035-11e9-8ca6-5c51b97710c1.png)
 
-Here, you can see how the 4 key fields in the query result set get mapped to the Multistat fields.  In this case, the label is associated with the query field 'sensor', Value as 'value', with 2 decimal places. Note too, that the bars are set to be sorted in ascending 'value' order.
 
-The DateTime col (optional) is mapped here to the 'date' field.  When set, the TZ Offset Hrs setting can be used to offset the display value to account for time-zone differences between the data source and the client.
 
-The 'Show as-of Date' setting controls whether or not the last update time is to be displayed in the top right of the panel.  When set, this displays the maximum datetime value in the query record set, which can be useful in process monitoring applications.  The format field controls how this time is displayed (see documentation for [moment.js](https://momentjs.com/guides/#/parsing/known-formats/) for formatting details), or us the reserved keyword 'ELAPSED' to display as a natural language string, relative to the current time.   Help is available, if needed.
+Here, you can see how the 4 key fields in the query result set get mapped to the Multistat fields.  In this case, the **label** is associated with the query field 'sensor', **Value** as 'quantity', with 1 decimal place and no scaling (**scale factor = 1**).  Note too that the default **aggregation** parameter of 'Last' is selected.  This dataset contains multiple rows for some labels - this setting automatically selects the last (latest) value for each sensor. 
+
+Note too, that the bars are set to be sorted in ascending 'sensor' name.
+
+The data is set to **group** on the 'area' field - this will create 3 sub-charts, for the East, North and West areas.
+
+The **DateTime col** (optional) is mapped here to the 'time' field.  When set, the TZ Offset Hrs setting can be used to offset the display value to account for time-zone differences between the data source and the client. *(Note - this time offset features duplicates something similar built into recent versions of Grafana.  This feature may be removed in future versions of Multistat)*
+
+ 
+The '**Show as-of Date**' setting controls whether or not the last update time is to be displayed in the top right of the panel.  **Most users can ignore this setting**. When it is set, the maximum datetime value in the query record set is displayed alongside the panel title.  This can be useful in process monitoring applications to provide evidence that the data is being updated in a timely manner etc.  The format field controls how this time is displayed (see documentation for [moment.js](https://momentjs.com/guides/#/parsing/known-formats/) for formatting details), or use the reserved keyword 'ELAPSED' to display as a natural language string, relative to the current time.   Help is available, if needed.
+
 
 
 
 The **Layout** tab
 
-![image](https://user-images.githubusercontent.com/3724718/50192633-ba2a7380-02f8-11e9-8e61-4e29cd2de49f.png)
-This is made up of two sections - Layout and Options.
+![image](https://user-images.githubusercontent.com/3724718/51728892-78979180-2037-11e9-8c4e-1578ca7302b5.png)
+
+The Layouts tab defines the basic settings that control how the data is arranged on the panel. 
+The Horizontal checkbox switches the bar orientation from vertical to horizontal.  As the chart(s) rotate, the axis and labels rotate with them - hence the use of neutral terms for the axis as 'High' and 'Low' rather than 'Left', 'Right', 'Top' or 'Bottom'
+
+**Label Margin** sets the area reserved for the labels can be set according to the length of the labels - or left blank, leaving the panel to calculate a reasonable value based on the actual data, orientation and chosen font size etc.   **Angle** controls the rotation angle for the label text, which can help preserve screen real-estate - particularly when long labels are present.  *Note - it is quite difficult for the control to predetermine the ideal center of rotation for these labels.  Depending on the data, this can make the charts hard to understand.  More work in future releases should improve this feature.  Still, if it helps in any specific case, feel free to use it.* 
+
+**Low Side Margin** and **High Side Margin** set the width of the two axis.  Set to 0 to hide one or both of them.
+
+**High Axis Color** and **Low Axis Color** set the colors for these axes, assuming they are visible
+
+**High Bar Color** sets the regular color of bars who's values are above the baseline (normally 0, see the Lines-And-Limits tab). **Low Bar Color** does the same for bar descending below (or to the left) of the base line.  **Bar Padding** controls the width of the gap between bars, as a percentage of the bar width
+
+**Odd Row Color** and **Even Row Color** sets the colors of the alternating background stripes.  These seem to work best when semi-transparent colors are chosen (switch the color picker to 'Custom' and slide the transparency control to the left) 
+
+![image](https://user-images.githubusercontent.com/3724718/51762923-b2e44b80-2096-11e9-821e-b4a1274e0b67.png)
+
+
+The **Grouping** tab
+![image](https://user-images.githubusercontent.com/3724718/51763087-3605a180-2097-11e9-982c-a33b5e0466b5.png)
+
+Provided the Group Col (see the Columns Tab, above) is mapped to a field, this tab show settings for how the groups are to be displayed.  (When Group Col is not defined,  ALL the values appear in a single group)
+
+The **Columns Per Row** setting controls how many sub-charts appear in each row.  When the data contains more groups than are defined here, additional rows of sub-charts are added, wrapping to fill the available space.  *Note: If Group Col is set to something inappropriate, such as (say) the value or datetime field, Multistat can generate a ridiculous number of sub-charts - auto-scaled to fit in the available area, resulting in an unreadable mess.  Don't panic - just choose a more meaningful grouping field, assuming your data has one.*
+
+The **Group Name Filter** field (*this is an advanced feature most users can ignore.  If in doubt, make sure this is blank.  Especially if the chart appears to be empty!).*  This field should be a regular expression string which is used to filter out non-matching group names, when needed.  
+
+Using the demo sample data, for example (which contains values for areas East, West and North), we could select just the East and West groups by using a value of 'East|West' (Note the Pipe character '|' separating a sequence of matching strings.  Regular expressions are amazingly powerful and can be much, much more complicated than this - but a simple set of pipe-delimited strings is usually enough in this application.
+
+The **Group Sort Order** field is another regular expression string, this time used to define the order the groups are presented in (reading like a book from top left, wrapping to the bottom right).  Matched group names are presented in order, followed by any remaining non-matched group names in the default (alphabetical) order.
+Left blank with our sample data, the groups will be arranged in alphabetical order - that is, East->North->West.  Setting this field to the regular expression 'West|North|East' overrides the alphabetical ordering, resulting in a more map-meaningful displays with the West group on the left and the East group on the right *(apologies to users in the Southern Hemisphere who might have a different perspective...)*
+![image](https://user-images.githubusercontent.com/3724718/51764732-841ca400-209b-11e9-8a0f-3527750d97fe.png)
+*Notice how Multistat intelligently adjusts the height and width of the sub-charts to keep all bars the same width, regardless of the number of bars in each group.  When more than one row of sub-charts is generated, Multistat inserts blank/dummy rows in groups needed to keep the groups aligned properly.*
+![image](https://user-images.githubusercontent.com/3724718/51766163-81bc4900-209f-11e9-945c-afe3bf001a88.png)
 
 
 
-Layouts define the setting controlling how the data is arranged on the panel.  In horizontal mode only, a group col setting can be used to define a field that displays multiple sets, or groups, of elements.  In this demo case, we're grouping on the 'region' field, which takes on 5 different values (East, West, North, South and Central).
+**Show Group Labels** controls whether or not each group is topped with it's name, along with the **Font Size** and **Color** settings 
 
-When grouping, by default, the groups are arranged in alphabetical order.  (See here, Central->East->North->South->West)
+The **Options** Tab
+![image](https://user-images.githubusercontent.com/3724718/51764990-35bbd500-209c-11e9-9184-669e77eefddb.png)
 
-![image](https://user-images.githubusercontent.com/3724718/39014353-f93f1894-43ce-11e8-8ad1-d10906f3ee3b.png)
+**Show Values** controls whether or not to display the values in text (the bar size always represents the value and may be enough for users without a readable text version).  When checked, the **Font Size** and **Color** can also be defined.  The **Position** setting controls where the value text will appear - either at the extreme (end) of the relevant bars, at the base of the bars or in a reserved area above (or to the right of) the chart.  Choose what makes sense in your application.
+![image](https://user-images.githubusercontent.com/3724718/51769330-6efa4200-20a8-11e9-90cf-c1a2397b4f89.png)
+*The three value positions, Bar Base, Bar End and Top*
 
+**Show Group Labels** and **Show Labels** - as before (Show Group Labels also appeared on the Grouping tab, for convenience).. Set Font Size and color etc.
+The **Out Of Range** label color override is an advanced feature for cases where a specific axis Max and/or Min setting is in place (see the **Lines-And-Limits** tab below) and a bar is outside one of these limits.  This color overrides the standard label color for labels where this occurs. *(This is useful, for example where a non-working sensor, for example, generates a wildly out of range value)*
+**Label Margin**, **Angle**, **Low Side Margin** and **High Side Margin** - these too are duplicates of controls on the Layout tab, again, for convenience.
 
-
-This default can be overridden by setting the Group Sort Order string - a comma delimited sequence of group names, like "North,East,West,South,Central"  that make it North->East->West->South->Central
-
-![image](https://user-images.githubusercontent.com/3724718/39014554-86a11ebc-43cf-11e8-997b-a0d3bab94f74.png)
-
-
-
-
-
-The margin settings control how much space needs to be reserved, depending on the actual name of the labels etc.  Bar colors (plus others such as the axis labels and ticks and the odd/even bar background) are defined in this section.  Depending on the application, we can set different colors for positive and negative values and also control the bar-to-gap padding percentage.
-
-Font size and color is selectable for the labels and values too, plus a switch to enable mouse hover tool-tips, plus (in the event that a datetime field has been set in the Columns tab), the format used to display any datetime values in the query result set.
-
-
+**Tooltips** enables the mouse over info balloons, listing all the fields corresponding to the identified bar.  **Date Format** allows the setting formatting characters for the field identified as the datatime field (if any)
 
 The **Lines and Limits** tab
+![image](https://user-images.githubusercontent.com/3724718/51770407-4758a900-20ab-11e9-87b4-f7c69a679d6a.png)
 
-![image](https://user-images.githubusercontent.com/3724718/50192702-f958c480-02f8-11e9-8700-d180077d99d7.png)
+**Max Value** and **Min Value** These overrides default auto-scaling axis extents, and if the **Show Line** checkbox is set, control the color of the resulting reference lines.
+
+The **BaseLine** setting (default 0) differentiates between positive and negative values, each potentially having a different color.  This can be useful when monitoring deviations from some non-zero set point.  For example, Electrical generators (in North America, at least) operate at very close to 60Hz, with normally, only small deviations.  Setting a baseline at 60.0 and a Max/Min to (say) 60.10 and 59.90 would make an easily understood display in such an application.
+
+Values above the base line are generally draw using the High Bar color (see the Layout Tab).  Values below in the Low Bar color.
+
+**High Limit** and **Low Limit**, if set define additional 'warning' references.  Corresponding reference lines and colors are set as before.   In addition, the **Color Bar** option overrides the regular above or below base line bar colors for bars outside these warning levels.  Optionally, these can be set to 'flash' - transitioning from one color to another at a controllable rate (period).  *The period is measured in mS, Values between 200mS and 400mS seem to work best.*
 
 
-On this tab, you can override the auto-defaults to control upper and lower extents (these automatically extend when the values displayed fall outside these settings), plus optionally display these values as colored reference lines.
+As with all these settings, the user can display a reference line on the chart and set the colors to whatever makes sense in the application.   In the frequency example above, there might be high and Low Limits set at (say) 60.05 and 95.95 respectively.
 
-The Base Line setting (default 0) differentiates between positive and negative values, each potentially having a different color.  This can be useful when monitoring deviations from some non-zero set point.  For example, Electrical generators (in North America, at least) operate at very close to 60Hz, with normally, only small deviations.  Setting a baseline at 60.0 and a Max/Min to (say) 60.10 and 59.90 would make an easily understood display in such an application.
-
-
-
-**Threshold limits**
-
-In addition, this tab allow the user to specify high and low Limit values.  Bars with values outside these limits can be colored differently, to indicate an exceedance.  As with all there settings, the user can display a reference line on the chart and set the colors to whatever makes sense in the application.   In the frequency example above, there might be high and Low Limits set at (say) 60.05 and 95.95 respectively.
-
-Additionally, exceedances can be configured to 'flash' - toggling between two colors and some pre-defined rate.
+For example...
 
 ![image](https://user-images.githubusercontent.com/3724718/38963541-547a9560-4327-11e8-912a-5fdca266fd5f.png)
 
@@ -242,9 +302,8 @@ Putting it all together, the displays can make a truly unforgettable and un-igno
 
 **Known Issues**
 
- This is a version 1.2.0 release, as such there may be a few known issues that need to be added or fixed.
-
- * Value label positioning.  position labels intelligently as opposed to slightly below the top of each bar.
+ This is a version 1.0.1 release, as such there may be a few known issues that need to be added or fixed.
+.
 
 
 

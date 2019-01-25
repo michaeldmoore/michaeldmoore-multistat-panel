@@ -6,7 +6,9 @@
 
 
 
-This panel was developed for as a table-like panel for presenting bar charts, providing some useful additions particularly suited to process control/monitoring dashboards.  SingleStat displays a single metric from time series data set, with optional threshold-related coloring etc.  Multistat builds on this base, displaying query data in the form of a bar graph  with adding optional upper and lower hard limits.  Plus a lot, lot more....
+This panel was developed for as a table-like panel for presenting bar charts, providing some useful additions particularly suited to process control/monitoring dashboards.  As such, Multistat displays never use scroll-bars (scroll bars are useless in monitoring dashboard).  
+
+SingleStat displays a single metric from time series data set, with optional threshold-related coloring etc.  Multistat builds on this base, but with multi-column table data sets, displaying query data in the form of bar graphs with optional upper and lower hard limits.  Plus a lot, lot more....
 
 
 
@@ -24,24 +26,50 @@ Horizontally...
 
 
 
-Or as horizontal groups (based on the data query)
-
-![image](https://user-images.githubusercontent.com/3724718/38958223-7b5a3106-4311-11e8-9172-a4786728a236.png)
-
+Or grouped on an attribute, again vertically
+![image](https://user-images.githubusercontent.com/3724718/51725178-7b3dbb00-2026-11e9-861f-d800897d17d3.png)
 
 
-Multistat takes it's data from a table query - returning, at minimum, 2 fields (names can be anything)
+... or horizontally
+![image](https://user-images.githubusercontent.com/3724718/51725236-c6f06480-2026-11e9-84f0-4d2f75a69d66.png)
+*(Note these last two examples are single Multistat panels.  A single set of configuration settings is automatically applied to each of the grouped sub-displays)*
 
-* Label
-* Value
-* Timestamp (optional)
-* Group By (optional, horizontal mode only)
+And (just about) *everything* is configurable...
+Max, Min, auto-scaling, base-lines, colors, rows and columns - (just about) everything...
+
+High and Low limits too, with optional bar coloring
+![image](https://user-images.githubusercontent.com/3724718/51725465-f3f14700-2027-11e9-8d61-592f644a5c20.png)
+
+All this, and optional flashing too when bars surpass these limits.
+
+**Data**
+
+Multistat accepts Grafana **table** formatted data.  There is **no support for time series** formatted data - *at least not in the current version*.
+
+As a minimum, Multistat requires table data with at least two fields per row - one, a label (string) and the other, a value (numeric).  Note though, that these fields can be called anything.  Multistat makes no assumptions regarding the names of the table data field it handles.
+
+Each distinct label will be displayed as a bar - the length being determined by it's numerical value.
+
+takes it's data from a table query - returning, at minimum, 2 fields (names can be anything)
 
 
+A **timestamp** field can be useful too - this can be in any commonly understood format (Multistat uses the popular **Moment.js** java script library for manipulating time/date strings - see https://momentjs.com/docs/#/displaying/ for details).  
 
+A **grouping** field can be useful too, to organize large data sets into more meaningful sections.  When grouping, the number of columns can be pre-configured, along with handy mechanisms for filtering and arranging the order each group is presented in.
 
-These queries should return a relatively small number of rows - Multistat does not use scroll bars - all bars are auto-scaled to fit the display window (scroll bars are useless in a monitoring dashboard).  
-*For maximum efficiency, each label should appear once only in the data set - Mutilstat has an option to aggregate values on a per-label basis - say to select the latest timestamped value (or the first, or mean etc.) - at the expense of CPU and network traffic.
+Any additional fields are retained and presented in optional tool-tip balloons.  Again, (just about) everything is configurable here...
+![image](https://user-images.githubusercontent.com/3724718/51726418-e8544f00-202c-11e9-89e8-2cce5c7bfb2a.png)
+
+**Duplicate labels in table data.**
+Each distinct label in the input data results in a distinct bar in Multistat.  Ideally, table data should be created by queries that return distinct data sets - that is, sets in which each label is presented in a single row.  When data sets are processed with multiple rows for a given label, Multistat needs to know which value to use (and hence, which values to ignore).  A configurable aggregation parameter tells Multistat how to handle this.  'Last' (and 'First') select the last (or first) row in the data for any given label, throwing out all the others.    The optional date/timestamp field helps too by presorting the data table before selecting the aggregation function.  The tool-tip then shows the set of fields for the selected data row, as expected.
+
+Setting the aggregation parameter to 'Max' or 'Min' works in a similar way, selecting the row for each label with the corresponding value - and secondly using the last or latest value in the event that there is a tie in the value.
+ 
+Setting the aggregation parameter to 'Mean' results in the arithmetic mean of all duplicate values to be used, as should be expected.  *A side effect of this though is that the fields presented in the tool-tip balloon in this case represent just one of the rows - actually the 'last' row, the value of which will not generally match the displayed 'mean' value for that label.*
+
+**Data set size - a performance consideration**
+As mentioned before, ideally the data set should contain a single row for each distinct label. This offloads the maximum amount of filtering and aggregation etc., to the database which is generally much more efficient for these tasks.
+In the event that the database cannot pre-filter the data in this way, the aggregation setting can still generate the required display, but at the cost of increased CPU and network load.  Generally, this is not significant - Multistat can easily handle queries with a few hundred labels, each with a hundred or more rows.  Note though that huge data sets - data sets with multiple megabytes of data etc. - these will negatively impact performance.  Particularly as refresh rates shorten.  In extreme cases, this can even make the browser become unresponsive.  **Beware of enormous data sets.**
 
 
 
@@ -67,9 +95,9 @@ Multistat has a wealth of configurable options.  just about everything displayed
 
 * Optional Left & Right value axes display (that is, upper & lower axes when in horizontal display mode)
 
-* Adjustable label margin size
+* Adjustable label margin size override
 
-* Overridable Min, Max and Baseline values (See below for discussion on baselines)
+* Min, Max and Baseline values (See below for discussion on baselines)
 
 * Optional High and Low value alarm limits and indicator lines
 
@@ -93,7 +121,7 @@ The Grafana-standard Metrics tab allows the user to specify a query, to be issue
 This area is under continued active development.  Currently, Multistat only supports **Table** data queries.  Each row returned will be displayed as a bar, auto-sized to use the available space.  The panel does not provide scroll bars, so any query returning more rows than can comfortably fit in the allotted panel area will be unreadable. 
 
 
-**Note - getting appropriately formatted data can be challenging, especially while becoming familiar with all the options offered by Multistat.  For this end - and for general purpose Grafana plugin testing - I've created a simple data source working in cojunction with the standard SimpleJSON datasource to import simple CSV files which can be easily edited to generate any kind of table or time series data sets.  See here for details, including set up instructions : https://github.com/michaeldmoore/CSVServer **
+*Note - getting appropriately formatted data can be challenging, especially while becoming familiar with all the options offered by Multistat.  For this end - and for general purpose Grafana plugin testing - I've created a simple NodeJS data source called **CSVServer**,  working in conjunction with the standard **SimpleJSON** datasource to import simple CSV files which can be easily edited to generate any kind of table or time series data sets.  See here for details, including set up instructions : https://github.com/michaeldmoore/CSVServer* 
 
 
 **Table Queries**
@@ -110,11 +138,11 @@ If no query is defined, or the data source is unavailable, Multistat displays a 
 
 **Queries *should* return just one value per label**
 
-Multistat can only display a single bar for each label.  Ideally, query results *should be written* to return a single value per label.  When this is not possible, and the query returns multiple values per label, Multistat uses an aggregation operator to select one of these (first, last, mean, min or max).  *one more - all - will eliminate the aggregator altogether,  This can create confusing displays as multiple values appear overlying the position of such bars.  You have been warned.  For efficiency though, it is much better to write a query that only returns the required data.
+Multistat can only display a single bar for each label.  Ideally, query results *should be written* to return a single value per label.  When this is not possible, and the query returns multiple values per label, Multistat uses an aggregation operator to select one of these (first, last, mean, min or max).  *one more - all - will eliminate the aggregator altogether,  Be careful - This can create confusing displays as multiple values appear overlying the position of such bars.  **You have been warned.**  For efficiency though, it is much better to write a query that only returns the required data.
 
 
 
-For this discussion, I created a test data set in a CSV file (demo.csv) distributed with the CSVServer add-on to SinpleJSON data source.  I highly recommend installing this so you can follow along and see how the various configuration options work before worrying about live real-world data sets.  The demo CSV file contains the following data:
+For this discussion, I created a test data set in a CSV file (demo.csv) distributed with the **CSVServer** add-on to SinpleJSON data source.  I highly recommend installing this so you can follow along and see how the various configuration options work before worrying about live real-world data sets.  The demo CSV file contains the following data:
 
 ```
 time,sensor,area,quantity
@@ -147,13 +175,13 @@ time,sensor,area,quantity
 Note, sensor AAA in this data set has multiple values, each a few hours apart.  All the other sensors have a single row - this will allow the aggregation feature to be demonstrated later in this note. Each row nthis data set includes a date/time, a label and a value, plus a region field (that will be useful in grouping).   The field names can be anything; everything is defined in the configuration tabs. Additional fields, if any, will appear in the tool-tip pop-up display, if enabled.
 
 
-As you can see, multistat is configured using a number of option tabs.  Let's examine each of these in sequence.
+As you can see, Multistat is configured using a number of option tabs.  Let's examine each of these in sequence.
 
 First, the data source and query is setup using the standard **Metrics** tab
 
 ![image](https://user-images.githubusercontent.com/3724718/50192332-5b182f00-02f7-11e9-805c-2137c832d7f6.png)
 
-Note the data set format is set to 'Table' (Multistat does not support time series data sets)
+Note the data set format is set to '**Table**' (Multistat does not support time series data sets)
 
 Note: The Query Inspector built into Grafana is a terrific resource for figuring out source data problems.  Here's what we get from my demo query:
 
@@ -164,24 +192,31 @@ etc.
 
 The data is mapped using the **Columns** configuration tab:
 
-![image](https://user-images.githubusercontent.com/3724718/50192572-733c7e00-02f8-11e9-8e92-1e1456567dea.png)
+![image](https://user-images.githubusercontent.com/3724718/51728249-2ce3e880-2035-11e9-8ca6-5c51b97710c1.png)
 
-Here, you can see how the 4 key fields in the query result set get mapped to the Multistat fields.  In this case, the label is associated with the query field 'sensor', Value as 'value', with 2 decimal places. Note too, that the bars are set to be sorted in ascending 'value' order.
 
-The DateTime col (optional) is mapped here to the 'date' field.  When set, the TZ Offset Hrs setting can be used to offset the display value to account for time-zone differences between the data source and the client.
 
-The 'Show as-of Date' setting controls whether or not the last update time is to be displayed in the top right of the panel.  When set, this displays the maximum datetime value in the query record set, which can be useful in process monitoring applications.  The format field controls how this time is displayed (see documentation for [moment.js](https://momentjs.com/guides/#/parsing/known-formats/) for formatting details), or us the reserved keyword 'ELAPSED' to display as a natural language string, relative to the current time.   Help is available, if needed.
+Here, you can see how the 4 key fields in the query result set get mapped to the Multistat fields.  In this case, the **label** is associated with the query field 'sensor', **Value** as 'quantity', with 1 decimal place and no scaling (**scale factor = 1**).  Note too that the default **aggregation** parameter of 'Last' is selected.  This dataset contains multiple rows for some labels - this setting automatically selects the last (latest) value for each sensor. 
+
+Note too, that the bars are set to be sorted in ascending 'sensor' name.
+
+The data is set to **group** on the 'area' field - this will create 3 sub-charts, for the East, North and West areas.
+
+The **DateTime col** (optional) is mapped here to the 'time' field.  When set, the TZ Offset Hrs setting can be used to offset the display value to account for time-zone differences between the data source and the client. *(Note - this time offset features duplicates something similar built into recent versions of Grafana.  This feature may be removed in future versions of Multistat)*
+
+ 
+The '**Show as-of Date**' setting controls whether or not the last update time is to be displayed in the top right of the panel.  **Most users can ignore this setting**. When it is set, the maximum datetime value in the query record set is displayed alongside the panel title.  This can be useful in process monitoring applications to provide evidence that the data is being updated in a timely manner etc.  The format field controls how this time is displayed (see documentation for [moment.js](https://momentjs.com/guides/#/parsing/known-formats/) for formatting details), or use the reserved keyword 'ELAPSED' to display as a natural language string, relative to the current time.   Help is available, if needed.
+
 
 
 
 The **Layout** tab
 
-![image](https://user-images.githubusercontent.com/3724718/50192633-ba2a7380-02f8-11e9-8e61-4e29cd2de49f.png)
-This is made up of two sections - Layout and Options.
+![image](https://user-images.githubusercontent.com/3724718/51728892-78979180-2037-11e9-8c4e-1578ca7302b5.png)
 
+The Layouts tab defines the basic settings that control how the data is arranged on the panel. 
 
-
-Layouts define the setting controlling how the data is arranged on the panel.  In horizontal mode only, a group col setting can be used to define a field that displays multiple sets, or groups, of elements.  In this demo case, we're grouping on the 'region' field, which takes on 5 different values (East, West, North, South and Central).
+ A group col setting can be used to define a field that displays multiple sets, or groups, of elements.  In this demo case, we're grouping on the 'region' field, which takes on 5 different values (East, West, North, South and Central).
 
 When grouping, by default, the groups are arranged in alphabetical order.  (See here, Central->East->North->South->West)
 
