@@ -244,13 +244,15 @@ Using the demo sample data, for example (which contains values for areas East, W
 The **Group Sort Order** field is another regular expression string, this time used to define the order the groups are presented in (reading like a book from top left, wrapping to the bottom right).  Matched group names are presented in order, followed by any remaining non-matched group names in the default (alphabetical) order.
 Left blank with our sample data, the groups will be arranged in alphabetical order - that is, East->North->West.  Setting this field to the regular expression 'West|North|East' overrides the alphabetical ordering, resulting in a more map-meaningful displays with the West group on the left and the East group on the right *(apologies to users in the Southern Hemisphere who might have a different perspective...)*
 ![image](https://user-images.githubusercontent.com/3724718/51764732-841ca400-209b-11e9-8a0f-3527750d97fe.png)
+Notice how Multistat intelligently adjusts the height and width of the sub-charts to keep all bars the same width while 
+
 
 **Show Group Labels** controls whether or not each group is topped with it's name, along with the **Font Size** and **Color** settings 
 
 The **Options** Tab
 ![image](https://user-images.githubusercontent.com/3724718/51764990-35bbd500-209c-11e9-9184-669e77eefddb.png)
 
-**Show Values** controls whether or not to display the values in text (the bar size always represents the value and may be enough for users without a readable text version).  When checked, the **Font Size** and **Color** can also be defined.  The Position setting controls where the value text will appear - either at the extreme (end) of the relevant bars, at the base of the bars or in a reserved area above (or to the right of) the chart.  Choose what makes
+**Show Values** controls whether or not to display the values in text (the bar size always represents the value and may be enough for users without a readable text version).  When checked, the **Font Size** and **Color** can also be defined.  The **Position** setting controls where the value text will appear - either at the extreme (end) of the relevant bars, at the base of the bars or in a reserved area above (or to the right of) the chart.  Choose what makes sense in your application.
 
 The margin settings control how much space needs to be reserved, depending on the actual name of the labels etc.  Bar colors (plus others such as the axis labels and ticks and the odd/even bar background) are defined in this section.  Depending on the application, we can set different colors for positive and negative values and also control the bar-to-gap padding percentage.
 
@@ -308,9 +310,9 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbODAwOTM2MzY2LDE5MTIyNjY5NDIsLTg5NT
-EzMjI5OCwxMjg0OTA1NjMwLDU3MDYwMzU3NywzOTgxMjMyNTcs
-LTEwNDIyNTg0NCwxNDIyMjQxMDExLDE4MTI0Nzk4NzMsLTI2ND
-EwNjA3MSw4MTE2MTUwODYsMTU5NzY0MDA1NywtMTA1NzE5Njgz
-NV19
+eyJoaXN0b3J5IjpbMTQwMzgwMzg2NywxOTEyMjY2OTQyLC04OT
+UxMzIyOTgsMTI4NDkwNTYzMCw1NzA2MDM1NzcsMzk4MTIzMjU3
+LC0xMDQyMjU4NDQsMTQyMjI0MTAxMSwxODEyNDc5ODczLC0yNj
+QxMDYwNzEsODExNjE1MDg2LDE1OTc2NDAwNTcsLTEwNTcxOTY4
+MzVdfQ==
 -->
