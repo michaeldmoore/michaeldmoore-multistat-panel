@@ -255,6 +255,8 @@ The **Options** Tab
 ![image](https://user-images.githubusercontent.com/3724718/51764990-35bbd500-209c-11e9-9184-669e77eefddb.png)
 
 **Show Values** controls whether or not to display the values in text (the bar size always represents the value and may be enough for users without a readable text version).  When checked, the **Font Size** and **Color** can also be defined.  The **Position** setting controls where the value text will appear - either at the extreme (end) of the relevant bars, at the base of the bars or in a reserved area above (or to the right of) the chart.  Choose what makes sense in your application.
+![image](https://user-images.githubusercontent.com/3724718/51769330-6efa4200-20a8-11e9-90cf-c1a2397b4f89.png)
+*The three value positions, Bar Base, Bar End and Top*
 
 The margin settings control how much space needs to be reserved, depending on the actual name of the labels etc.  Bar colors (plus others such as the axis labels and ticks and the odd/even bar background) are defined in this section.  Depending on the application, we can set different colors for positive and negative values and also control the bar-to-gap padding percentage.
 
@@ -312,9 +314,9 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTIwMDU0Njg5LDIzODQxOTczMCwxOTEyMj
-Y2OTQyLC04OTUxMzIyOTgsMTI4NDkwNTYzMCw1NzA2MDM1Nzcs
-Mzk4MTIzMjU3LC0xMDQyMjU4NDQsMTQyMjI0MTAxMSwxODEyND
-c5ODczLC0yNjQxMDYwNzEsODExNjE1MDg2LDE1OTc2NDAwNTcs
-LTEwNTcxOTY4MzVdfQ==
+eyJoaXN0b3J5IjpbLTM0NjA3OTc3LDEyMDA1NDY4OSwyMzg0MT
+k3MzAsMTkxMjI2Njk0MiwtODk1MTMyMjk4LDEyODQ5MDU2MzAs
+NTcwNjAzNTc3LDM5ODEyMzI1NywtMTA0MjI1ODQ0LDE0MjIyND
+EwMTEsMTgxMjQ3OTg3MywtMjY0MTA2MDcxLDgxMTYxNTA4Niwx
+NTk3NjQwMDU3LC0xMDU3MTk2ODM1XX0=
 -->
