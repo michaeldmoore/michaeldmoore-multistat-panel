@@ -201,8 +201,10 @@ Here, you can see how the 4 key fields in the query result set get mapped to the
 The DateTime col (optional) is mapped here to the 'time' field.  When set, the TZ Offset Hrs setting can be used to offset the display value to account for time-zone differences between the data source and the client. *(Note - this time offset features duplicates something similar built into recent versions of Grafana.  This feature may be removed in future versions of Multistat)*
 
 The optional Group col is set to the data field 'area' - resulting in 3 sub-charts (1 each for North, East and West)
-This sample data set contains duplicate rows for some labels - the default setting of the aggregation parameter selects the latest value for each distinc
-The 'Show as-of Date' setting controls whether or not the last update time is to be displayed in the top right of the panel.  When set, this displays the maximum datetime value in the query record set, which can be useful in process monitoring applications.  The format field controls how this time is displayed (see documentation for [moment.js](https://momentjs.com/guides/#/parsing/known-formats/) for formatting details), or us the reserved keyword 'ELAPSED' to display as a natural language string, relative to the current time.   Help is available, if needed.
+
+This sample data set contains duplicate rows for some labels - the default setting of the aggregation parameter selects the latest value for each distinct label (sensor).
+
+*The 'Show as-of Date' setting controls whether or not the last update time is to be displayed in the top right of the panel.  When set, this displays the maximum datetime value in the query record set, which can be useful in process monitoring applications.  The format field controls how this time is displayed (see documentation for [moment.js](https://momentjs.com/guides/#/parsing/known-formats/) for formatting details), or us the reserved keyword 'ELAPSED' to display as a natural language string, relative to the current time.   Help is available, if needed.*
 
 
 
@@ -285,7 +287,7 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTI0NDM4MDIzNywtMTA0MjI1ODQ0LDE0Mj
-IyNDEwMTEsMTgxMjQ3OTg3MywtMjY0MTA2MDcxLDgxMTYxNTA4
-NiwxNTk3NjQwMDU3LC0xMDU3MTk2ODM1XX0=
+eyJoaXN0b3J5IjpbOTc2OTk3NTYsLTEwNDIyNTg0NCwxNDIyMj
+QxMDExLDE4MTI0Nzk4NzMsLTI2NDEwNjA3MSw4MTE2MTUwODYs
+MTU5NzY0MDA1NywtMTA1NzE5NjgzNV19
 -->
