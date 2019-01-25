@@ -204,7 +204,7 @@ The optional Group col is set to the data field 'area' - resulting in 3 sub-char
 
 This sample data set contains duplicate rows for some labels - the default setting of the aggregation parameter selects the latest value for each distinct label (sensor).
 
-*The 'Show as-of Date' setting controls whether or not the last update time is to be displayed in the top right of the panel.  When set, this displays the maximum datetime value in the query record set, which can be useful in process monitoring applications.  The format field controls how this time is displayed (see documentation for [moment.js](https://momentjs.com/guides/#/parsing/known-formats/) for formatting details), or us the reserved keyword 'ELAPSED' to display as a natural language string, relative to the current time.   Help is available, if needed.*
+The 'Show as-of Date' setting controls whether or not the last update time is to be displayed in the top right of the panel.  When set, this displays the maximum datetime value in the query record set, which can be useful in process monitoring applications.  The format field controls how this time is displayed (see documentation for [moment.js](https://momentjs.com/guides/#/parsing/known-formats/) for formatting details), or use the reserved keyword 'ELAPSED' to display as a natural language string, relative to the current time.   Help is available, if needed.
 
 
 
@@ -287,7 +287,7 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbOTc2OTk3NTYsLTEwNDIyNTg0NCwxNDIyMj
-QxMDExLDE4MTI0Nzk4NzMsLTI2NDEwNjA3MSw4MTE2MTUwODYs
-MTU5NzY0MDA1NywtMTA1NzE5NjgzNV19
+eyJoaXN0b3J5IjpbMTUwNjE0MTQzMywtMTA0MjI1ODQ0LDE0Mj
+IyNDEwMTEsMTgxMjQ3OTg3MywtMjY0MTA2MDcxLDgxMTYxNTA4
+NiwxNTk3NjQwMDU3LC0xMDU3MTk2ODM1XX0=
 -->
