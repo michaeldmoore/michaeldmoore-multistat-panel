@@ -217,7 +217,7 @@ The **Layout** tab
 The Layouts tab defines the basic settings that control how the data is arranged on the panel. 
 The Horizontal checkbox switches the bar orientation from vertical to horizontal.  As the chart(s) rotate, the axis and labels rotate with them - hence the use of neutral terms for the axis as 'High' and 'Low' rather than 'Left', 'Right', 'Top' or 'Bottom'
 
-**Label Margin** sets the area reserved for the labels can be set according to the length of the labels - or left blank, leaving the panel to calculate a reasonable value based on the actual data, orientation and chosen font size etc.   **Angle** controls the rotation angle for the label text, which can help preserve screen real-estate - particularly when long labels are present.  Note - the point around which the text is rotated is 
+**Label Margin** sets the area reserved for the labels can be set according to the length of the labels - or left blank, leaving the panel to calculate a reasonable value based on the actual data, orientation and chosen font size etc.   **Angle** controls the rotation angle for the label text, which can help preserve screen real-estate - particularly when long labels are present.  Note - it is difficult to predetermine the best point to rotate the text around so this can sometimes around which the text is rotated can sometimes
  
 
 
@@ -293,7 +293,7 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTkzMzg5MjYyMyw1NzA2MDM1NzcsMzk4MT
+eyJoaXN0b3J5IjpbMTQwMjM0MzQ5OCw1NzA2MDM1NzcsMzk4MT
 IzMjU3LC0xMDQyMjU4NDQsMTQyMjI0MTAxMSwxODEyNDc5ODcz
 LC0yNjQxMDYwNzEsODExNjE1MDg2LDE1OTc2NDAwNTcsLTEwNT
 cxOTY4MzVdfQ==
