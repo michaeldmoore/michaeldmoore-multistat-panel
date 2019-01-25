@@ -302,7 +302,7 @@ Putting it all together, the displays can make a truly unforgettable and un-igno
 
 **Known Issues**
 
- This is a version 1.2.0 release, as such there may be a few known issues that need to be added or fixed.
+ This is a version 1.0.1 release, as such there may be a few known issues that need to be added or fixed.
 .
 
 
@@ -312,10 +312,10 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE0ODIwMTk5OTEsLTE5NDMzNDk2MDAsLT
-c0MDE4NTQ4MCwxMjAwNTQ2ODksMjM4NDE5NzMwLDE5MTIyNjY5
-NDIsLTg5NTEzMjI5OCwxMjg0OTA1NjMwLDU3MDYwMzU3NywzOT
-gxMjMyNTcsLTEwNDIyNTg0NCwxNDIyMjQxMDExLDE4MTI0Nzk4
-NzMsLTI2NDEwNjA3MSw4MTE2MTUwODYsMTU5NzY0MDA1NywtMT
-A1NzE5NjgzNV19
+eyJoaXN0b3J5IjpbLTYzMTg4MzEyLC0xOTQzMzQ5NjAwLC03ND
+AxODU0ODAsMTIwMDU0Njg5LDIzODQxOTczMCwxOTEyMjY2OTQy
+LC04OTUxMzIyOTgsMTI4NDkwNTYzMCw1NzA2MDM1NzcsMzk4MT
+IzMjU3LC0xMDQyMjU4NDQsMTQyMjI0MTAxMSwxODEyNDc5ODcz
+LC0yNjQxMDYwNzEsODExNjE1MDg2LDE1OTc2NDAwNTcsLTEwNT
+cxOTY4MzVdfQ==
 -->
