@@ -6,7 +6,9 @@
 
 
 
-This panel was developed for as a table-like panel for presenting bar charts, providing some useful additions particularly suited to process control/monitoring dashboards.  As such, Multistat displays never use scroll-barSingleStat displays a single metric from time series data set, with optional threshold-related coloring etc.  Multistat builds on this base, displaying query data in the form of a bar graph  with adding optional upper and lower hard limits.  Plus a lot, lot more....
+This panel was developed for as a table-like panel for presenting bar charts, providing some useful additions particularly suited to process control/monitoring dashboards.  As such, Multistat displays never use scroll-bars (scroll bars are useless in monitoring dashboard).  
+
+SingleStat displays a single metric from time series data set, with optional threshold-related coloring etc.  Multistat builds on this base, displaying query data in the form of a bar graph  with adding optional upper and lower hard limits.  Plus a lot, lot more....
 
 
 
@@ -280,7 +282,7 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTQ3ODE5NDk1OCwxODEyNDc5ODczLC0yNj
+eyJoaXN0b3J5IjpbMTEwMDM4NTYzOCwxODEyNDc5ODczLC0yNj
 QxMDYwNzEsODExNjE1MDg2LDE1OTc2NDAwNTcsLTEwNTcxOTY4
 MzVdfQ==
 -->
