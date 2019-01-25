@@ -31,7 +31,7 @@ Or grouped on an attribute, again vertically
 ... or horizontally
 ![image](https://user-images.githubusercontent.com/3724718/51725236-c6f06480-2026-11e9-84f0-4d2f75a69d66.png)
 
-![image](https://user-images.githubusercontent.com/3724718/38958223-7b5a3106-4311-11e8-9172-a4786728a236.png)
+
 
 
 
@@ -258,6 +258,6 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTM5NzQwODgzMCwxNTk3NjQwMDU3LC0xMD
-U3MTk2ODM1XX0=
+eyJoaXN0b3J5IjpbNzM0NDk1NzYzLDE1OTc2NDAwNTcsLTEwNT
+cxOTY4MzVdfQ==
 -->
