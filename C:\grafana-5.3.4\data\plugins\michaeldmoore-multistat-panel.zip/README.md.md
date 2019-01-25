@@ -264,7 +264,7 @@ The **Out Of Range** label color override is an advanced feature for cases where
 
 **Tooltips** enables the mouse over info balloons, listing all the fields corresponding to the identified bar.  **Date Format** allows the setting formatting characters for the field identified as the datatime field (if any)
 
-The **Lines-And-Limits** tab
+The **Lines -And-Limits** tab
 ![image](https://user-images.githubusercontent.com/3724718/51770407-4758a900-20ab-11e9-87b4-f7c69a679d6a.png)
 
 
@@ -328,9 +328,10 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE5NDMzNDk2MDAsLTc0MDE4NTQ4MCwxMj
-AwNTQ2ODksMjM4NDE5NzMwLDE5MTIyNjY5NDIsLTg5NTEzMjI5
-OCwxMjg0OTA1NjMwLDU3MDYwMzU3NywzOTgxMjMyNTcsLTEwND
-IyNTg0NCwxNDIyMjQxMDExLDE4MTI0Nzk4NzMsLTI2NDEwNjA3
-MSw4MTE2MTUwODYsMTU5NzY0MDA1NywtMTA1NzE5NjgzNV19
+eyJoaXN0b3J5IjpbLTE1NDg5MDE0MCwtMTk0MzM0OTYwMCwtNz
+QwMTg1NDgwLDEyMDA1NDY4OSwyMzg0MTk3MzAsMTkxMjI2Njk0
+MiwtODk1MTMyMjk4LDEyODQ5MDU2MzAsNTcwNjAzNTc3LDM5OD
+EyMzI1NywtMTA0MjI1ODQ0LDE0MjIyNDEwMTEsMTgxMjQ3OTg3
+MywtMjY0MTA2MDcxLDgxMTYxNTA4NiwxNTk3NjQwMDU3LC0xMD
+U3MTk2ODM1XX0=
 -->
