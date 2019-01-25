@@ -138,11 +138,11 @@ If no query is defined, or the data source is unavailable, Multistat displays a 
 
 **Queries *should* return just one value per label**
 
-Multistat can only display a single bar for each label.  Ideally, query results *should be written* to return a single value per label.  When this is not possible, and the query returns multiple values per label, Multistat uses an aggregation operator to select one of these (first, last, mean, min or max).  *one more - all - will eliminate the aggregator altogether,  This can create confusing displays as multiple values appear overlying the position of such bars.  You have been warned.  For efficiency though, it is much better to write a query that only returns the required data.
+Multistat can only display a single bar for each label.  Ideally, query results *should be written* to return a single value per label.  When this is not possible, and the query returns multiple values per label, Multistat uses an aggregation operator to select one of these (first, last, mean, min or max).  *one more - all - will eliminate the aggregator altogether,  Be careful - This can create confusing displays as multiple values appear overlying the position of such bars.  **You have been warned.**  For efficiency though, it is much better to write a query that only returns the required data.
 
 
 
-For this discussion, I created a test data set in a CSV file (demo.csv) distributed with the CSVServer add-on to SinpleJSON data source.  I highly recommend installing this so you can follow along and see how the various configuration options work before worrying about live real-world data sets.  The demo CSV file contains the following data:
+For this discussion, I created a test data set in a CSV file (demo.csv) distributed with the **CSVServer** add-on to SinpleJSON data source.  I highly recommend installing this so you can follow along and see how the various configuration options work before worrying about live real-world data sets.  The demo CSV file contains the following data:
 
 ```
 time,sensor,area,quantity
@@ -281,7 +281,7 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE4OTMzOTk5OTUsMTgxMjQ3OTg3MywtMj
-Y0MTA2MDcxLDgxMTYxNTA4NiwxNTk3NjQwMDU3LC0xMDU3MTk2
-ODM1XX0=
+eyJoaXN0b3J5IjpbMTY2NjgxODU3OSwxODEyNDc5ODczLC0yNj
+QxMDYwNzEsODExNjE1MDg2LDE1OTc2NDAwNTcsLTEwNTcxOTY4
+MzVdfQ==
 -->
