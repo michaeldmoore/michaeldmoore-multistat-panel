@@ -273,10 +273,10 @@ The **BaseLine** setting (default 0) differentiates between positive and negativ
 
 Values above the base line are generally draw using the High Bar color (see the Layout Tab).  Values below in the Low Bar color.
 
-**High Limit** and **Low Limit**, if set define additional 'warning' references.  Corresponding reference lines and colors are set as before.   In addition, the **Color Bar** option overrides the regular above or below base line bar colors for bars outside these warning levels.  Optionally, these can be set to 'flash' - transitioning from one color to another at a controllable rate (period).  The period is measured in mS, Values between 200mS and 400mS seem to work best.
+**High Limit** and **Low Limit**, if set define additional 'warning' references.  Corresponding reference lines and colors are set as before.   In addition, the **Color Bar** option overrides the regular above or below base line bar colors for bars outside these warning levels.  Optionally, these can be set to 'flash' - transitioning from one color to another at a controllable rate (period).  *The period is measured in mS, Values between 200mS and 400mS seem to work best.*
 
 
-In addition, this tab allow the user to specify high and low Limit values.  Bars with values outside these limits can be colored differently, to indicate an exceedance.  As with all there settings, the user can display a reference line on the chart and set the colors to whatever makes sense in the application.   In the frequency example above, there might be high and Low Limits set at (say) 60.05 and 95.95 respectively.
+As with all these settings, the user can display a reference line on the chart and set the colors to whatever makes sense in the application.   In the frequency example above, there might be high and Low Limits set at (say) 60.05 and 95.95 respectively.
 
 Additionally, exceedances can be configured to 'flash' - toggling between two colors and some pre-defined rate.
 
@@ -313,10 +313,10 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEyMDU4NTM2NTYsLTE5NDMzNDk2MDAsLT
-c0MDE4NTQ4MCwxMjAwNTQ2ODksMjM4NDE5NzMwLDE5MTIyNjY5
-NDIsLTg5NTEzMjI5OCwxMjg0OTA1NjMwLDU3MDYwMzU3NywzOT
-gxMjMyNTcsLTEwNDIyNTg0NCwxNDIyMjQxMDExLDE4MTI0Nzk4
-NzMsLTI2NDEwNjA3MSw4MTE2MTUwODYsMTU5NzY0MDA1NywtMT
-A1NzE5NjgzNV19
+eyJoaXN0b3J5IjpbMTU2OTE0NjIzLC0xOTQzMzQ5NjAwLC03ND
+AxODU0ODAsMTIwMDU0Njg5LDIzODQxOTczMCwxOTEyMjY2OTQy
+LC04OTUxMzIyOTgsMTI4NDkwNTYzMCw1NzA2MDM1NzcsMzk4MT
+IzMjU3LC0xMDQyMjU4NDQsMTQyMjI0MTAxMSwxODEyNDc5ODcz
+LC0yNjQxMDYwNzEsODExNjE1MDg2LDE1OTc2NDAwNTcsLTEwNT
+cxOTY4MzVdfQ==
 -->
