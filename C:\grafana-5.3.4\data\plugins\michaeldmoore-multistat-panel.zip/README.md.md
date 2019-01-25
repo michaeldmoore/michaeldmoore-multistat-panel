@@ -61,8 +61,10 @@ Any additional fields are retained and presented in optional tool-tip balloons. 
 
 **Duplicate labels in table data.**
 Each distinct label in the input data results in a distinct bar in Multistat.  Ideally, table data should be created by queries that return distinct data sets - that is, sets in which each label is presented in a single row.  When data sets are processed with multiple rows for a given label, Multistat needs to know which value to use (and hence, which values to ignore).  A configurable aggregation parameter tells Multistat how to handle this.  'Last' (and 'First') select the last (or first) row in the data for any given label, throwing out all the others.    The optional date/timestamp field helps too by presorting the data table before selecting the aggregation function.  The tool-tip then shows the set of fields for the selected data row, as expected.
-Setting the aggregation parameter to 'Max' or 'Min' works in a similar way, selecting the row for each label with the corresponding value - and secondly using the last or latest value in the  
 
+Setting the aggregation parameter to 'Max' or 'Min' works in a similar way, selecting the row for each label with the corresponding value - and secondly using the last or latest value in the event that there is a tie in the value.
+ 
+Setting the aggregation parameter to 'Mean' results in the arithmetic mean of all duplicate values to be use
 
 These queries should return a relatively small number of rows - Multistat does not use scroll bars - all bars are auto-scaled to fit the display window (scroll bars are useless in a monitoring dashboard).  
 *For maximum efficiency, each label should appear once only in the data set - Multistat has an option to aggregate values on a per-label basis - say to select the latest timestamped value (or the first, or mean etc.) - at the expense of CPU and network traffic.
@@ -277,7 +279,7 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMjAyMjY4ODk1MCwxODEyNDc5ODczLC0yNj
+eyJoaXN0b3J5IjpbMTY2OTUxNjI4OCwxODEyNDc5ODczLC0yNj
 QxMDYwNzEsODExNjE1MDg2LDE1OTc2NDAwNTcsLTEwNTcxOTY4
 MzVdfQ==
 -->
