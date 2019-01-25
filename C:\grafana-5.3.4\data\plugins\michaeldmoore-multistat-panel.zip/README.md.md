@@ -52,8 +52,9 @@ Each distinct label will be displayed as a bar - the length being determined by 
 takes it's data from a table query - returning, at minimum, 2 fields (names can be anything)
 
 
-A timestamp field can be useful too -this can be in any commonly understood format (Multistat uses the popular Moment.js javascript library for maniplating time/date strings - see https://momentjs.com/docs/#/displaying/ for details)
+A timestamp field can be useful too - this can be in any commonly understood format (Multistat uses the popular Moment.js java script library for manipulating time/date strings - see https://momentjs.com/docs/#/displaying/ for details).  
 
+A grouping field can be useful too, to organize large numbers of lables into groups
 * Label
 * Value
 * Timestamp (optional)
@@ -275,6 +276,6 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEwMTMwMjA3MzcsLTI2NDEwNjA3MSw4MT
+eyJoaXN0b3J5IjpbLTIwNzk2MzYyNzgsLTI2NDEwNjA3MSw4MT
 E2MTUwODYsMTU5NzY0MDA1NywtMTA1NzE5NjgzNV19
 -->
