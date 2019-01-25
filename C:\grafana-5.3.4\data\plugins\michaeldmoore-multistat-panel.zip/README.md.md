@@ -196,9 +196,9 @@ The data is mapped using the **Columns** configuration tab:
 
 
 
-Here, you can see how the 4 key fields in the query result set get mapped to the Multistat fields.  In this case, the label is associated with the query field 'sensor', Value as 'quantity', with 1 decimal place. Note too, that the bars are set to be sorted in ascending 'value' order.
+Here, you can see how the 4 key fields in the query result set get mapped to the Multistat fields.  In this case, the label is associated with the query field 'sensor', Value as 'quantity', with 1 decimal place. Note too, that the bars are set to be sorted in ascending 'sensor' name.
 
-The DateTime col (optional) is mapped here to the 'date' field.  When set, the TZ Offset Hrs setting can be used to offset the display value to account for time-zone differences between the data source and the client.
+The DateTime col (optional) is mapped here to the 'time' field.  When set, the TZ Offset Hrs setting can be used to offset the display value to account for time-zone differences between the data source and the client. (Note - this duplicates a feature that appears to have been added to re
 
 The 'Show as-of Date' setting controls whether or not the last update time is to be displayed in the top right of the panel.  When set, this displays the maximum datetime value in the query record set, which can be useful in process monitoring applications.  The format field controls how this time is displayed (see documentation for [moment.js](https://momentjs.com/guides/#/parsing/known-formats/) for formatting details), or us the reserved keyword 'ELAPSED' to display as a natural language string, relative to the current time.   Help is available, if needed.
 
@@ -283,7 +283,7 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTQzOTg4Mzg4LC0xMDQyMjU4NDQsMTQyMj
-I0MTAxMSwxODEyNDc5ODczLC0yNjQxMDYwNzEsODExNjE1MDg2
-LDE1OTc2NDAwNTcsLTEwNTcxOTY4MzVdfQ==
+eyJoaXN0b3J5IjpbLTEwNjg0MjYwMzksLTEwNDIyNTg0NCwxND
+IyMjQxMDExLDE4MTI0Nzk4NzMsLTI2NDEwNjA3MSw4MTE2MTUw
+ODYsMTU5NzY0MDA1NywtMTA1NzE5NjgzNV19
 -->
