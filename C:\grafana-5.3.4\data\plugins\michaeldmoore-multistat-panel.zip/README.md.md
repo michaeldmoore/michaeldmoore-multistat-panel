@@ -259,7 +259,7 @@ The **Options** Tab
 *The three value positions, Bar Base, Bar End and Top*
 
 **Show Group Labels** and **Show Labels** - as before (Show Group Labels also appeared on the Grouping tab, for convenience).. Set Font Size and color etc.
-The Out Of Range label color override is an advanced feature for cases where a specific axis Max and/or Min setting is in place (see the **Lines-And-Limits** tab below) and a bar is outside one of these limits.  This color overrides the standard label color for labels where this occurs. *(This is useful, for example where a non-working sensor, for example, generates a wildly out of range value)*
+The **Out Of Range** label color override is an advanced feature for cases where a specific axis Max and/or Min setting is in place (see the **Lines-And-Limits** tab below) and a bar is outside one of these limits.  This color overrides the standard label color for labels where this occurs. *(This is useful, for example where a non-working sensor, for example, generates a wildly out of range value)*
 
 
 The margin settings control how much space needs to be reserved, depending on the actual name of the labels etc.  Bar colors (plus others such as the axis labels and ticks and the odd/even bar background) are defined in this section.  Depending on the application, we can set different colors for positive and negative values and also control the bar-to-gap padding percentage.
@@ -318,9 +318,9 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMjA2NjIzNDAxOCwxMjAwNTQ2ODksMjM4ND
-E5NzMwLDE5MTIyNjY5NDIsLTg5NTEzMjI5OCwxMjg0OTA1NjMw
-LDU3MDYwMzU3NywzOTgxMjMyNTcsLTEwNDIyNTg0NCwxNDIyMj
-QxMDExLDE4MTI0Nzk4NzMsLTI2NDEwNjA3MSw4MTE2MTUwODYs
-MTU5NzY0MDA1NywtMTA1NzE5NjgzNV19
+eyJoaXN0b3J5IjpbLTE5MjQxNDYxNDIsMTIwMDU0Njg5LDIzOD
+QxOTczMCwxOTEyMjY2OTQyLC04OTUxMzIyOTgsMTI4NDkwNTYz
+MCw1NzA2MDM1NzcsMzk4MTIzMjU3LC0xMDQyMjU4NDQsMTQyMj
+I0MTAxMSwxODEyNDc5ODczLC0yNjQxMDYwNzEsODExNjE1MDg2
+LDE1OTc2NDAwNTcsLTEwNTcxOTY4MzVdfQ==
 -->
