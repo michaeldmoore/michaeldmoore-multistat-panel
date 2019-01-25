@@ -39,6 +39,9 @@ Max, Min, auto-scaling, base-lines, colors, rows and columns - (just about) ever
 High and Low limits too, with optional bar coloring
 ![image](https://user-images.githubusercontent.com/3724718/51725465-f3f14700-2027-11e9-8d61-592f644a5c20.png)
 
+All this, and optional flashing too when bars surpass these limits.
+
+**Data**
 
 Multistat takes it's data from a table query - returning, at minimum, 2 fields (names can be anything)
 
@@ -263,6 +266,6 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTI2NDEwNjA3MSw4MTE2MTUwODYsMTU5Nz
-Y0MDA1NywtMTA1NzE5NjgzNV19
+eyJoaXN0b3J5IjpbODkwMjQ3MjEsLTI2NDEwNjA3MSw4MTE2MT
+UwODYsMTU5NzY0MDA1NywtMTA1NzE5NjgzNV19
 -->
