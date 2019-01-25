@@ -258,6 +258,9 @@ The **Options** Tab
 ![image](https://user-images.githubusercontent.com/3724718/51769330-6efa4200-20a8-11e9-90cf-c1a2397b4f89.png)
 *The three value positions, Bar Base, Bar End and Top*
 
+**Show Group Labels** and Show Labels - as before (Show Group Labels also appeared on the Grouping tab, for convinience)
+
+
 The margin settings control how much space needs to be reserved, depending on the actual name of the labels etc.  Bar colors (plus others such as the axis labels and ticks and the odd/even bar background) are defined in this section.  Depending on the application, we can set different colors for positive and negative values and also control the bar-to-gap padding percentage.
 
 Font size and color is selectable for the labels and values too, plus a switch to enable mouse hover tool-tips, plus (in the event that a datetime field has been set in the Columns tab), the format used to display any datetime values in the query result set.
@@ -314,9 +317,9 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTM0NjA3OTc3LDEyMDA1NDY4OSwyMzg0MT
-k3MzAsMTkxMjI2Njk0MiwtODk1MTMyMjk4LDEyODQ5MDU2MzAs
-NTcwNjAzNTc3LDM5ODEyMzI1NywtMTA0MjI1ODQ0LDE0MjIyND
-EwMTEsMTgxMjQ3OTg3MywtMjY0MTA2MDcxLDgxMTYxNTA4Niwx
-NTk3NjQwMDU3LC0xMDU3MTk2ODM1XX0=
+eyJoaXN0b3J5IjpbMTYzMzA1NDIyMiwxMjAwNTQ2ODksMjM4ND
+E5NzMwLDE5MTIyNjY5NDIsLTg5NTEzMjI5OCwxMjg0OTA1NjMw
+LDU3MDYwMzU3NywzOTgxMjMyNTcsLTEwNDIyNTg0NCwxNDIyMj
+QxMDExLDE4MTI0Nzk4NzMsLTI2NDEwNjA3MSw4MTE2MTUwODYs
+MTU5NzY0MDA1NywtMTA1NzE5NjgzNV19
 -->
