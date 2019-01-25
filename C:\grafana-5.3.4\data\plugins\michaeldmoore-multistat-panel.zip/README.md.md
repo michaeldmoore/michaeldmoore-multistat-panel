@@ -245,7 +245,7 @@ The **Group Sort Order** field is another regular expression string, this time u
 Left blank with our sample data, the groups will be arranged in alphabetical order - that is, East->North->West.  Setting this field to the regular expression 'West|North|East' overrides the alphabetical ordering, resulting in a more map-meaningful displays with the West group on the left and the East group on the right *(apologies to users in the Southern Hemisphere who might have a different perspective...)*
 ![image](https://user-images.githubusercontent.com/3724718/51764732-841ca400-209b-11e9-8a0f-3527750d97fe.png)
 
-
+**Show Group Labels** controls whether or not each group is topped with it's name, and if so, the Font Size and Color setting 
 
 
 
@@ -306,9 +306,9 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTgzMTEwMDI2OCwxOTEyMjY2OTQyLC04OT
-UxMzIyOTgsMTI4NDkwNTYzMCw1NzA2MDM1NzcsMzk4MTIzMjU3
-LC0xMDQyMjU4NDQsMTQyMjI0MTAxMSwxODEyNDc5ODczLC0yNj
-QxMDYwNzEsODExNjE1MDg2LDE1OTc2NDAwNTcsLTEwNTcxOTY4
-MzVdfQ==
+eyJoaXN0b3J5IjpbODEzNTc5Nzc5LDE5MTIyNjY5NDIsLTg5NT
+EzMjI5OCwxMjg0OTA1NjMwLDU3MDYwMzU3NywzOTgxMjMyNTcs
+LTEwNDIyNTg0NCwxNDIyMjQxMDExLDE4MTI0Nzk4NzMsLTI2ND
+EwNjA3MSw4MTE2MTUwODYsMTU5NzY0MDA1NywtMTA1NzE5Njgz
+NV19
 -->
