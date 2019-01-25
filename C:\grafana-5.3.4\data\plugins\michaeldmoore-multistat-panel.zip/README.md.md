@@ -36,7 +36,7 @@ Or grouped on an attribute, again vertically
 And (just about) *everything* is configurable...
 Max, Min, auto-scaling, base-lines, colors, rows and columns - (just about) everything...
 
-High and Low limits to
+High and Low limits too, with optional bar coloring
 
 
 Multistat takes it's data from a table query - returning, at minimum, 2 fields (names can be anything)
@@ -262,6 +262,6 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNzcyMDMwMjk5LDE1OTc2NDAwNTcsLTEwNT
+eyJoaXN0b3J5IjpbODExNjE1MDg2LDE1OTc2NDAwNTcsLTEwNT
 cxOTY4MzVdfQ==
 -->
