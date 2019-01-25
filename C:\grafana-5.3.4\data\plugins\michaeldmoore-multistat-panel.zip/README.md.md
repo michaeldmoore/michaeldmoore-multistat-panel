@@ -32,8 +32,7 @@ Or grouped on an attribute, again vertically
 
 ... or horizontally
 ![image](https://user-images.githubusercontent.com/3724718/51725236-c6f06480-2026-11e9-84f0-4d2f75a69d66.png)
-
-
+(Note these last two examples are single Multistat panels.  A single set of configuration settings is applied to each of the groups sub
 
 And (just about) *everything* is configurable...
 Max, Min, auto-scaling, base-lines, colors, rows and columns - (just about) everything...
@@ -282,7 +281,7 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE4NzI3MTEyMTcsMTgxMjQ3OTg3MywtMj
-Y0MTA2MDcxLDgxMTYxNTA4NiwxNTk3NjQwMDU3LC0xMDU3MTk2
-ODM1XX0=
+eyJoaXN0b3J5IjpbLTYyMDg2MTQ4MSwxODEyNDc5ODczLC0yNj
+QxMDYwNzEsODExNjE1MDg2LDE1OTc2NDAwNTcsLTEwNTcxOTY4
+MzVdfQ==
 -->
