@@ -215,8 +215,11 @@ The **Layout** tab
 ![image](https://user-images.githubusercontent.com/3724718/51728892-78979180-2037-11e9-8c4e-1578ca7302b5.png)
 
 The Layouts tab defines the basic settings that control how the data is arranged on the panel. 
+The Horizontal checkbox switches the bars from vertical to horizontal
+ 
 
- A group col setting can be used to define a field that displays multiple sets, or groups, of elements.  In this demo case, we're grouping on the 'region' field, which takes on 5 different values (East, West, North, South and Central).
+
+A group col setting can be used to define a field that displays multiple sets, or groups, of elements.  In this demo case, we're grouping on the 'region' field, which takes on 5 different values (East, West, North, South and Central).
 
 When grouping, by default, the groups are arranged in alphabetical order.  (See here, Central->East->North->South->West)
 
@@ -288,7 +291,8 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNTcwNjAzNTc3LDM5ODEyMzI1NywtMTA0Mj
-I1ODQ0LDE0MjIyNDEwMTEsMTgxMjQ3OTg3MywtMjY0MTA2MDcx
-LDgxMTYxNTA4NiwxNTk3NjQwMDU3LC0xMDU3MTk2ODM1XX0=
+eyJoaXN0b3J5IjpbMTUwOTMxMDQ3NSw1NzA2MDM1NzcsMzk4MT
+IzMjU3LC0xMDQyMjU4NDQsMTQyMjI0MTAxMSwxODEyNDc5ODcz
+LC0yNjQxMDYwNzEsODExNjE1MDg2LDE1OTc2NDAwNTcsLTEwNT
+cxOTY4MzVdfQ==
 -->
