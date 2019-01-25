@@ -264,6 +264,13 @@ The **Out Of Range** label color override is an advanced feature for cases where
 
 **Tooltips** enables the mouse over info balloons, listing all the fields corresponding to the identified bar.  **Date Format** allows the setting formatting characters for the field identified as the datatime field (if any)
 
+The **Lines-And-Limits** tab
+![image](https://user-images.githubusercontent.com/3724718/51770407-4758a900-20ab-11e9-87b4-f7c69a679d6a.png)
+
+
+
+
+
 
 The margin settings control how much space needs to be reserved, depending on the actual name of the labels etc.  Bar colors (plus others such as the axis labels and ticks and the odd/even bar background) are defined in this section.  Depending on the application, we can set different colors for positive and negative values and also control the bar-to-gap padding percentage.
 
@@ -321,9 +328,9 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTc0MDE4NTQ4MCwxMjAwNTQ2ODksMjM4ND
-E5NzMwLDE5MTIyNjY5NDIsLTg5NTEzMjI5OCwxMjg0OTA1NjMw
-LDU3MDYwMzU3NywzOTgxMjMyNTcsLTEwNDIyNTg0NCwxNDIyMj
-QxMDExLDE4MTI0Nzk4NzMsLTI2NDEwNjA3MSw4MTE2MTUwODYs
-MTU5NzY0MDA1NywtMTA1NzE5NjgzNV19
+eyJoaXN0b3J5IjpbLTE5NDMzNDk2MDAsLTc0MDE4NTQ4MCwxMj
+AwNTQ2ODksMjM4NDE5NzMwLDE5MTIyNjY5NDIsLTg5NTEzMjI5
+OCwxMjg0OTA1NjMwLDU3MDYwMzU3NywzOTgxMjMyNTcsLTEwND
+IyNTg0NCwxNDIyMjQxMDExLDE4MTI0Nzk4NzMsLTI2NDEwNjA3
+MSw4MTE2MTUwODYsMTU5NzY0MDA1NywtMTA1NzE5NjgzNV19
 -->
