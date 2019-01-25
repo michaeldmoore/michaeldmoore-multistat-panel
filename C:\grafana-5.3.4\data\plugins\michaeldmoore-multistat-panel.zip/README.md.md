@@ -70,7 +70,8 @@ Setting the aggregation parameter to 'Mean' results in the arithmetic mean of al
 As mentioned before, ideally the data set should contain a single row for each distinct label. This offloads the maximum amount of filtering and aggregation etc., to the database which is generally much more efficient for these tasks.
 In the event that the database cannot pre-filter the data in this way, the aggregation setting can still generate the required display, but at the cost of increased CPU and network load.  Generally, this is not significant - Multistat can easily handle queries with a few hundred labels, each with a hundred or more rows.  Note though that huge data sets - data sets with multiple megabytes of data etc. - these will negatively impact performance.  Particularly as refresh rates shorten.  In extreme cases, this can even make the browser become unresponsive.  **Beware of enormous data sets.**
 
-
+These queries should return a relatively small number of rows -  
+*For maximum efficiency, each label should appear once only in the data set - Multistat has an option to aggregate values on a per-label basis - say to select the latest timestamped value (or the first, or mean etc.) - at the expense of CPU and network traffic.
 
 
 
@@ -282,7 +283,7 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNDAzMzk3NTY5LDE4MTI0Nzk4NzMsLTI2ND
-EwNjA3MSw4MTE2MTUwODYsMTU5NzY0MDA1NywtMTA1NzE5Njgz
-NV19
+eyJoaXN0b3J5IjpbMTg2Nzc4MDg3NiwxODEyNDc5ODczLC0yNj
+QxMDYwNzEsODExNjE1MDg2LDE1OTc2NDAwNTcsLTEwNTcxOTY4
+MzVdfQ==
 -->
