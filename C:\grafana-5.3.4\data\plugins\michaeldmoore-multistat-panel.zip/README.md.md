@@ -245,9 +245,9 @@ The **Group Sort Order** field is another regular expression string, this time u
 Left blank with our sample data, the groups will be arranged in alphabetical order - that is, East->North->West.  Setting this field to the regular expression 'West|North|East' overrides the alphabetical ordering, resulting in a more map-meaningful displays with the West group on the left and the East group on the right *(apologies to users in the Southern Hemisphere who might have a different perspective...)*
 ![image](https://user-images.githubusercontent.com/3724718/51764732-841ca400-209b-11e9-8a0f-3527750d97fe.png)
 
-**Show Group Labels** controls whether or not each group is topped with it's name, and if so, the Font Size and Color setting 
+**Show Group Labels** controls whether or not each group is topped with it's name, along with the **Font Size** and **Color** settings 
 
-
+The **Options** Tab
 
 
 The margin settings control how much space needs to be reserved, depending on the actual name of the labels etc.  Bar colors (plus others such as the axis labels and ticks and the odd/even bar background) are defined in this section.  Depending on the application, we can set different colors for positive and negative values and also control the bar-to-gap padding percentage.
@@ -306,9 +306,9 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbODEzNTc5Nzc5LDE5MTIyNjY5NDIsLTg5NT
-EzMjI5OCwxMjg0OTA1NjMwLDU3MDYwMzU3NywzOTgxMjMyNTcs
-LTEwNDIyNTg0NCwxNDIyMjQxMDExLDE4MTI0Nzk4NzMsLTI2ND
-EwNjA3MSw4MTE2MTUwODYsMTU5NzY0MDA1NywtMTA1NzE5Njgz
-NV19
+eyJoaXN0b3J5IjpbLTE0MTE4NjAxMjEsMTkxMjI2Njk0MiwtOD
+k1MTMyMjk4LDEyODQ5MDU2MzAsNTcwNjAzNTc3LDM5ODEyMzI1
+NywtMTA0MjI1ODQ0LDE0MjIyNDEwMTEsMTgxMjQ3OTg3MywtMj
+Y0MTA2MDcxLDgxMTYxNTA4NiwxNTk3NjQwMDU3LC0xMDU3MTk2
+ODM1XX0=
 -->
