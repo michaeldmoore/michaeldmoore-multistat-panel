@@ -250,7 +250,8 @@ Left blank with our sample data, the groups will be arranged in alphabetical ord
 The **Options** Tab
 ![image](https://user-images.githubusercontent.com/3724718/51764990-35bbd500-209c-11e9-9184-669e77eefddb.png)
 
-The first line
+The first line controls whether or not to display the values in text (the bar size always represents the value and may be enough for users without a readable text version)
+
 The margin settings control how much space needs to be reserved, depending on the actual name of the labels etc.  Bar colors (plus others such as the axis labels and ticks and the odd/even bar background) are defined in this section.  Depending on the application, we can set different colors for positive and negative values and also control the bar-to-gap padding percentage.
 
 Font size and color is selectable for the labels and values too, plus a switch to enable mouse hover tool-tips, plus (in the event that a datetime field has been set in the Columns tab), the format used to display any datetime values in the query result set.
@@ -307,7 +308,7 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMjEzNjQ3OTc0NCwxOTEyMjY2OTQyLC04OT
+eyJoaXN0b3J5IjpbMTQxMzU4ODIxMSwxOTEyMjY2OTQyLC04OT
 UxMzIyOTgsMTI4NDkwNTYzMCw1NzA2MDM1NzcsMzk4MTIzMjU3
 LC0xMDQyMjU4NDQsMTQyMjI0MTAxMSwxODEyNDc5ODczLC0yNj
 QxMDYwNzEsODExNjE1MDg2LDE1OTc2NDAwNTcsLTEwNTcxOTY4
