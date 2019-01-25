@@ -43,12 +43,12 @@ All this, and optional flashing too when bars surpass these limits.
 
 **Data**
 
-Multistat takes it's data from a table query - returning, at minimum, 2 fields (names can be anything)
+Multistat accepAt a minimum, Multistat takes it's data from a table query - returning, at minimum, 2 fields (names can be anything)
 
 * Label
 * Value
 * Timestamp (optional)
-* Group By (optional, horizontal mode only)
+* Group By (optional)
 
 
 
@@ -266,6 +266,6 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbODkwMjQ3MjEsLTI2NDEwNjA3MSw4MTE2MT
-UwODYsMTU5NzY0MDA1NywtMTA1NzE5NjgzNV19
+eyJoaXN0b3J5IjpbLTk3NjU0NjU4MSwtMjY0MTA2MDcxLDgxMT
+YxNTA4NiwxNTk3NjQwMDU3LC0xMDU3MTk2ODM1XX0=
 -->
