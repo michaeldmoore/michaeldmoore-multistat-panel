@@ -267,7 +267,7 @@ The **Out Of Range** label color override is an advanced feature for cases where
 The **Lines and Limits** tab
 ![image](https://user-images.githubusercontent.com/3724718/51770407-4758a900-20ab-11e9-87b4-f7c69a679d6a.png)
 
-**Max Value** and **Min Value** These overrides default auto-scaling axis extents.On this tab, you can override the auto-defaults to control upper and lower extents (these automatically extend when the values displayed fall outside these settings), plus optionally display these values as colored reference lines.
+**Max Value** and **Min Value** These overrides default auto-scaling axis extents, and if the **Show Line** checkbox is set, control the color of the resulting reference lines.
 
 The **BaseLine** setting (default 0) differentiates between positive and negative values, each potentially having a different color.  This can be useful when monitoring deviations from some non-zero set point.  For example, Electrical generators (in North America, at least) operate at very close to 60Hz, with normally, only small deviations.  Setting a baseline at 60.0 and a Max/Min to (say) 60.10 and 59.90 would make an easily understood display in such an application.
 
@@ -312,7 +312,7 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTMyNTgwNTg1MSwtMTk0MzM0OTYwMCwtNz
+eyJoaXN0b3J5IjpbLTUxNDg0NjExMCwtMTk0MzM0OTYwMCwtNz
 QwMTg1NDgwLDEyMDA1NDY4OSwyMzg0MTk3MzAsMTkxMjI2Njk0
 MiwtODk1MTMyMjk4LDEyODQ5MDU2MzAsNTcwNjAzNTc3LDM5OD
 EyMzI1NywtMTA0MjI1ODQ0LDE0MjIyNDEwMTEsMTgxMjQ3OTg3
