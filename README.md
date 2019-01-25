@@ -302,7 +302,7 @@ Putting it all together, the displays can make a truly unforgettable and un-igno
 
 **Known Issues**
 
- This is a version 1.0.1 release, as such there may be a few known issues that need to be added or fixed.
+ This is a version 1.0.2 release, as such there may be a few known issues that need to be added or fixed.
 .
 
 
