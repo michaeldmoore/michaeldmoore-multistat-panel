@@ -239,7 +239,9 @@ The **Columns Per Row** setting controls how many sub-charts appear in each row.
 
 The **Group Name Filter** field (*this is an advanced feature most users can ignore.  If in doubt, make sure this is blank.  Especially if the chart appears to be empty!).*  This field should be a regular expression string which is used to filter out non-matching group names, when needed.  Using the demo sample data, for example (which contains values for areas East, West and North), we could select just the East and West groups by using a value of 'East|West' (Note the Pipe character '|' separating a sequence of matching strings.  Regular expressions are amazingly powerful and can be much, much more complicated than this - but a simple set of pipe-delimited strings is usually enough in this application.
 
-The Group Sort Order field i
+The Group Sort Order field is another regular expression string, this time used to define the order the groups are presented in (reading like a book from top left, wrapping to the bottom right).  Matched group names are presented 
+
+
 A group col setting can be used to define a field that displays multiple sets, or groups, of elements.  In this demo case, we're grouping on the 'region' field, which takes on 5 different values (East, West, North, South and Central).
 
 When grouping, by default, the groups are arranged in alphabetical order.  (See here, Central->East->North->South->West)
@@ -312,8 +314,8 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTgwMzA1ODkyMSwtODk1MTMyMjk4LDEyOD
-Q5MDU2MzAsNTcwNjAzNTc3LDM5ODEyMzI1NywtMTA0MjI1ODQ0
-LDE0MjIyNDEwMTEsMTgxMjQ3OTg3MywtMjY0MTA2MDcxLDgxMT
-YxNTA4NiwxNTk3NjQwMDU3LC0xMDU3MTk2ODM1XX0=
+eyJoaXN0b3J5IjpbMTYxMTg1Mzc3LC04OTUxMzIyOTgsMTI4ND
+kwNTYzMCw1NzA2MDM1NzcsMzk4MTIzMjU3LC0xMDQyMjU4NDQs
+MTQyMjI0MTAxMSwxODEyNDc5ODczLC0yNjQxMDYwNzEsODExNj
+E1MDg2LDE1OTc2NDAwNTcsLTEwNTcxOTY4MzVdfQ==
 -->
