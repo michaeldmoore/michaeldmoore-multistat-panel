@@ -57,10 +57,11 @@ A **timestamp** field can be useful too - this can be in any commonly understood
 A **grouping** field can be useful too, to organize large data sets into more meaningful sections.  When grouping, the number of columns can be pre-configured, along with handy mechanisms for filtering and arranging the order each group is presented in.
 
 Any additional fields are retained and presented in optional tool-tip balloons.  Again, (just about) everything is configurable here...
+![image](https://user-images.githubusercontent.com/3724718/51726418-e8544f00-202c-11e9-89e8-2cce5c7bfb2a.png)
 
-
+Data set
 These queries should return a relatively small number of rows - Multistat does not use scroll bars - all bars are auto-scaled to fit the display window (scroll bars are useless in a monitoring dashboard).  
-*For maximum efficiency, each label should appear once only in the data set - Mutilstat has an option to aggregate values on a per-label basis - say to select the latest timestamped value (or the first, or mean etc.) - at the expense of CPU and network traffic.
+*For maximum efficiency, each label should appear once only in the data set - Multistat has an option to aggregate values on a per-label basis - say to select the latest timestamped value (or the first, or mean etc.) - at the expense of CPU and network traffic.
 
 
 
@@ -272,6 +273,7 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTgxMjQ3OTg3MywtMjY0MTA2MDcxLDgxMT
-YxNTA4NiwxNTk3NjQwMDU3LC0xMDU3MTk2ODM1XX0=
+eyJoaXN0b3J5IjpbMzY2NDAxMjEsMTgxMjQ3OTg3MywtMjY0MT
+A2MDcxLDgxMTYxNTA4NiwxNTk3NjQwMDU3LC0xMDU3MTk2ODM1
+XX0=
 -->
