@@ -43,7 +43,9 @@ All this, and optional flashing too when bars surpass these limits.
 
 **Data**
 
-Multistat accepAt a minimum, Multistat takes it's data from a table query - returning, at minimum, 2 fields (names can be anything)
+Multistat accepts Grafana table formatted data.  There is no support for time series formatted data - at least not in the current version.
+
+At a minimum, Multistat requires two fields - a takes it's data from a table query - returning, at minimum, 2 fields (names can be anything)
 
 * Label
 * Value
@@ -266,6 +268,6 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTk3NjU0NjU4MSwtMjY0MTA2MDcxLDgxMT
+eyJoaXN0b3J5IjpbMTU5Mjk3MzUyNywtMjY0MTA2MDcxLDgxMT
 YxNTA4NiwxNTk3NjQwMDU3LC0xMDU3MTk2ODM1XX0=
 -->
