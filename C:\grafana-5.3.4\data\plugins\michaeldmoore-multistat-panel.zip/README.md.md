@@ -221,8 +221,9 @@ The Horizontal checkbox switches the bar orientation from vertical to horizontal
 
 **Low Side Margin** and **High Side Margin** set the width of the two axis.  Set to 0 to hide one or both of them.
 
-High Axis Color and Low Axis Color set the colors for these axes, assuming they are vis
+**High Axis Color** and **Low Axis Color** set the colors for these axes, assuming they are visible
 
+High Bar Color sets the regular color of bars who's values are above the baseline (normally 0, see the 
 A group col setting can be used to define a field that displays multiple sets, or groups, of elements.  In this demo case, we're grouping on the 'region' field, which takes on 5 different values (East, West, North, South and Central).
 
 When grouping, by default, the groups are arranged in alphabetical order.  (See here, Central->East->North->South->West)
@@ -295,7 +296,7 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE3NDcyNTcxNDYsNTcwNjAzNTc3LDM5OD
+eyJoaXN0b3J5IjpbLTExMzI0MzczNTMsNTcwNjAzNTc3LDM5OD
 EyMzI1NywtMTA0MjI1ODQ0LDE0MjIyNDEwMTEsMTgxMjQ3OTg3
 MywtMjY0MTA2MDcxLDgxMTYxNTA4NiwxNTk3NjQwMDU3LC0xMD
 U3MTk2ODM1XX0=
