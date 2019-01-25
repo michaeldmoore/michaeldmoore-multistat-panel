@@ -196,7 +196,7 @@ The data is mapped using the **Columns** configuration tab:
 
 
 
-Here, you can see how the 4 key fields in the query result set get mapped to the Multistat fields.  In this case, the **label** is associated with the query field 'sensor', **Value** as 'quantity', with 1 decimal place and no scaling (scale factor = 1).  Note too that the default aggregation parameter of 'Last' is selected.  This dataset contains multiple rows for some labels - this setting automatically selects the last (latest) value for each sensor 
+Here, you can see how the 4 key fields in the query result set get mapped to the Multistat fields.  In this case, the **label** is associated with the query field 'sensor', **Value** as 'quantity', with 1 decimal place and no scaling (**scale factor = 1**).  Note too that the default **aggregation** parameter of 'Last' is selected.  This dataset contains multiple rows for some labels - this setting automatically selects the last (latest) value for each sensor. 
 
 Note too, that the bars are set to be sorted in ascending 'sensor' name.
 
@@ -207,7 +207,7 @@ The **DateTime col** (optional) is mapped here to the 'time' field.  When set, t
  
 The '**Show as-of Date**' setting controls whether or not the last update time is to be displayed in the top right of the panel.  **Most users can ignore this setting**. When it is set, the maximum datetime value in the query record set is displayed alongside the panel title.  This can be useful in process monitoring applications to provide evidence that the data is being updated in a timely manner etc.  The format field controls how this time is displayed (see documentation for [moment.js](https://momentjs.com/guides/#/parsing/known-formats/) for formatting details), or use the reserved keyword 'ELAPSED' to display as a natural language string, relative to the current time.   Help is available, if needed.
 
-This sample data set contains duplicate rows for some labels - the default setting of the aggregation parameter selects the latest value for each distinct label (sensor).
+
 
 
 The **Layout** tab
@@ -288,7 +288,7 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTIwMDM3MjAxMSwzOTgxMjMyNTcsLTEwND
-IyNTg0NCwxNDIyMjQxMDExLDE4MTI0Nzk4NzMsLTI2NDEwNjA3
-MSw4MTE2MTUwODYsMTU5NzY0MDA1NywtMTA1NzE5NjgzNV19
+eyJoaXN0b3J5IjpbNTcwNjAzNTc3LDM5ODEyMzI1NywtMTA0Mj
+I1ODQ0LDE0MjIyNDEwMTEsMTgxMjQ3OTg3MywtMjY0MTA2MDcx
+LDgxMTYxNTA4NiwxNTk3NjQwMDU3LC0xMDU3MTk2ODM1XX0=
 -->
