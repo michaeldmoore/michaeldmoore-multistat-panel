@@ -67,7 +67,7 @@ Setting the aggregation parameter to 'Max' or 'Min' works in a similar way, sele
 Setting the aggregation parameter to 'Mean' results in the arithmetic mean of all duplicate values to be used, as should be expected.  *A side effect of this though is that the fields presented in the tool-tip balloon in this case represent just one of the rows - actually the 'last' row, the value of which will not generally match the displayed 'mean' value for that label.*
 
 **Data set size - a performance consideration**
-
+As mentioned before, ideally the data set should each distinct label will appear once and once only in the data
 These queries should return a relatively small number of rows - Multistat does not use scroll bars - all bars are auto-scaled to fit the display window (scroll bars are useless in a monitoring dashboard).  
 *For maximum efficiency, each label should appear once only in the data set - Multistat has an option to aggregate values on a per-label basis - say to select the latest timestamped value (or the first, or mean etc.) - at the expense of CPU and network traffic.
 
@@ -281,7 +281,7 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEyODU5MjAyMjIsMTgxMjQ3OTg3MywtMj
-Y0MTA2MDcxLDgxMTYxNTA4NiwxNTk3NjQwMDU3LC0xMDU3MTk2
-ODM1XX0=
+eyJoaXN0b3J5IjpbMTkyMjkxOTY1NSwxODEyNDc5ODczLC0yNj
+QxMDYwNzEsODExNjE1MDg2LDE1OTc2NDAwNTcsLTEwNTcxOTY4
+MzVdfQ==
 -->
