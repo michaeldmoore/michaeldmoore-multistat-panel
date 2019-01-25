@@ -217,7 +217,7 @@ The **Layout** tab
 The Layouts tab defines the basic settings that control how the data is arranged on the panel. 
 The Horizontal checkbox switches the bar orientation from vertical to horizontal.  As the chart(s) rotate, the axis and labels rotate with them - hence the use of neutral terms for the axis as 'High' and 'Low' rather than 'Left', 'Right', 'Top' or 'Bottom'
 
-The area reserved for the labels can be set according to the length of the labels - or left blank, leaving the panel to calculate a reasonable value based on the data and orientation 
+The area reserved for the labels can be set according to the length of the labels - or left blank, leaving the panel to calculate a reasonable value based on the actual data and orientation 
  
 
 
@@ -293,8 +293,8 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTc3NjEzODM5LDU3MDYwMzU3NywzOTgxMj
-MyNTcsLTEwNDIyNTg0NCwxNDIyMjQxMDExLDE4MTI0Nzk4NzMs
-LTI2NDEwNjA3MSw4MTE2MTUwODYsMTU5NzY0MDA1NywtMTA1Nz
-E5NjgzNV19
+eyJoaXN0b3J5IjpbLTQxNDU5MDk1OSw1NzA2MDM1NzcsMzk4MT
+IzMjU3LC0xMDQyMjU4NDQsMTQyMjI0MTAxMSwxODEyNDc5ODcz
+LC0yNjQxMDYwNzEsODExNjE1MDg2LDE1OTc2NDAwNTcsLTEwNT
+cxOTY4MzVdfQ==
 -->
