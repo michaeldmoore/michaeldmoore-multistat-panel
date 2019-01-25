@@ -267,18 +267,9 @@ The **Out Of Range** label color override is an advanced feature for cases where
 The **Lines and Limits** tab
 ![image](https://user-images.githubusercontent.com/3724718/51770407-4758a900-20ab-11e9-87b4-f7c69a679d6a.png)
 
-
-
-
-
-
-
-
-
-
 On this tab, you can override the auto-defaults to control upper and lower extents (these automatically extend when the values displayed fall outside these settings), plus optionally display these values as colored reference lines.
 
-The Base Line setting (default 0) differentiates between positive and negative values, each potentially having a different color.  This can be useful when monitoring deviations from some non-zero set point.  For example, Electrical generators (in North America, at least) operate at very close to 60Hz, with normally, only small deviations.  Setting a baseline at 60.0 and a Max/Min to (say) 60.10 and 59.90 would make an easily understood display in such an application.
+The **BaseLine** setting (default 0) differentiates between positive and negative values, each potentially having a different color.  This can be useful when monitoring deviations from some non-zero set point.  For example, Electrical generators (in North America, at least) operate at very close to 60Hz, with normally, only small deviations.  Setting a baseline at 60.0 and a Max/Min to (say) 60.10 and 59.90 would make an easily understood display in such an application.
 
 
 
@@ -321,10 +312,10 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTIxMTQ3ODg4NjAsLTE5NDMzNDk2MDAsLT
-c0MDE4NTQ4MCwxMjAwNTQ2ODksMjM4NDE5NzMwLDE5MTIyNjY5
-NDIsLTg5NTEzMjI5OCwxMjg0OTA1NjMwLDU3MDYwMzU3NywzOT
-gxMjMyNTcsLTEwNDIyNTg0NCwxNDIyMjQxMDExLDE4MTI0Nzk4
-NzMsLTI2NDEwNjA3MSw4MTE2MTUwODYsMTU5NzY0MDA1NywtMT
-A1NzE5NjgzNV19
+eyJoaXN0b3J5IjpbNTM4MTk1MTIyLC0xOTQzMzQ5NjAwLC03ND
+AxODU0ODAsMTIwMDU0Njg5LDIzODQxOTczMCwxOTEyMjY2OTQy
+LC04OTUxMzIyOTgsMTI4NDkwNTYzMCw1NzA2MDM1NzcsMzk4MT
+IzMjU3LC0xMDQyMjU4NDQsMTQyMjI0MTAxMSwxODEyNDc5ODcz
+LC0yNjQxMDYwNzEsODExNjE1MDg2LDE1OTc2NDAwNTcsLTEwNT
+cxOTY4MzVdfQ==
 -->
