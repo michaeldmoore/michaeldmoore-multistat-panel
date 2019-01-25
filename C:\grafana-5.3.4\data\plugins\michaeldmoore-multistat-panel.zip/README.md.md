@@ -230,8 +230,10 @@ The Horizontal checkbox switches the bar orientation from vertical to horizontal
 ![image](https://user-images.githubusercontent.com/3724718/51762923-b2e44b80-2096-11e9-821e-b4a1274e0b67.png)
 
 
+The **Grouping** tab
+![image](https://user-images.githubusercontent.com/3724718/51763087-3605a180-2097-11e9-982c-a33b5e0466b5.png)
 
-A group col setting can be used to define a field that displays multiple sets, or groups, of elements.  In this demo case, we're grouping on the 'region' field, which takes on 5 different values (East, West, North, South and Central).
+A group col setting can be used to define a field that displays multiple sets, or groups, of elements.  In this demo case, we're grouping on the 'region' field, which takes on 5 different values (East, West, North, South and Central)Once a Grou.
 
 When grouping, by default, the groups are arranged in alphabetical order.  (See here, Central->East->North->South->West)
 
@@ -303,8 +305,8 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTg5NTEzMjI5OCwxMjg0OTA1NjMwLDU3MD
-YwMzU3NywzOTgxMjMyNTcsLTEwNDIyNTg0NCwxNDIyMjQxMDEx
-LDE4MTI0Nzk4NzMsLTI2NDEwNjA3MSw4MTE2MTUwODYsMTU5Nz
-Y0MDA1NywtMTA1NzE5NjgzNV19
+eyJoaXN0b3J5IjpbLTIwNzE2ODc4MjMsLTg5NTEzMjI5OCwxMj
+g0OTA1NjMwLDU3MDYwMzU3NywzOTgxMjMyNTcsLTEwNDIyNTg0
+NCwxNDIyMjQxMDExLDE4MTI0Nzk4NzMsLTI2NDEwNjA3MSw4MT
+E2MTUwODYsMTU5NzY0MDA1NywtMTA1NzE5NjgzNV19
 -->
