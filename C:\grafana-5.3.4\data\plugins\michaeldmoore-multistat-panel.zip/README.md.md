@@ -95,9 +95,9 @@ Multistat has a wealth of configurable options.  just about everything displayed
 
 * Optional Left & Right value axes display (that is, upper & lower axes when in horizontal display mode)
 
-* Adjustable label margin size
+* Adjustable label margin size override (
 
-* Overridable Min, Max and Baseline values (See below for discussion on baselines)
+* Min, Max and Baseline values (See below for discussion on baselines)
 
 * Optional High and Low value alarm limits and indicator lines
 
@@ -281,7 +281,7 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEzODg4ODc2NDcsMTgxMjQ3OTg3MywtMj
-Y0MTA2MDcxLDgxMTYxNTA4NiwxNTk3NjQwMDU3LC0xMDU3MTk2
-ODM1XX0=
+eyJoaXN0b3J5IjpbMTg1ODc2Njk0NiwxODEyNDc5ODczLC0yNj
+QxMDYwNzEsODExNjE1MDg2LDE1OTc2NDAwNTcsLTEwNTcxOTY4
+MzVdfQ==
 -->
