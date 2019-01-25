@@ -196,7 +196,7 @@ The data is mapped using the **Columns** configuration tab:
 
 
 
-Here, you can see how the 4 key fields in the query result set get mapped to the Multistat fields.  In this case, the **label** is associated with the query field 'sensor', **Value** as 'quantity', with 1 decimal place and no scaling (scale factor = 1). 
+Here, you can see how the 4 key fields in the query result set get mapped to the Multistat fields.  In this case, the **label** is associated with the query field 'sensor', **Value** as 'quantity', with 1 decimal place and no scaling (scale factor = 1).  Note too that the default aggregation parameter of 'Last' is selected.  This dataset contains multiple rows for some labels - this setting automatically selects the last (latest) value for each sensor 
 
 Note too, that the bars are set to be sorted in ascending 'sensor' name.
 
@@ -288,7 +288,7 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMjc0Mzc4OTg4LDM5ODEyMzI1NywtMTA0Mj
-I1ODQ0LDE0MjIyNDEwMTEsMTgxMjQ3OTg3MywtMjY0MTA2MDcx
-LDgxMTYxNTA4NiwxNTk3NjQwMDU3LC0xMDU3MTk2ODM1XX0=
+eyJoaXN0b3J5IjpbLTIwMDM3MjAxMSwzOTgxMjMyNTcsLTEwND
+IyNTg0NCwxNDIyMjQxMDExLDE4MTI0Nzk4NzMsLTI2NDEwNjA3
+MSw4MTE2MTUwODYsMTU5NzY0MDA1NywtMTA1NzE5NjgzNV19
 -->
