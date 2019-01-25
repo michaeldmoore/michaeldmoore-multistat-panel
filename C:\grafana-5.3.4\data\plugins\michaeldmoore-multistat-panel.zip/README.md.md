@@ -212,12 +212,9 @@ The **Layout** tab
 
 ![image](https://user-images.githubusercontent.com/3724718/51728892-78979180-2037-11e9-8c4e-1578ca7302b5.png)
 
+The Layouts tab defines the basic settings that control how the data is arranged on the panel. 
 
-This is made up of two sections - Layout and Options.
-
-
-
-The Layouts tab defines the basic settings that control how the data is arranged on the panel.  In horizontal mode only, a group col setting can be used to define a field that displays multiple sets, or groups, of elements.  In this demo case, we're grouping on the 'region' field, which takes on 5 different values (East, West, North, South and Central).
+ A group col setting can be used to define a field that displays multiple sets, or groups, of elements.  In this demo case, we're grouping on the 'region' field, which takes on 5 different values (East, West, North, South and Central).
 
 When grouping, by default, the groups are arranged in alphabetical order.  (See here, Central->East->North->South->West)
 
@@ -289,8 +286,7 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE5MDA3NDg2NjksMzk4MTIzMjU3LC0xMD
-QyMjU4NDQsMTQyMjI0MTAxMSwxODEyNDc5ODczLC0yNjQxMDYw
-NzEsODExNjE1MDg2LDE1OTc2NDAwNTcsLTEwNTcxOTY4MzVdfQ
-==
+eyJoaXN0b3J5IjpbLTMzMTYzNDI5OCwzOTgxMjMyNTcsLTEwND
+IyNTg0NCwxNDIyMjQxMDExLDE4MTI0Nzk4NzMsLTI2NDEwNjA3
+MSw4MTE2MTUwODYsMTU5NzY0MDA1NywtMTA1NzE5NjgzNV19
 -->
