@@ -273,7 +273,7 @@ The **BaseLine** setting (default 0) differentiates between positive and negativ
 
 Values above the base line are generally draw using the High Bar color (see the Layout Tab).  Values below in the Low Bar color.
 
-High Limit and Low Limit, if set define additional 'warning' references.  Corresponding 
+**High Limit** and **Low Limit**, if set define additional 'warning' references.  Corresponding reference lines and colors are set as before.   In addition, the Color Bar option overrides the regular above or below base line
 
 **Threshold limits**
 
@@ -314,10 +314,10 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTIzNjU2NzQ2OSwtMTk0MzM0OTYwMCwtNz
-QwMTg1NDgwLDEyMDA1NDY4OSwyMzg0MTk3MzAsMTkxMjI2Njk0
-MiwtODk1MTMyMjk4LDEyODQ5MDU2MzAsNTcwNjAzNTc3LDM5OD
-EyMzI1NywtMTA0MjI1ODQ0LDE0MjIyNDEwMTEsMTgxMjQ3OTg3
-MywtMjY0MTA2MDcxLDgxMTYxNTA4NiwxNTk3NjQwMDU3LC0xMD
-U3MTk2ODM1XX0=
+eyJoaXN0b3J5IjpbMjk5OTI4NzM4LC0xOTQzMzQ5NjAwLC03ND
+AxODU0ODAsMTIwMDU0Njg5LDIzODQxOTczMCwxOTEyMjY2OTQy
+LC04OTUxMzIyOTgsMTI4NDkwNTYzMCw1NzA2MDM1NzcsMzk4MT
+IzMjU3LC0xMDQyMjU4NDQsMTQyMjI0MTAxMSwxODEyNDc5ODcz
+LC0yNjQxMDYwNzEsODExNjE1MDg2LDE1OTc2NDAwNTcsLTEwNT
+cxOTY4MzVdfQ==
 -->
