@@ -237,7 +237,7 @@ Provided the Group Col (see the Columns Tab, above) is mapped to a field, this t
 
 The **Columns Per Row** setting controls how many sub-charts appear in each row.  When the data contains more groups than are defined here, additional rows of sub-charts are added, wrapping to fill the available space.  *Note: If Group Col is set to something inappropriate, such as (say) the value or datetime field, Multistat can generate a ridiculous number of sub-charts - auto-scaled to fit in the available area, resulting in an unreadable mess.  Don't panic - just choose a more meaningful grouping field, assuming your data has one.*
 
-The Group Name Filter field (this is 
+The Group Name Filter field (*this is an advanced feature most users can ignore.  If in doubt, make sure this is blank.  Especially if the chart appears to be empty!).*  T
 A group col setting can be used to define a field that displays multiple sets, or groups, of elements.  In this demo case, we're grouping on the 'region' field, which takes on 5 different values (East, West, North, South and Central).
 
 When grouping, by default, the groups are arranged in alphabetical order.  (See here, Central->East->North->South->West)
@@ -310,8 +310,8 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE5Mjk3ODI5NjEsLTg5NTEzMjI5OCwxMj
-g0OTA1NjMwLDU3MDYwMzU3NywzOTgxMjMyNTcsLTEwNDIyNTg0
-NCwxNDIyMjQxMDExLDE4MTI0Nzk4NzMsLTI2NDEwNjA3MSw4MT
-E2MTUwODYsMTU5NzY0MDA1NywtMTA1NzE5NjgzNV19
+eyJoaXN0b3J5IjpbMzI0Mzc2NzcwLC04OTUxMzIyOTgsMTI4ND
+kwNTYzMCw1NzA2MDM1NzcsMzk4MTIzMjU3LC0xMDQyMjU4NDQs
+MTQyMjI0MTAxMSwxODEyNDc5ODczLC0yNjQxMDYwNzEsODExNj
+E1MDg2LDE1OTc2NDAwNTcsLTEwNTcxOTY4MzVdfQ==
 -->
