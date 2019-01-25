@@ -244,7 +244,7 @@ Using the demo sample data, for example (which contains values for areas East, W
 The **Group Sort Order** field is another regular expression string, this time used to define the order the groups are presented in (reading like a book from top left, wrapping to the bottom right).  Matched group names are presented in order, followed by any remaining non-matched group names in the default (alphabetical) order.
 Left blank with our sample data, the groups will be arranged in alphabetical order - that is, East->North->West.  Setting this field to the regular expression 'West|North|East' overrides the alphabetical ordering, resulting in a more map-meaningful displays with the West group on the left and the East group on the right *(apologies to users in the Southern Hemisphere who might have a different perspective...)*
 ![image](https://user-images.githubusercontent.com/3724718/51764732-841ca400-209b-11e9-8a0f-3527750d97fe.png)
-Notice how Multistat intelligently adjusts the height and width of the sub-charts to keep all bars the same width while 
+Notice how Multistat intelligently adjusts the height and width of the sub-charts to keep all bars the same width, regardless of the number of bars in each group.  When more than one row of sub-charts is generated, Multistat inserts blank/dummy rows in groups needed to keep the groups aligned properly.
 
 
 **Show Group Labels** controls whether or not each group is topped with it's name, along with the **Font Size** and **Color** settings 
@@ -310,9 +310,9 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTQwMzgwMzg2NywxOTEyMjY2OTQyLC04OT
-UxMzIyOTgsMTI4NDkwNTYzMCw1NzA2MDM1NzcsMzk4MTIzMjU3
-LC0xMDQyMjU4NDQsMTQyMjI0MTAxMSwxODEyNDc5ODczLC0yNj
-QxMDYwNzEsODExNjE1MDg2LDE1OTc2NDAwNTcsLTEwNTcxOTY4
-MzVdfQ==
+eyJoaXN0b3J5IjpbLTE2NDcxMTk2NDYsMTkxMjI2Njk0MiwtOD
+k1MTMyMjk4LDEyODQ5MDU2MzAsNTcwNjAzNTc3LDM5ODEyMzI1
+NywtMTA0MjI1ODQ0LDE0MjIyNDEwMTEsMTgxMjQ3OTg3MywtMj
+Y0MTA2MDcxLDgxMTYxNTA4NiwxNTk3NjQwMDU3LC0xMDU3MTk2
+ODM1XX0=
 -->
