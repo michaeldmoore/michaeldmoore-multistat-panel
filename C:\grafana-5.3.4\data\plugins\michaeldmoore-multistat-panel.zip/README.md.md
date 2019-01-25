@@ -24,7 +24,11 @@ Horizontally...
 
 
 
-Or grouped on an attribute
+Or grouped on an attribute, again vertically
+![image](https://user-images.githubusercontent.com/3724718/51725178-7b3dbb00-2026-11e9-861f-d800897d17d3.png)
+
+
+... or horizontally
 
 ![image](https://user-images.githubusercontent.com/3724718/38958223-7b5a3106-4311-11e8-9172-a4786728a236.png)
 
@@ -253,5 +257,6 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTU5NzY0MDA1NywtMTA1NzE5NjgzNV19
+eyJoaXN0b3J5IjpbLTYyNjg3ODMyMiwxNTk3NjQwMDU3LC0xMD
+U3MTk2ODM1XX0=
 -->
