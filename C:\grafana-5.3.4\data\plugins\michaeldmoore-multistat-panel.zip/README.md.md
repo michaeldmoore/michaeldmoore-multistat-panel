@@ -245,6 +245,8 @@ The **Group Sort Order** field is another regular expression string, this time u
 Left blank with our sample data, the groups will be arranged in alphabetical order - that is, East->North->West.  Setting this field to the regular expression 'West|North|East' overrides the alphabetical ordering, resulting in a more map-meaningful displays with the West group on the left and the East group on the right *(apologies to users in the Southern Hemisphere who might have a different perspective...)*
 ![image](https://user-images.githubusercontent.com/3724718/51764732-841ca400-209b-11e9-8a0f-3527750d97fe.png)
 *Notice how Multistat intelligently adjusts the height and width of the sub-charts to keep all bars the same width, regardless of the number of bars in each group.  When more than one row of sub-charts is generated, Multistat inserts blank/dummy rows in groups needed to keep the groups aligned properly.*
+![image](https://user-images.githubusercontent.com/3724718/51766163-81bc4900-209f-11e9-945c-afe3bf001a88.png)
+
 
 
 **Show Group Labels** controls whether or not each group is topped with it's name, along with the **Font Size** and **Color** settings 
@@ -310,9 +312,9 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMjM4NDE5NzMwLDE5MTIyNjY5NDIsLTg5NT
-EzMjI5OCwxMjg0OTA1NjMwLDU3MDYwMzU3NywzOTgxMjMyNTcs
-LTEwNDIyNTg0NCwxNDIyMjQxMDExLDE4MTI0Nzk4NzMsLTI2ND
-EwNjA3MSw4MTE2MTUwODYsMTU5NzY0MDA1NywtMTA1NzE5Njgz
-NV19
+eyJoaXN0b3J5IjpbMTIwMDU0Njg5LDIzODQxOTczMCwxOTEyMj
+Y2OTQyLC04OTUxMzIyOTgsMTI4NDkwNTYzMCw1NzA2MDM1Nzcs
+Mzk4MTIzMjU3LC0xMDQyMjU4NDQsMTQyMjI0MTAxMSwxODEyND
+c5ODczLC0yNjQxMDYwNzEsODExNjE1MDg2LDE1OTc2NDAwNTcs
+LTEwNTcxOTY4MzVdfQ==
 -->
