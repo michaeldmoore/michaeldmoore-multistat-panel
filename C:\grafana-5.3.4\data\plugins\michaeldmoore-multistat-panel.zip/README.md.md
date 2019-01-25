@@ -64,7 +64,7 @@ Each distinct label in the input data results in a distinct bar in Multistat.  I
 
 Setting the aggregation parameter to 'Max' or 'Min' works in a similar way, selecting the row for each label with the corresponding value - and secondly using the last or latest value in the event that there is a tie in the value.
  
-Setting the aggregation parameter to 'Mean' results in the arithmetic mean of all duplicate values to be used, as should be expected.  One side effect of this though is that the fields presented in the tool-tip balloon now  represent just one of the rows
+Setting the aggregation parameter to 'Mean' results in the arithmetic mean of all duplicate values to be used, as should be expected.  Ane side effect of this though is that the fields presented in the tool-tip balloon now represent just one of the rows - actually the 'last' row, the value of which will not generally match the displayed 'mean' value for that label.
 
 These queries should return a relatively small number of rows - Multistat does not use scroll bars - all bars are auto-scaled to fit the display window (scroll bars are useless in a monitoring dashboard).  
 *For maximum efficiency, each label should appear once only in the data set - Multistat has an option to aggregate values on a per-label basis - say to select the latest timestamped value (or the first, or mean etc.) - at the expense of CPU and network traffic.
@@ -279,7 +279,7 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTE4MzMyNDg4MSwxODEyNDc5ODczLC0yNj
+eyJoaXN0b3J5IjpbMTIxMzAxMDY1NSwxODEyNDc5ODczLC0yNj
 QxMDYwNzEsODExNjE1MDg2LDE1OTc2NDAwNTcsLTEwNTcxOTY4
 MzVdfQ==
 -->
