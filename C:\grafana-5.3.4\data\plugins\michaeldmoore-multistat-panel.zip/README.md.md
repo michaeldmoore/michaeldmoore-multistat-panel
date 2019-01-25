@@ -52,15 +52,11 @@ Each distinct label will be displayed as a bar - the length being determined by 
 takes it's data from a table query - returning, at minimum, 2 fields (names can be anything)
 
 
-A timestamp field can be useful too - this can be in any commonly understood format (Multistat uses the popular Moment.js java script library for manipulating time/date strings - see https://momentjs.com/docs/#/displaying/ for details).  
+A **timestamp** field can be useful too - this can be in any commonly understood format (Multistat uses the popular Moment.js java script library for manipulating time/date strings - see https://momentjs.com/docs/#/displaying/ for details).  
 
-A grouping field can be useful too, to organize large data sets into more meaningful sections.  When grouping, the number of columns can be pre-configure
-* Label
-* Value
-* Timestamp (optional)
-* Group By (optional)
+A **grouping** field can be useful too, to organize large data sets into more meaningful sections.  When grouping, the number of columns can be pre-configured, along with handy mechanisms for filtering and arranging the order each group is presented in.
 
-
+Any 
 
 
 These queries should return a relatively small number of rows - Multistat does not use scroll bars - all bars are auto-scaled to fit the display window (scroll bars are useless in a monitoring dashboard).  
@@ -276,6 +272,6 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTM2Mjk4MTc3NCwtMjY0MTA2MDcxLDgxMT
+eyJoaXN0b3J5IjpbMTE2MDg5NTgxOSwtMjY0MTA2MDcxLDgxMT
 YxNTA4NiwxNTk3NjQwMDU3LC0xMDU3MTk2ODM1XX0=
 -->
