@@ -200,7 +200,7 @@ Here, you can see how the 4 key fields in the query result set get mapped to the
 
 The DateTime col (optional) is mapped here to the 'time' field.  When set, the TZ Offset Hrs setting can be used to offset the display value to account for time-zone differences between the data source and the client. *(Note - this time offset features duplicates something similar built into recent versions of Grafana.  This feature may be removed in future versions of Multistat)*
 
-
+The following discussion of 'Show as-of Date' is serves a rather specialized usage pattern.  Most users can ignore this parameter.  When set though
 The 'Show as-of Date' setting controls whether or not the last update time is to be displayed in the top right of the panel.  When set, this displays the maximum datetime value in the query record set, which can be useful in process monitoring applications.  The format field controls how this time is displayed (see documentation for [moment.js](https://momentjs.com/guides/#/parsing/known-formats/) for formatting details), or use the reserved keyword 'ELAPSED' to display as a natural language string, relative to the current time.   Help is available, if needed.
 
 The optional Group col is set to the data field 'area' - resulting in 3 sub-charts (1 each for North, East and West)
@@ -286,7 +286,7 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTMzMTYzNDI5OCwzOTgxMjMyNTcsLTEwND
+eyJoaXN0b3J5IjpbMjA3MDAzMzI1MiwzOTgxMjMyNTcsLTEwND
 IyNTg0NCwxNDIyMjQxMDExLDE4MTI0Nzk4NzMsLTI2NDEwNjA3
 MSw4MTE2MTUwODYsMTU5NzY0MDA1NywtMTA1NzE5NjgzNV19
 -->
