@@ -264,7 +264,7 @@ The **Out Of Range** label color override is an advanced feature for cases where
 
 **Tooltips** enables the mouse over info balloons, listing all the fields corresponding to the identified bar.  **Date Format** allows the setting formatting characters for the field identified as the datatime field (if any)
 
-The **Lines -And-Limits** tab
+The **Lines and Limits** tab
 ![image](https://user-images.githubusercontent.com/3724718/51770407-4758a900-20ab-11e9-87b4-f7c69a679d6a.png)
 
 
@@ -272,15 +272,8 @@ The **Lines -And-Limits** tab
 
 
 
-The margin settings control how much space needs to be reserved, depending on the actual name of the labels etc.  Bar colors (plus others such as the axis labels and ticks and the odd/even bar background) are defined in this section.  Depending on the application, we can set different colors for positive and negative values and also control the bar-to-gap padding percentage.
-
-Font size and color is selectable for the labels and values too, plus a switch to enable mouse hover tool-tips, plus (in the event that a datetime field has been set in the Columns tab), the format used to display any datetime values in the query result set.
 
 
-
-The **Lines and Limits** tab
-
-![image](https://user-images.githubusercontent.com/3724718/50192702-f958c480-02f8-11e9-8700-d180077d99d7.png)
 
 
 On this tab, you can override the auto-defaults to control upper and lower extents (these automatically extend when the values displayed fall outside these settings), plus optionally display these values as colored reference lines.
@@ -328,10 +321,10 @@ If you find this useful, and/or if you can think of additional features that you
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE1NDg5MDE0MCwtMTk0MzM0OTYwMCwtNz
-QwMTg1NDgwLDEyMDA1NDY4OSwyMzg0MTk3MzAsMTkxMjI2Njk0
-MiwtODk1MTMyMjk4LDEyODQ5MDU2MzAsNTcwNjAzNTc3LDM5OD
-EyMzI1NywtMTA0MjI1ODQ0LDE0MjIyNDEwMTEsMTgxMjQ3OTg3
-MywtMjY0MTA2MDcxLDgxMTYxNTA4NiwxNTk3NjQwMDU3LC0xMD
-U3MTk2ODM1XX0=
+eyJoaXN0b3J5IjpbLTIxMTQ3ODg4NjAsLTE5NDMzNDk2MDAsLT
+c0MDE4NTQ4MCwxMjAwNTQ2ODksMjM4NDE5NzMwLDE5MTIyNjY5
+NDIsLTg5NTEzMjI5OCwxMjg0OTA1NjMwLDU3MDYwMzU3NywzOT
+gxMjMyNTcsLTEwNDIyNTg0NCwxNDIyMjQxMDExLDE4MTI0Nzk4
+NzMsLTI2NDEwNjA3MSw4MTE2MTUwODYsMTU5NzY0MDA1NywtMT
+A1NzE5NjgzNV19
 -->
