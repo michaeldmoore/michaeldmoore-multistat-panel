@@ -1,67 +1,57 @@
 <div class="editor-row">
-
-  <div class="section gf-form-group">
-	<h5 class="section-heading">Layout</h5>
-
-	<div class="gf-form">
-      <gf-form-switch class="gf-form" label-class="michaeldmoore-multistat-panel-w9" label="Horizontal" checked="ctrl.panel.Horizontal" on-change="ctrl.render()"></gf-form-switch>
-	  
-	</div>
-
-    <div class="gf-form">
-	  <label class="gf-form-label michaeldmoore-multistat-panel-w9">Label Margin</label>
-	  <input type="number" class="gf-form-input michaeldmoore-multistat-panel-w4" placeholder="auto" data-placement="right" 
-	    bs-tooltip="'Set to 0 for no bottom margin'" ng-model="ctrl.panel.LabelMargin" ng-change="ctrl.render()" ng-model-onblur>
-	  <label class="gf-form-label michaeldmoore-multistat-panel-w9">Angle</label>
-	  <input type="number" class="gf-form-input michaeldmoore-multistat-panel-w4" placeholder="auto" data-placement="right" 
-	    bs-tooltip="'Set to 0 for no rotation'" ng-model="ctrl.panel.LableAngle" ng-change="ctrl.render()" ng-model-onblur>
-    </div>
-	
-    <div class="gf-form">
-	  <label class="gf-form-label michaeldmoore-multistat-panel-w9">Low Side Margin</label>
-	  <input type="number" class="gf-form-input michaeldmoore-multistat-panel-w4" placeholder="auto" data-placement="right" 
-	    bs-tooltip="'Set to 0 for no low side axis'" ng-model="ctrl.panel.LowSideMargin" ng-change="ctrl.render()" ng-model-onblur>
-	  <label class="gf-form-label michaeldmoore-multistat-panel-w9">High Side Margin</label>
-	  <input type="number" class="gf-form-input michaeldmoore-multistat-panel-w4" placeholder="auto" data-placement="right" 
-	    bs-tooltip="'Set to 0 for no high side axis'" ng-model="ctrl.panel.HighSideMargin" ng-change="ctrl.render()" ng-model-onblur>
-    </div>
-	
-
-	<div class="gf-form">
-	  <label class="gf-form-label michaeldmoore-multistat-panel-w9">High Axis Color</label>
-	  <span class="gf-form-label michaeldmoore-multistat-panel-w4">
-		<spectrum-picker ng-model="ctrl.panel.HighAxisColor" ng-change="ctrl.render()" ></spectrum-picker>
-	  </span>
-	  <label class="gf-form-label michaeldmoore-multistat-panel-w9">Low Axis Color</label>
-	  <span class="gf-form-label michaeldmoore-multistat-panel-w4">
-		<spectrum-picker ng-model="ctrl.panel.LowAxisColor" ng-change="ctrl.render()" ></spectrum-picker>
-	  </span>
-	</div>
-	
-	<div class="gf-form">
-	  <label class="gf-form-label michaeldmoore-multistat-panel-w9">High Bar Color</label>
-	  <span class="gf-form-label michaeldmoore-multistat-panel-w4">
-		<spectrum-picker ng-model="ctrl.panel.HighBarColor" ng-change="ctrl.render()" ></spectrum-picker>
-	  </span>
-	  <label class="gf-form-label michaeldmoore-multistat-panel-w9">Low Bar Color</label>
-	  <span class="gf-form-label michaeldmoore-multistat-panel-w4">
-		<spectrum-picker ng-model="ctrl.panel.LowBarColor" ng-change="ctrl.render()" ></spectrum-picker>
-	  </span>
-	  <label class="gf-form-label width-9">Bar Padding %</label>
-	  <input type="number" class="gf-form-input width-4" placeholder="auto" data-placement="right" 
-	    bs-tooltip="'Override automatic maximum scale value'" ng-model="ctrl.panel.BarPadding" ng-change="ctrl.render()" ng-model-onblur>
-	</div>
-	
-	<div class="gf-form">
-	  <label class="gf-form-label michaeldmoore-multistat-panel-w9">Odd Row Color</label>
-	  <span class="gf-form-label michaeldmoore-multistat-panel-w4">
-		<spectrum-picker ng-model="ctrl.panel.OddRowColor" ng-change="ctrl.render()" ></spectrum-picker>
-	  </span>
-	  <label class="gf-form-label michaeldmoore-multistat-panel-w9">Even Row Color</label>
-	  <span class="gf-form-label michaeldmoore-multistat-panel-w4">
-		<spectrum-picker ng-model="ctrl.panel.EvenRowColor" ng-change="ctrl.render()" ></spectrum-picker>
-	  </span>
-	</div>
-  </div>
-  
+   <div class="section gf-form-group">
+      <h5 class="section-heading">Layout</h5>
+      <div class="gf-form">
+         <gf-form-switch class="gf-form" label-class="michaeldmoore-multistat-panel-w9" label="Horizontal" checked="ctrl.panel.Horizontal" on-change="ctrl.render()"></gf-form-switch>
+      </div>
+      <div class="gf-form">
+         <label class="gf-form-label michaeldmoore-multistat-panel-w9">Label Margin</label>
+         <input type="number" class="gf-form-input michaeldmoore-multistat-panel-w4" placeholder="auto" data-placement="right" 
+            bs-tooltip="'Set to 0 for no bottom margin'" ng-model="ctrl.panel.LabelMargin" ng-change="ctrl.render()" ng-model-onblur>
+         <label class="gf-form-label michaeldmoore-multistat-panel-w9">Angle</label>
+         <input type="number" class="gf-form-input michaeldmoore-multistat-panel-w4" placeholder="auto" data-placement="right" 
+            bs-tooltip="'Set to 0 for no rotation'" ng-model="ctrl.panel.LableAngle" ng-change="ctrl.render()" ng-model-onblur>
+      </div>
+      <div class="gf-form">
+         <label class="gf-form-label michaeldmoore-multistat-panel-w9">Low Side Margin</label>
+         <input type="number" class="gf-form-input michaeldmoore-multistat-panel-w4" placeholder="auto" data-placement="right" 
+            bs-tooltip="'Set to 0 for no low side axis'" ng-model="ctrl.panel.LowSideMargin" ng-change="ctrl.render()" ng-model-onblur>
+         <label class="gf-form-label michaeldmoore-multistat-panel-w9">High Side Margin</label>
+         <input type="number" class="gf-form-input michaeldmoore-multistat-panel-w4" placeholder="auto" data-placement="right" 
+            bs-tooltip="'Set to 0 for no high side axis'" ng-model="ctrl.panel.HighSideMargin" ng-change="ctrl.render()" ng-model-onblur>
+      </div>
+      <div class="gf-form">
+         <label class="gf-form-label michaeldmoore-multistat-panel-w9">High Axis Color</label>
+         <span class="gf-form-label michaeldmoore-multistat-panel-w4">
+            <spectrum-picker ng-model="ctrl.panel.HighAxisColor" ng-change="ctrl.render()" ></spectrum-picker>
+         </span>
+         <label class="gf-form-label michaeldmoore-multistat-panel-w9">Low Axis Color</label>
+         <span class="gf-form-label michaeldmoore-multistat-panel-w4">
+            <spectrum-picker ng-model="ctrl.panel.LowAxisColor" ng-change="ctrl.render()" ></spectrum-picker>
+         </span>
+      </div>
+      <div class="gf-form">
+         <label class="gf-form-label michaeldmoore-multistat-panel-w9">High Bar Color</label>
+         <span class="gf-form-label michaeldmoore-multistat-panel-w4">
+            <spectrum-picker ng-model="ctrl.panel.HighBarColor" ng-change="ctrl.render()" ></spectrum-picker>
+         </span>
+         <label class="gf-form-label michaeldmoore-multistat-panel-w9">Low Bar Color</label>
+         <span class="gf-form-label michaeldmoore-multistat-panel-w4">
+            <spectrum-picker ng-model="ctrl.panel.LowBarColor" ng-change="ctrl.render()" ></spectrum-picker>
+         </span>
+         <label class="gf-form-label width-9">Bar Padding %</label>
+         <input type="number" class="gf-form-input width-4" placeholder="auto" data-placement="right" 
+            bs-tooltip="'Override automatic maximum scale value'" ng-model="ctrl.panel.BarPadding" ng-change="ctrl.render()" ng-model-onblur>
+      </div>
+      <div class="gf-form">
+         <label class="gf-form-label michaeldmoore-multistat-panel-w9">Odd Row Color</label>
+         <span class="gf-form-label michaeldmoore-multistat-panel-w4">
+            <spectrum-picker ng-model="ctrl.panel.OddRowColor" ng-change="ctrl.render()" ></spectrum-picker>
+         </span>
+         <label class="gf-form-label michaeldmoore-multistat-panel-w9">Even Row Color</label>
+         <span class="gf-form-label michaeldmoore-multistat-panel-w4">
+            <spectrum-picker ng-model="ctrl.panel.EvenRowColor" ng-change="ctrl.render()" ></spectrum-picker>
+         </span>
+      </div>
+   </div>
 </div>

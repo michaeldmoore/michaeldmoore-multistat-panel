@@ -215,45 +215,70 @@ The **Layout** tab
 ![image](https://user-images.githubusercontent.com/3724718/51728892-78979180-2037-11e9-8c4e-1578ca7302b5.png)
 
 The Layouts tab defines the basic settings that control how the data is arranged on the panel. 
+The Horizontal checkbox switches the bar orientation from vertical to horizontal.  As the chart(s) rotate, the axis and labels rotate with them - hence the use of neutral terms for the axis as 'High' and 'Low' rather than 'Left', 'Right', 'Top' or 'Bottom'
 
- A group col setting can be used to define a field that displays multiple sets, or groups, of elements.  In this demo case, we're grouping on the 'region' field, which takes on 5 different values (East, West, North, South and Central).
+**Label Margin** sets the area reserved for the labels can be set according to the length of the labels - or left blank, leaving the panel to calculate a reasonable value based on the actual data, orientation and chosen font size etc.   **Angle** controls the rotation angle for the label text, which can help preserve screen real-estate - particularly when long labels are present.  *Note - it is quite difficult for the control to predetermine the ideal center of rotation for these labels.  Depending on the data, this can make the charts hard to understand.  More work in future releases should improve this feature.  Still, if it helps in any specific case, feel free to use it.* 
 
-When grouping, by default, the groups are arranged in alphabetical order.  (See here, Central->East->North->South->West)
+**Low Side Margin** and **High Side Margin** set the width of the two axis.  Set to 0 to hide one or both of them.
 
-![image](https://user-images.githubusercontent.com/3724718/39014353-f93f1894-43ce-11e8-8ad1-d10906f3ee3b.png)
+**High Axis Color** and **Low Axis Color** set the colors for these axes, assuming they are visible
 
+**High Bar Color** sets the regular color of bars who's values are above the baseline (normally 0, see the Lines-And-Limits tab). **Low Bar Color** does the same for bar descending below (or to the left) of the base line.  **Bar Padding** controls the width of the gap between bars, as a percentage of the bar width
 
+**Odd Row Color** and **Even Row Color** sets the colors of the alternating background stripes.  These seem to work best when semi-transparent colors are chosen (switch the color picker to 'Custom' and slide the transparency control to the left) 
 
-This default can be overridden by setting the Group Sort Order string - a comma delimited sequence of group names, like "North,East,West,South,Central"  that make it North->East->West->South->Central
-
-![image](https://user-images.githubusercontent.com/3724718/39014554-86a11ebc-43cf-11e8-997b-a0d3bab94f74.png)
-
-
-
+![image](https://user-images.githubusercontent.com/3724718/51762923-b2e44b80-2096-11e9-821e-b4a1274e0b67.png)
 
 
-The margin settings control how much space needs to be reserved, depending on the actual name of the labels etc.  Bar colors (plus others such as the axis labels and ticks and the odd/even bar background) are defined in this section.  Depending on the application, we can set different colors for positive and negative values and also control the bar-to-gap padding percentage.
+The **Grouping** tab
+![image](https://user-images.githubusercontent.com/3724718/51763087-3605a180-2097-11e9-982c-a33b5e0466b5.png)
 
-Font size and color is selectable for the labels and values too, plus a switch to enable mouse hover tool-tips, plus (in the event that a datetime field has been set in the Columns tab), the format used to display any datetime values in the query result set.
+Provided the Group Col (see the Columns Tab, above) is mapped to a field, this tab show settings for how the groups are to be displayed.  (When Group Col is not defined,  ALL the values appear in a single group)
+
+The **Columns Per Row** setting controls how many sub-charts appear in each row.  When the data contains more groups than are defined here, additional rows of sub-charts are added, wrapping to fill the available space.  *Note: If Group Col is set to something inappropriate, such as (say) the value or datetime field, Multistat can generate a ridiculous number of sub-charts - auto-scaled to fit in the available area, resulting in an unreadable mess.  Don't panic - just choose a more meaningful grouping field, assuming your data has one.*
+
+The **Group Name Filter** field (*this is an advanced feature most users can ignore.  If in doubt, make sure this is blank.  Especially if the chart appears to be empty!).*  This field should be a regular expression string which is used to filter out non-matching group names, when needed.  
+
+Using the demo sample data, for example (which contains values for areas East, West and North), we could select just the East and West groups by using a value of 'East|West' (Note the Pipe character '|' separating a sequence of matching strings.  Regular expressions are amazingly powerful and can be much, much more complicated than this - but a simple set of pipe-delimited strings is usually enough in this application.
+
+The **Group Sort Order** field is another regular expression string, this time used to define the order the groups are presented in (reading like a book from top left, wrapping to the bottom right).  Matched group names are presented in order, followed by any remaining non-matched group names in the default (alphabetical) order.
+Left blank with our sample data, the groups will be arranged in alphabetical order - that is, East->North->West.  Setting this field to the regular expression 'West|North|East' overrides the alphabetical ordering, resulting in a more map-meaningful displays with the West group on the left and the East group on the right *(apologies to users in the Southern Hemisphere who might have a different perspective...)*
+![image](https://user-images.githubusercontent.com/3724718/51764732-841ca400-209b-11e9-8a0f-3527750d97fe.png)
+*Notice how Multistat intelligently adjusts the height and width of the sub-charts to keep all bars the same width, regardless of the number of bars in each group.  When more than one row of sub-charts is generated, Multistat inserts blank/dummy rows in groups needed to keep the groups aligned properly.*
+![image](https://user-images.githubusercontent.com/3724718/51766163-81bc4900-209f-11e9-945c-afe3bf001a88.png)
 
 
+
+**Show Group Labels** controls whether or not each group is topped with it's name, along with the **Font Size** and **Color** settings 
+
+The **Options** Tab
+![image](https://user-images.githubusercontent.com/3724718/51764990-35bbd500-209c-11e9-9184-669e77eefddb.png)
+
+**Show Values** controls whether or not to display the values in text (the bar size always represents the value and may be enough for users without a readable text version).  When checked, the **Font Size** and **Color** can also be defined.  The **Position** setting controls where the value text will appear - either at the extreme (end) of the relevant bars, at the base of the bars or in a reserved area above (or to the right of) the chart.  Choose what makes sense in your application.
+![image](https://user-images.githubusercontent.com/3724718/51769330-6efa4200-20a8-11e9-90cf-c1a2397b4f89.png)
+*The three value positions, Bar Base, Bar End and Top*
+
+**Show Group Labels** and **Show Labels** - as before (Show Group Labels also appeared on the Grouping tab, for convenience).. Set Font Size and color etc.
+The **Out Of Range** label color override is an advanced feature for cases where a specific axis Max and/or Min setting is in place (see the **Lines-And-Limits** tab below) and a bar is outside one of these limits.  This color overrides the standard label color for labels where this occurs. *(This is useful, for example where a non-working sensor, for example, generates a wildly out of range value)*
+**Label Margin**, **Angle**, **Low Side Margin** and **High Side Margin** - these too are duplicates of controls on the Layout tab, again, for convenience.
+
+**Tooltips** enables the mouse over info balloons, listing all the fields corresponding to the identified bar.  **Date Format** allows the setting formatting characters for the field identified as the datatime field (if any)
 
 The **Lines and Limits** tab
+![image](https://user-images.githubusercontent.com/3724718/51770407-4758a900-20ab-11e9-87b4-f7c69a679d6a.png)
 
-![image](https://user-images.githubusercontent.com/3724718/50192702-f958c480-02f8-11e9-8700-d180077d99d7.png)
+**Max Value** and **Min Value** These overrides default auto-scaling axis extents, and if the **Show Line** checkbox is set, control the color of the resulting reference lines.
+
+The **BaseLine** setting (default 0) differentiates between positive and negative values, each potentially having a different color.  This can be useful when monitoring deviations from some non-zero set point.  For example, Electrical generators (in North America, at least) operate at very close to 60Hz, with normally, only small deviations.  Setting a baseline at 60.0 and a Max/Min to (say) 60.10 and 59.90 would make an easily understood display in such an application.
+
+Values above the base line are generally draw using the High Bar color (see the Layout Tab).  Values below in the Low Bar color.
+
+**High Limit** and **Low Limit**, if set define additional 'warning' references.  Corresponding reference lines and colors are set as before.   In addition, the **Color Bar** option overrides the regular above or below base line bar colors for bars outside these warning levels.  Optionally, these can be set to 'flash' - transitioning from one color to another at a controllable rate (period).  *The period is measured in mS, Values between 200mS and 400mS seem to work best.*
 
 
-On this tab, you can override the auto-defaults to control upper and lower extents (these automatically extend when the values displayed fall outside these settings), plus optionally display these values as colored reference lines.
+As with all these settings, the user can display a reference line on the chart and set the colors to whatever makes sense in the application.   In the frequency example above, there might be high and Low Limits set at (say) 60.05 and 95.95 respectively.
 
-The Base Line setting (default 0) differentiates between positive and negative values, each potentially having a different color.  This can be useful when monitoring deviations from some non-zero set point.  For example, Electrical generators (in North America, at least) operate at very close to 60Hz, with normally, only small deviations.  Setting a baseline at 60.0 and a Max/Min to (say) 60.10 and 59.90 would make an easily understood display in such an application.
-
-
-
-**Threshold limits**
-
-In addition, this tab allow the user to specify high and low Limit values.  Bars with values outside these limits can be colored differently, to indicate an exceedance.  As with all there settings, the user can display a reference line on the chart and set the colors to whatever makes sense in the application.   In the frequency example above, there might be high and Low Limits set at (say) 60.05 and 95.95 respectively.
-
-Additionally, exceedances can be configured to 'flash' - toggling between two colors and some pre-defined rate.
+For example...
 
 ![image](https://user-images.githubusercontent.com/3724718/38963541-547a9560-4327-11e8-912a-5fdca266fd5f.png)
 
@@ -277,9 +302,8 @@ Putting it all together, the displays can make a truly unforgettable and un-igno
 
 **Known Issues**
 
- This is a version 1.2.0 release, as such there may be a few known issues that need to be added or fixed.
-
- * Value label positioning.  position labels intelligently as opposed to slightly below the top of each bar.
+ This is a version 1.0.2 release, as such there may be a few known issues that need to be added or fixed.
+.
 
 
 

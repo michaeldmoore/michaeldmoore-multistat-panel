@@ -1,42 +1,35 @@
 <div class="editor-row">
-
-  <div class="section gf-form-group">
-	<h5 class="section-heading">Grouping</h5>
-
-	<div class="gf-form" ng-if="ctrl.panel.GroupColName!=''">
+<div class="section gf-form-group">
+   <h5 class="section-heading">Grouping</h5>
+   <div class="gf-form" ng-if="ctrl.panel.GroupColName!=''">
       <label class="gf-form-label michaeldmoore-multistat-panel-w10">Columns Per Row</label>
-	  <input type="number" class="gf-form-input michaeldmoore-multistat-panel-w4" placeholder="0" data-placement="right" 
-	    bs-tooltip="'Set to value > 0 to break display into multiple row/columns'" ng-model="ctrl.panel.GroupCols" ng-change="ctrl.render()" ng-model-onblur>
-	</div>
-	
-	<div class="gf-form" ng-if="ctrl.panel.GroupColName!=''">
-	  <label class="gf-form-label michaeldmoore-multistat-panel-w10">Group Name Filter</label>
+      <input type="number" class="gf-form-input michaeldmoore-multistat-panel-w4" placeholder="0" data-placement="right" 
+         bs-tooltip="'Set to value > 0 to break display into multiple row/columns'" ng-model="ctrl.panel.GroupCols" ng-change="ctrl.render()" ng-model-onblur>
+   </div>
+   <div class="gf-form" ng-if="ctrl.panel.GroupColName!=''">
+      <label class="gf-form-label michaeldmoore-multistat-panel-w10">Group Name Filter</label>
       <input type="string" class="gf-form-input width-30" data-placement="right" 
-	    bs-tooltip="'RegEX pattern for filtering groups by name - leave blank for no filtering\ne.g. use partial string matches seperated by pipe (|) chars.'" ng-model="ctrl.panel.GroupNameFilter" ng-change="ctrl.render()" ng-model-onchange />	
-	</div>
-
-	<div class="gf-form" ng-if="ctrl.panel.GroupColName!=''">
-	  <label class="gf-form-label michaeldmoore-multistat-panel-w10">Group Sort Order</label>
+         bs-tooltip="'RegEX pattern for filtering groups by name - leave blank for no filtering\ne.g. use partial string matches seperated by pipe (|) chars.'" ng-model="ctrl.panel.GroupNameFilter" ng-change="ctrl.render()" ng-model-onchange />	
+   </div>
+   <div class="gf-form" ng-if="ctrl.panel.GroupColName!=''">
+      <label class="gf-form-label michaeldmoore-multistat-panel-w10">Group Sort Order</label>
       <input type="string" class="gf-form-input width-30" data-placement="right" 
-	    bs-tooltip="'Comma seperated group name order - e.g. North,South,East,West'" ng-model="ctrl.panel.GroupSortString" ng-change="ctrl.render()" ng-model-onchange />	
-	</div>
-
-	<div class="gf-form"  ng-if="ctrl.panel.GroupColName!=''">
+         bs-tooltip="'Comma seperated group name order - e.g. North,South,East,West'" ng-model="ctrl.panel.GroupSortString" ng-change="ctrl.render()" ng-model-onchange />	
+   </div>
+   <div class="gf-form"  ng-if="ctrl.panel.GroupColName!=''">
       <gf-form-switch class="gf-form" label-class="width-10" label="Show Group Labels" checked="ctrl.panel.ShowGroupLabels" on-change="ctrl.render()"></gf-form-switch>
-	  <div class="gf-form-inline" ng-if="ctrl.panel.ShowGroupLabels">
-        <label class="gf-form-label michaeldmoore-multistat-panel-w9">Font size</label>
-        <div class="gf-form-select-wrapper">
-          <select class="gf-form-input michaeldmoore-multistat-panel-w6" ng-model="ctrl.panel.GroupLabelFontSize" ng-options="f for f in ctrl.fontSizes" ng-change="ctrl.render()"></select>
-        </div>
-	    <label class="gf-form-label michaeldmoore-multistat-panel-w6">Color</label>
-	    <span class="gf-form-label michaeldmoore-annunciator-panel-w4">
-		  <spectrum-picker ng-model="ctrl.panel.GroupLabelColor" ng-change="ctrl.render()" ></spectrum-picker>
-	    </span>
-	  </div>
-	</div>
-
-	<div class="gf-form" ng-if="ctrl.panel.GroupColName==''">
-	  <label class="gf-form-label michaeldmoore-multistat-panel-w20">Grouping is currently disabled (select grouping column in Layout tab to enable grouping)</label>
-	</div>
-
+      <div class="gf-form-inline" ng-if="ctrl.panel.ShowGroupLabels">
+         <label class="gf-form-label michaeldmoore-multistat-panel-w9">Font size</label>
+         <div class="gf-form-select-wrapper">
+            <select class="gf-form-input michaeldmoore-multistat-panel-w6" ng-model="ctrl.panel.GroupLabelFontSize" ng-options="f for f in ctrl.fontSizes" ng-change="ctrl.render()"></select>
+         </div>
+         <label class="gf-form-label michaeldmoore-multistat-panel-w6">Color</label>
+         <span class="gf-form-label michaeldmoore-annunciator-panel-w4">
+            <spectrum-picker ng-model="ctrl.panel.GroupLabelColor" ng-change="ctrl.render()" ></spectrum-picker>
+         </span>
+      </div>
+   </div>
+   <div class="gf-form" ng-if="ctrl.panel.GroupColName==''">
+      <label class="gf-form-label michaeldmoore-multistat-panel-w20">Grouping is currently disabled (select grouping column in Layout tab to enable grouping)</label>
+   </div>
 </div>

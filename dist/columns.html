@@ -1,88 +1,73 @@
 <div class="editor-row">
-  <div class="section gf-form-group">
-    <h5 class="section-heading">Column Definitions</h5>
-
-	
-	<div class="gf-form">
-	  <div class="gf-form-inline">
-        <label class="gf-form-label michaeldmoore-multistat-panel-w9">Label col</label>
-        <div class="gf-form-select-wrapper">
-          <select class="gf-form-input michaeldmoore-multistat-panel-w12" ng-model="ctrl.panel.LabelColName" ng-options="f for f in ctrl.cols" ng-change="ctrl.render()"></select>
-        </div>
-	  </div>
-    </div>
-	
-	<div class="gf-form">
-	  <label class="gf-form-label michaeldmoore-multistat-panel-w9">Label Filter</label>
-      <input type="string" class="gf-form-input width-35" data-placement="right" 
-	    bs-tooltip="'RegEX pattern for filtering labels by name - leave blank for no filtering\ne.g. use partial string matches seperated by pipe (|) chars.'" ng-model="ctrl.panel.LabelNameFilter" ng-change="ctrl.render()" ng-model-onchange />	
-	</div>
-
-
-	<div class="gf-form">
-	  <div class="gf-form-inline">
-        <label class="gf-form-label michaeldmoore-multistat-panel-w9">Value col</label>
-        <div class="gf-form-select-wrapper">
-          <select class="gf-form-input michaeldmoore-multistat-panel-w12" ng-model="ctrl.panel.ValueColName" ng-options="f for f in ctrl.cols" ng-change="ctrl.render()"></select>
-        </div>
-	    <label class="gf-form-label width-7">Scale Factor</label>
-	    <input type="number" class="gf-form-input width-6" data-placement="right" 
-			bs-tooltip="'Scale factor - all input values are multiplied by this factor before being displayed'" ng-model="ctrl.panel.ScaleFactor" ng-change="ctrl.render()" ng-model-onblur>		
-	    <label class="gf-form-label width-8">Decimals</label>
-	    <input type="number" class="gf-form-input width-4" data-placement="right" 
-			bs-tooltip="'Number of decimal places for value in tool tip'" ng-model="ctrl.panel.ValueDecimals" ng-change="ctrl.render()" ng-model-onblur>		
-	    <label class="gf-form-label width-6">Aggregation</label>
-        <div class="gf-form-select-wrapper">
-          <select class="gf-form-input michaeldmoore-multistat-panel-w6" ng-model="ctrl.panel.Aggregate" ng-options="f for f in ctrl.aggregations" ng-change="ctrl.render()"></select>
-        </div>			
-	  </div>
-	</div>
-
-	<div class="gf-form">
-	  <div class="gf-form-inline">
-        <label class="gf-form-label michaeldmoore-multistat-panel-w9">Group col</label>
-        <div class="gf-form-select-wrapper">
-          <select class="gf-form-input michaeldmoore-multistat-panel-w12" ng-model="ctrl.panel.GroupColName" ng-options="f for f in ctrl.cols0" ng-change="ctrl.render()"bs-tooltip="'Note : Grouping is only supported in Horizontal layouts'"></select>
-        </div>	  
-	  </div>
-	</div>
-
-
-
-
-	
-	<div class="gf-form">
-	  <div class="gf-form-inline">
-        <label class="gf-form-label michaeldmoore-multistat-panel-w9">DateTime col</label>
-        <div class="gf-form-select-wrapper">
-          <select class="gf-form-input michaeldmoore-multistat-panel-w12" ng-model="ctrl.panel.DateTimeColName" ng-options="f for f in ctrl.cols0" ng-change="ctrl.render()"></select>
-        </div>
-	  </div>
-	  
-  	  <div class="gf-form" ng-if="ctrl.panel.DateTimeColName != ''">
-	    <label class="gf-form-label width-7">TZ Offset Hrs</label>
-	    <input type="number" class="gf-form-input width-6" data-placement="right" 
-			bs-tooltip="'Number of decimal places for value in tool tip'" ng-model="ctrl.panel.TZOffsetHours" ng-change="ctrl.render()" ng-model-onblur>		
-
-	    <div class="gf-form-inline">
-	      <gf-form-switch class="gf-form" label-class="width-8" label="Show as-of Date" checked="ctrl.panel.ShowDate" on-change="ctrl.render()"></gf-form-switch>
-	      <div class="gf-form" ng-if="ctrl.panel.ShowDate">
-		    <label class="gf-form-label width-6">Format</label>
-	        <input type="string" class="gf-form-input width-14" data-placement="right" 
-		    bs-tooltip="'Date formatting string - e.g. MMMM Do YYYY, h:mm:ss a'" ng-model="ctrl.panel.DateFormat" ng-change=  "ctrl.render()" ng-model-onblur />
-		  
-            <label class="gf-form-label query-keyword" ng-click="ctrl.showTZDateFormat = !ctrl.showTZDateFormat">
-              Show Help
-              <i class="fa fa-caret-down" ng-show="ctrl.showTZDateFormat"></i>
-              <i class="fa fa-caret-right" ng-hide="ctrl.showTZDateFormat"></i>
-            </label>
-	      </div>
-        </div>			
-	  </div>
-    </div>
-	  
-	<div class="gf-form" ng-show="ctrl.showTZDateFormat">
-	  <pre class="gf-form-pre alert alert-info" ng-if="ctrl.panel.ShowDate">As-Of Date display:
+   <div class="section gf-form-group">
+      <h5 class="section-heading">Column Definitions</h5>
+      <div class="gf-form">
+         <div class="gf-form-inline">
+            <label class="gf-form-label michaeldmoore-multistat-panel-w9">Label col</label>
+            <div class="gf-form-select-wrapper">
+               <select class="gf-form-input michaeldmoore-multistat-panel-w12" ng-model="ctrl.panel.LabelColName" ng-options="f for f in ctrl.cols" ng-change="ctrl.render()"></select>
+            </div>
+         </div>
+      </div>
+      <div class="gf-form">
+         <label class="gf-form-label michaeldmoore-multistat-panel-w9">Label Filter</label>
+         <input type="string" class="gf-form-input width-35" data-placement="right" 
+            bs-tooltip="'RegEX pattern for filtering labels by name - leave blank for no filtering\ne.g. use partial string matches seperated by pipe (|) chars.'" ng-model="ctrl.panel.LabelNameFilter" ng-change="ctrl.render()" ng-model-onchange />	
+      </div>
+      <div class="gf-form">
+         <div class="gf-form-inline">
+            <label class="gf-form-label michaeldmoore-multistat-panel-w9">Value col</label>
+            <div class="gf-form-select-wrapper">
+               <select class="gf-form-input michaeldmoore-multistat-panel-w12" ng-model="ctrl.panel.ValueColName" ng-options="f for f in ctrl.cols" ng-change="ctrl.render()"></select>
+            </div>
+            <label class="gf-form-label width-7">Scale Factor</label>
+            <input type="number" class="gf-form-input width-6" data-placement="right" 
+               bs-tooltip="'Scale factor - all input values are multiplied by this factor before being displayed'" ng-model="ctrl.panel.ScaleFactor" ng-change="ctrl.render()" ng-model-onblur>		
+            <label class="gf-form-label width-8">Decimals</label>
+            <input type="number" class="gf-form-input width-4" data-placement="right" 
+               bs-tooltip="'Number of decimal places for value in tool tip'" ng-model="ctrl.panel.ValueDecimals" ng-change="ctrl.render()" ng-model-onblur>		
+            <label class="gf-form-label width-6">Aggregation</label>
+            <div class="gf-form-select-wrapper">
+               <select class="gf-form-input michaeldmoore-multistat-panel-w6" ng-model="ctrl.panel.Aggregate" ng-options="f for f in ctrl.aggregations" ng-change="ctrl.render()"></select>
+            </div>
+         </div>
+      </div>
+      <div class="gf-form">
+         <div class="gf-form-inline">
+            <label class="gf-form-label michaeldmoore-multistat-panel-w9">Group col</label>
+            <div class="gf-form-select-wrapper">
+               <select class="gf-form-input michaeldmoore-multistat-panel-w12" ng-model="ctrl.panel.GroupColName" ng-options="f for f in ctrl.cols0" ng-change="ctrl.render()"bs-tooltip="'Note : Grouping is only supported in Horizontal layouts'"></select>
+            </div>
+         </div>
+      </div>
+      <div class="gf-form">
+         <div class="gf-form-inline">
+            <label class="gf-form-label michaeldmoore-multistat-panel-w9">DateTime col</label>
+            <div class="gf-form-select-wrapper">
+               <select class="gf-form-input michaeldmoore-multistat-panel-w12" ng-model="ctrl.panel.DateTimeColName" ng-options="f for f in ctrl.cols0" ng-change="ctrl.render()"></select>
+            </div>
+         </div>
+         <div class="gf-form" ng-if="ctrl.panel.DateTimeColName != ''">
+            <label class="gf-form-label width-7">TZ Offset Hrs</label>
+            <input type="number" class="gf-form-input width-6" data-placement="right" 
+               bs-tooltip="'Number of decimal places for value in tool tip'" ng-model="ctrl.panel.TZOffsetHours" ng-change="ctrl.render()" ng-model-onblur>		
+            <div class="gf-form-inline">
+               <gf-form-switch class="gf-form" label-class="width-8" label="Show as-of Date" checked="ctrl.panel.ShowDate" on-change="ctrl.render()"></gf-form-switch>
+               <div class="gf-form" ng-if="ctrl.panel.ShowDate">
+                  <label class="gf-form-label width-6">Format</label>
+                  <input type="string" class="gf-form-input width-14" data-placement="right" 
+                     bs-tooltip="'Date formatting string - e.g. MMMM Do YYYY, h:mm:ss a'" ng-model="ctrl.panel.DateFormat" ng-change=  "ctrl.render()" ng-model-onblur />
+                  <label class="gf-form-label query-keyword" ng-click="ctrl.showTZDateFormat = !ctrl.showTZDateFormat">
+                  Show Help
+                  <i class="fa fa-caret-down" ng-show="ctrl.showTZDateFormat"></i>
+                  <i class="fa fa-caret-right" ng-hide="ctrl.showTZDateFormat"></i>
+                  </label>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div class="gf-form" ng-show="ctrl.showTZDateFormat">
+         <pre class="gf-form-pre alert alert-info" ng-if="ctrl.panel.ShowDate">As-Of Date display:
 This option controls if, and how the latest query time is displayed in the top right hand side of the panel.
 Depending on the data source and query, each row in Multistat may be updated at different times.  This display
 can be useful in showing the latest timestamp of all the data displayed in the panel - as a snapshot date/time.
@@ -91,20 +76,17 @@ Date display formatting string uses common standards. <a href="https://momentjs.
 
 Setting the format string to the reserved keyword "ELAPSED" displays the time as the elapsed time since the last data update (as per the latest grafana refresh operation).
 	  </pre>
-	</div>
-
-    <div class="gf-form">
-	  <div class="gf-form-inline">
-        <label class="gf-form-label michaeldmoore-multistat-panel-w9">Sort col</label>
-        <div class="gf-form-select-wrapper">
-          <select class="gf-form-input michaeldmoore-multistat-panel-w12" ng-model="ctrl.panel.SortColName" ng-options="f for f in ctrl.cols0" ng-change="ctrl.render()"></select>
-        </div>
-	    <div class="gf-form-select-wrapper" ng-if="ctrl.panel.SortColName != ''">
-		  <select class="gf-form-input michaeldmoore-multistat-panel-w9" ng-model="ctrl.panel.SortDirection" ng-options="f for f in ctrl.sortDirections" ng-change="ctrl.render()"></select>
-	    </div>
-	  </div>
-    </div>
-  
-  </div>
+      </div>
+      <div class="gf-form">
+         <div class="gf-form-inline">
+            <label class="gf-form-label michaeldmoore-multistat-panel-w9">Sort col</label>
+            <div class="gf-form-select-wrapper">
+               <select class="gf-form-input michaeldmoore-multistat-panel-w12" ng-model="ctrl.panel.SortColName" ng-options="f for f in ctrl.cols0" ng-change="ctrl.render()"></select>
+            </div>
+            <div class="gf-form-select-wrapper" ng-if="ctrl.panel.SortColName != ''">
+               <select class="gf-form-input michaeldmoore-multistat-panel-w9" ng-model="ctrl.panel.SortDirection" ng-options="f for f in ctrl.sortDirections" ng-change="ctrl.render()"></select>
+            </div>
+         </div>
+      </div>
+   </div>
 </div>
-
