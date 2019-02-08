@@ -1,8 +1,10 @@
+/*jshint esversion: 6 */
 module.exports = (grunt) => {
-  require('load-grunt-tasks')(grunt)
+  require('load-grunt-tasks')(grunt);
 
-  grunt.loadNpmTasks('grunt-execute')
-  grunt.loadNpmTasks('grunt-contrib-clean')
+  grunt.loadNpmTasks('grunt-execute');
+  grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-contrib-jshint');
 
   grunt.initConfig({
 
@@ -34,6 +36,10 @@ module.exports = (grunt) => {
       }
     },
 
+    jshint: {
+      all: ['Gruntfile.js', 'src/*.js']
+    },
+
     babel: {
       options: {
         sourceMap: true,
@@ -59,7 +65,7 @@ module.exports = (grunt) => {
       }
     }
 
-  })
+  });
 
-  grunt.registerTask('default', ['clean', 'copy:src_to_dist', 'copy:pluginDef', 'copy:img_to_dist', 'copy:css_to_dist', 'babel'])
-}
+  grunt.registerTask('default', ['clean', 'jshint', 'copy:src_to_dist', 'copy:pluginDef', 'copy:img_to_dist', 'copy:css_to_dist', 'babel']);
+};
