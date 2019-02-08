@@ -1,9 +1,9 @@
 'use strict';
 
-System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jquery', 'jquery.flot', './external/d3', 'angular', 'app/core/utils/kbn', 'app/core/config', 'app/core/time_series2', 'moment'], function (_export, _context) {
+System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment', './css/multistat-panel.css!', './external/d3'], function (_export, _context) {
 	"use strict";
 
-	var MetricsPanelCtrl, _, $, d3, angular, kbn, config, TimeSeries, moment, _createClass, MultistatPanelCtrl;
+	var MetricsPanelCtrl, $, _, moment, d3, _createClass, MultistatPanelCtrl;
 
 	function _classCallCheck(instance, Constructor) {
 		if (!(instance instanceof Constructor)) {
@@ -38,22 +38,14 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 	return {
 		setters: [function (_appPluginsSdk) {
 			MetricsPanelCtrl = _appPluginsSdk.MetricsPanelCtrl;
-		}, function (_cssMultistatPanelCss) {}, function (_lodash) {
-			_ = _lodash.default;
 		}, function (_jquery) {
 			$ = _jquery.default;
-		}, function (_jqueryFlot) {}, function (_externalD) {
-			d3 = _externalD.default;
-		}, function (_angular) {
-			angular = _angular.default;
-		}, function (_appCoreUtilsKbn) {
-			kbn = _appCoreUtilsKbn.default;
-		}, function (_appCoreConfig) {
-			config = _appCoreConfig.default;
-		}, function (_appCoreTime_series) {
-			TimeSeries = _appCoreTime_series.default;
+		}, function (_jqueryFlot) {}, function (_lodash) {
+			_ = _lodash.default;
 		}, function (_moment) {
 			moment = _moment.default;
+		}, function (_cssMultistatPanelCss) {}, function (_externalD) {
+			d3 = _externalD.default;
 		}],
 		execute: function () {
 			_createClass = function () {
@@ -204,8 +196,8 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 						} else if (data[0].type == "table") {
 							this.data = data[0];
 
-							for (var i = 0; i < this.data.columns.length; i++) {
-								this.cols[i] = this.data.columns[i].text;
+							for (var _i = 0; _i < this.data.columns.length; _i++) {
+								this.cols[_i] = this.data.columns[_i].text;
 							}this.cols0 = [''].concat(this.cols);
 
 							this.render();
@@ -224,8 +216,8 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 						if (dateTimeCol != -1 && this.panel.ShowDate) {
 							var maxDate = this.rows[0][dateTimeCol];
 
-							for (var i = 1; i < this.rows.length; i++) {
-								if (maxDate < this.rows[i][dateTimeCol]) maxDate = this.rows[i][dateTimeCol];
+							for (var _i2 = 1; _i2 < this.rows.length; _i2++) {
+								if (maxDate < this.rows[_i2][dateTimeCol]) maxDate = this.rows[_i2][dateTimeCol];
 							}
 
 							var dd = moment(maxDate).add(this.panel.TZOffsetHours, 'h');
@@ -237,52 +229,25 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 					key: 'onRender',
 					value: function onRender() {
 						if (this.data != null && this.data.rows != null) {
-							var scaleAndClipValue = function scaleAndClipValue(d) {
-								var val = d * ScaleFactor;
-								if (val > maxLineValue) val = maxLineValue;
-								if (val < minLineValue) val = minLineValue;
-
-								return val;
-							};
-
-							var pulseHigh = function pulseHigh(svg) {
-								var highFlashRects = svg.selectAll("rect.michaeldmoore-multistat-panel-bar.highflash");
-
-								if ($.isNumeric(HighLimitBarFlashTimeout) && highFlashRects._groups.length > 0 && highFlashRects._groups[0].length > 0) {
-									highFlashRects.transition().on("start", function highRepeat() {
-										d3.active(this).style("fill", HighLimitBarFlashColor).duration(HighLimitBarFlashTimeout).transition().style("fill", HighLimitBarColor).duration(HighLimitBarFlashTimeout).transition().on("start", highRepeat);
-									});
-								}
-							};
-
-							var pulseLow = function pulseLow(svg) {
-								var lowFlashRects = svg.selectAll("rect.michaeldmoore-multistat-panel-bar.lowflash");
-								if ($.isNumeric(LowLimitBarFlashTimeout) && lowFlashRects._groups.length > 0 && lowFlashRects._groups[0].length > 0) {
-									lowFlashRects.transition().on("start", function lowRepeat() {
-										d3.active(this).style("fill", LowLimitBarFlashColor).duration(LowLimitBarFlashTimeout).transition().style("fill", LowLimitBarColor).duration(LowLimitBarFlashTimeout).transition().on("start", lowRepeat);
-									});
-								}
-							};
-
 							var cols = this.cols;
 							var dateTimeCol = -1;
 							var labelCol = -1;
 							var valueCol = 0;
 							var sortCol = 0;
 							var groupCol = -1;
-							for (var i = 0; i < cols.length; i++) {
-								if (cols[i] == this.panel.DateTimeColName) dateTimeCol = i;
-								if (cols[i] == this.panel.LabelColName) labelCol = i;
-								if (cols[i] == this.panel.ValueColName) valueCol = i;
-								if (cols[i] == this.panel.SortColName) sortCol = i;
-								if (cols[i] == this.panel.GroupColName) groupCol = i;
+							for (var _i3 = 0; _i3 < cols.length; _i3++) {
+								if (cols[_i3] == this.panel.DateTimeColName) dateTimeCol = _i3;
+								if (cols[_i3] == this.panel.LabelColName) labelCol = _i3;
+								if (cols[_i3] == this.panel.ValueColName) valueCol = _i3;
+								if (cols[_i3] == this.panel.SortColName) sortCol = _i3;
+								if (cols[_i3] == this.panel.GroupColName) groupCol = _i3;
 							}
 
 							if (this.panel.LabelNameFilter.length > 0 && labelCol != -1) {
 								var regex = new RegExp(this.panel.LabelNameFilter, "");
 								this.matchingRows = [];
-								for (var i = 0; i < this.data.rows.length; i++) {
-									var dd = this.data.rows[i];
+								for (var _i4 = 0; _i4 < this.data.rows.length; _i4++) {
+									var dd = this.data.rows[_i4];
 									var label = dd[labelCol];
 									if (label.match(regex) != null) this.matchingRows.push(dd);
 								}
@@ -450,7 +415,7 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 
 							var tooltipShow = function tooltipShow(d, c, id) {
 								var tooltipDiv = d3.select(".michaeldmoore-multistat-panel-tooltip-" + id);
-								tooltipDiv.transition().duration(200).style("opacity", .9);
+								tooltipDiv.transition().duration(200).style("opacity", 0.9);
 								var html = "<table>";
 								for (i = 0; i < d.length; i++) {
 									var cc = c[i];
@@ -467,6 +432,14 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 							var tooltipHide = function tooltipHide(id) {
 								var tooltipDiv = d3.selectAll(".michaeldmoore-multistat-panel-tooltip-" + id);
 								tooltipDiv.transition().duration(500).style("opacity", 0);
+							};
+
+							var scaleAndClipValue = function scaleAndClipValue(d) {
+								var val = d * ScaleFactor;
+								if (val > maxLineValue) val = maxLineValue;
+								if (val < minLineValue) val = minLineValue;
+
+								return val;
 							};
 
 							if (horizontal) {
@@ -639,18 +612,18 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 
 									//Add High Side Value Axis (X)
 									if (highSideMargin > 0) {
-										var gg = svg.append("g").attr("transform", 'translate(1,' + (hh + highSideMargin) + ')').attr("class", "michaeldmoore-multistat-panel-valueaxis").call(d3.axisTop(valueScale));
-										gg.selectAll('.tick text').attr('fill', panel.HighAxisColor);
-										gg.selectAll('.tick line').attr('stroke', panel.HighAxisColor);
-										gg.selectAll('path.domain').attr('stroke', panel.HighAxisColor);
+										var ggHighSide = svg.append("g").attr("transform", 'translate(1,' + (hh + highSideMargin) + ')').attr("class", "michaeldmoore-multistat-panel-valueaxis").call(d3.axisTop(valueScale));
+										ggHighSide.selectAll('.tick text').attr('fill', panel.HighAxisColor);
+										ggHighSide.selectAll('.tick line').attr('stroke', panel.HighAxisColor);
+										ggHighSide.selectAll('path.domain').attr('stroke', panel.HighAxisColor);
 									}
 
 									//Add Low Side Value Axis (X)
 									if (lowSideMargin > 0) {
-										var gg = svg.append("g").attr("transform", 'translate(0,' + (hh + dh - lowSideMargin) + ')').attr("class", "michaeldmoore-multistat-panel-valueaxis").call(d3.axisBottom(valueScale));
-										gg.selectAll('.tick text').attr('fill', panel.LowAxisColor);
-										gg.selectAll('.tick line').attr('stroke', panel.LowAxisColor);
-										gg.selectAll('path.domain').attr('stroke', panel.LowAxisColor);
+										var ggLowSide = svg.append("g").attr("transform", 'translate(0,' + (hh + dh - lowSideMargin) + ')').attr("class", "michaeldmoore-multistat-panel-valueaxis").call(d3.axisBottom(valueScale));
+										ggLowSide.selectAll('.tick text').attr('fill', panel.LowAxisColor);
+										ggLowSide.selectAll('.tick line').attr('stroke', panel.LowAxisColor);
+										ggLowSide.selectAll('path.domain').attr('stroke', panel.LowAxisColor);
 									}
 								};
 
@@ -664,11 +637,11 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 									}).entries(this.rows);
 
 									if (GroupNameFilter.length > 0) {
-										var regex = new RegExp(GroupNameFilter, "");
+										var regexGroupNameFilter = new RegExp(GroupNameFilter, "");
 										var matchingGroups = [];
-										for (var i = 0; i < this.groupedRows.length; i++) {
-											var groupName = this.groupedRows[i].key;
-											if (groupName.match(regex) != null) matchingGroups.push(this.groupedRows[i]);
+										for (var _i5 = 0; _i5 < this.groupedRows.length; _i5++) {
+											var groupName = this.groupedRows[_i5].key;
+											if (groupName.match(regexGroupNameFilter) != null) matchingGroups.push(this.groupedRows[_i5]);
 										}
 										this.groupedRows = matchingGroups;
 									}
@@ -686,17 +659,17 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 
 									// figure out the max data points in each row of groups...
 									var pointsPerRow = [];
-									for (var i = 0; i < this.groupedRows.length / gcols; i++) {
+									for (var _i6 = 0; _i6 < this.groupedRows.length / gcols; _i6++) {
 										pointsPerRow.push(0);
-									}for (var i = 0; i < this.groupedRows.length; i++) {
-										var rr = Math.floor(i / gcols);
-										var u = this.groupedRows[i].values.length;
-										if (pointsPerRow[rr] < u) pointsPerRow[rr] = u;
+									}for (var _i7 = 0; _i7 < this.groupedRows.length; _i7++) {
+										var _rr = Math.floor(_i7 / gcols);
+										var u = this.groupedRows[_i7].values.length;
+										if (pointsPerRow[_rr] < u) pointsPerRow[_rr] = u;
 									}
 
 									var totalPoints = 0;
-									for (var i = 0; i < pointsPerRow.length; i++) {
-										totalPoints += pointsPerRow[i];
+									for (var _i8 = 0; _i8 < pointsPerRow.length; _i8++) {
+										totalPoints += pointsPerRow[_i8];
 									}var rowOverheadHeight = groupNameOffset + this.panel.LowSideMargin + this.panel.HighSideMargin;
 									var rowHeight = (h - pointsPerRow.length * rowOverheadHeight) / totalPoints;
 
@@ -879,23 +852,23 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 									}
 
 									if (lowSideMargin > 0) {
-										var gg = svg.append("g").attr('transform', 'translate(' + (left + lowSideMargin) + ', 0)').classed('michaeldmoore-multistat-panel-valueaxis', true).call(d3.axisLeft(valueScale).tickSizeInner(5).tickSizeOuter(10).ticks(5));
-										gg.selectAll('.tick text').attr('fill', panel.LowAxisColor);
-										gg.selectAll('.tick line').attr('stroke', panel.LowAxisColor);
-										gg.selectAll('path.domain').attr('stroke', panel.LowAxisColor);
+										var _gg = svg.append("g").attr('transform', 'translate(' + (left + lowSideMargin) + ', 0)').classed('michaeldmoore-multistat-panel-valueaxis', true).call(d3.axisLeft(valueScale).tickSizeInner(5).tickSizeOuter(10).ticks(5));
+										_gg.selectAll('.tick text').attr('fill', panel.LowAxisColor);
+										_gg.selectAll('.tick line').attr('stroke', panel.LowAxisColor);
+										_gg.selectAll('path.domain').attr('stroke', panel.LowAxisColor);
 									}
 
 									if (highSideMargin > 0) {
-										var gg = svg.append("g").attr('transform', 'translate(' + (left + w - highSideMargin) + ', 0)').classed('michaeldmoore-multistat-panel-valueaxis', true).call(d3.axisRight(valueScale).tickSizeInner(5).tickSizeOuter(10).ticks(5));
-										gg.selectAll('.tick text').attr('fill', panel.HighAxisColor);
-										gg.selectAll('.tick line').attr('stroke', panel.HighAxisColor);
-										gg.selectAll('path.domain').attr('stroke', panel.HighAxisColor);
+										var _gg2 = svg.append("g").attr('transform', 'translate(' + (left + w - highSideMargin) + ', 0)').classed('michaeldmoore-multistat-panel-valueaxis', true).call(d3.axisRight(valueScale).tickSizeInner(5).tickSizeOuter(10).ticks(5));
+										_gg2.selectAll('.tick text').attr('fill', panel.HighAxisColor);
+										_gg2.selectAll('.tick line').attr('stroke', panel.HighAxisColor);
+										_gg2.selectAll('path.domain').attr('stroke', panel.HighAxisColor);
 									}
 								};
 
-								var groupNameOffset = 0;
+								var _groupNameOffset = 0;
 
-								if (this.panel.ShowGroupLabels) groupNameOffset = Number(this.panel.GroupLabelFontSize.replace('%', '')) * 0.15;
+								if (this.panel.ShowGroupLabels) _groupNameOffset = Number(this.panel.GroupLabelFontSize.replace('%', '')) * 0.15;
 
 								if (groupCol >= 0) {
 									this.groupedRows = d3.nest().key(function (d) {
@@ -903,13 +876,13 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 									}).entries(this.rows);
 
 									if (GroupNameFilter.length > 0) {
-										var regex = new RegExp(GroupNameFilter, "");
-										var matchingGroups = [];
-										for (var i = 0; i < this.groupedRows.length; i++) {
-											var groupName = this.groupedRows[i].key;
-											if (groupName.match(regex) != null) matchingGroups.push(this.groupedRows[i]);
+										var regexGroupRows = new RegExp(GroupNameFilter, "");
+										var _matchingGroups = [];
+										for (var _i9 = 0; _i9 < this.groupedRows.length; _i9++) {
+											var _groupName = this.groupedRows[_i9].key;
+											if (_groupName.match(regexGroupRows) != null) _matchingGroups.push(this.groupedRows[_i9]);
 										}
-										this.groupedRows = matchingGroups;
+										this.groupedRows = _matchingGroups;
 									}
 
 									this.groupedRows.sort(function (a, b) {
@@ -919,42 +892,42 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 										if (aPos == bPos) return a.key.localeCompare(b.key);else if (aPos == -1) return 1;else if (bPos == -1) return -1;else return aPos - bPos;
 									});
 
-									var gap = 5;
-									var gcols = GroupCols <= 0 || GroupCols > this.groupedRows.length ? this.groupedRows.length : GroupCols;
-									var dw = (w + gap) / gcols;
+									var _gap = 5;
+									var _gcols = GroupCols <= 0 || GroupCols > this.groupedRows.length ? this.groupedRows.length : GroupCols;
+									var _dw = (w + _gap) / _gcols;
 
 									// figure out the max data points in each column of groups...
 									var pointsPerCol = [];
-									for (var i = 0; i < gcols; i++) {
+									for (var _i10 = 0; _i10 < _gcols; _i10++) {
 										pointsPerCol.push(0);
-									}for (var i = 0; i < this.groupedRows.length; i++) {
-										var cc = i % gcols;
-										var u = this.groupedRows[i].values.length;
-										if (pointsPerCol[cc] < u) pointsPerCol[cc] = u;
+									}for (var _i11 = 0; _i11 < this.groupedRows.length; _i11++) {
+										var _cc = _i11 % _gcols;
+										var _u = this.groupedRows[_i11].values.length;
+										if (pointsPerCol[_cc] < _u) pointsPerCol[_cc] = _u;
 									}
 
-									var totalPoints = 0;
-									for (var i = 0; i < pointsPerCol.length; i++) {
-										totalPoints += pointsPerCol[i];
+									var _totalPoints = 0;
+									for (var _i12 = 0; _i12 < pointsPerCol.length; _i12++) {
+										_totalPoints += pointsPerCol[_i12];
 									}var colOverheadWidth = this.panel.LowSideMargin + this.panel.HighSideMargin;
-									var colWidth = (w - pointsPerCol.length * colOverheadWidth) / totalPoints;
+									var colWidth = (w - pointsPerCol.length * colOverheadWidth) / _totalPoints;
 
-									var numRows = Math.ceil(this.groupedRows.length / gcols);
-									var dh = h / numRows;
-									var hh = dh;
-									for (var rr = 0; rr < numRows; rr++) {
+									var _numRows = Math.ceil(this.groupedRows.length / _gcols);
+									var _dh = h / _numRows;
+									var _hh = _dh;
+									for (var _rr2 = 0; _rr2 < _numRows; _rr2++) {
 										var ww = 0;
-										for (var cc = 0; cc < gcols; cc++) {
-											var nn = pointsPerCol[cc];
-											var dw = colOverheadWidth + nn * colWidth;
+										for (var _cc2 = 0; _cc2 < _gcols; _cc2++) {
+											var _nn = pointsPerCol[_cc2];
+											var _dw2 = colOverheadWidth + _nn * colWidth;
 
-											var ii = cc + rr * gcols;
-											if (ii < this.groupedRows.length) {
-												plotGroupVertical(this.panel, this.svg, this.groupedRows[ii].values, nn, this.groupedRows[ii].key, groupNameOffset, ww, dw - gap, hh - dh, dh);
-												ww += dw;
+											var _ii = _cc2 + _rr2 * _gcols;
+											if (_ii < this.groupedRows.length) {
+												plotGroupVertical(this.panel, this.svg, this.groupedRows[_ii].values, _nn, this.groupedRows[_ii].key, _groupNameOffset, ww, _dw2 - _gap, _hh - _dh, _dh);
+												ww += _dw2;
 											}
 										}
-										hh += dh;
+										_hh += _dh;
 									}
 								} else {
 									this.groupedRows = null;
@@ -962,6 +935,25 @@ System.register(['app/plugins/sdk', './css/multistat-panel.css!', 'lodash', 'jqu
 									plotGroupVertical(this.panel, this.svg, this.rows, this.rows.length, '', 0, 0, w, 0, h);
 								}
 							}
+
+							var pulseHigh = function pulseHigh(svg) {
+								var highFlashRects = svg.selectAll("rect.michaeldmoore-multistat-panel-bar.highflash");
+
+								if ($.isNumeric(HighLimitBarFlashTimeout) && highFlashRects._groups.length > 0 && highFlashRects._groups[0].length > 0) {
+									highFlashRects.transition().on("start", function highRepeat() {
+										d3.active(this).style("fill", HighLimitBarFlashColor).duration(HighLimitBarFlashTimeout).transition().style("fill", HighLimitBarColor).duration(HighLimitBarFlashTimeout).transition().on("start", highRepeat);
+									});
+								}
+							};
+
+							var pulseLow = function pulseLow(svg) {
+								var lowFlashRects = svg.selectAll("rect.michaeldmoore-multistat-panel-bar.lowflash");
+								if ($.isNumeric(LowLimitBarFlashTimeout) && lowFlashRects._groups.length > 0 && lowFlashRects._groups[0].length > 0) {
+									lowFlashRects.transition().on("start", function lowRepeat() {
+										d3.active(this).style("fill", LowLimitBarFlashColor).duration(LowLimitBarFlashTimeout).transition().style("fill", LowLimitBarColor).duration(LowLimitBarFlashTimeout).transition().on("start", lowRepeat);
+									});
+								}
+							};
 
 							pulseHigh(this.svg);
 							pulseLow(this.svg);
