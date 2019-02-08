@@ -1,19 +1,13 @@
 /*jshint esversion: 6 */
-import {
-    MetricsPanelCtrl
-} from 'app/plugins/sdk';
-
-import "./css/multistat-panel.css!";
-
-import _ from 'lodash';
+import { MetricsPanelCtrl } from 'app/plugins/sdk';
 import $ from 'jquery';
 import 'jquery.flot';
-import d3 from './external/d3';
-import angular from 'angular';
-import kbn from 'app/core/utils/kbn';
-import config from 'app/core/config';
-import TimeSeries from 'app/core/time_series2';
+import _ from 'lodash';
 import moment from 'moment';
+import "./css/multistat-panel.css!";
+import d3 from './external/d3';
+
+
 
 
 class MultistatPanelCtrl extends MetricsPanelCtrl {
@@ -402,7 +396,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 				.style("opacity", 0);	
 			};
 			
-			function scaleAndClipValue(d) {
+			var scaleAndClipValue = function(d) {
 				var val = d * ScaleFactor;
 				if (val > maxLineValue)
 					val = maxLineValue;
@@ -410,8 +404,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					val = minLineValue;
 				
 				return val;
-			}			
-					
+			};
 
 			if(horizontal) {
 				var plotGroupHorizontal = function(panel, svg, data, numRows, groupName, groupNameOffset, left, w, hh, dh) {
@@ -677,26 +670,26 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
 					//Add High Side Value Axis (X)
 					if (highSideMargin > 0) {
-						var gg = svg
+						var ggHighSide = svg
 								.append("g")
 								.attr("transform", 'translate(1,' + (hh + highSideMargin) + ')')
 								.attr("class", "michaeldmoore-multistat-panel-valueaxis")
 								.call(d3.axisTop(valueScale));
-						gg.selectAll('.tick text').attr('fill', panel.HighAxisColor);
-						gg.selectAll('.tick line').attr('stroke', panel.HighAxisColor);
-						gg.selectAll('path.domain').attr('stroke', panel.HighAxisColor);
+						ggHighSide.selectAll('.tick text').attr('fill', panel.HighAxisColor);
+						ggHighSide.selectAll('.tick line').attr('stroke', panel.HighAxisColor);
+						ggHighSide.selectAll('path.domain').attr('stroke', panel.HighAxisColor);
 					}
 					
 					//Add Low Side Value Axis (X)
 					if (lowSideMargin > 0) {	
-						var gg = svg
+						var ggLowSide = svg
 								.append("g")
 								.attr("transform", 'translate(0,' + (hh + dh - lowSideMargin) + ')')
 								.attr("class", "michaeldmoore-multistat-panel-valueaxis")
 								.call(d3.axisBottom(valueScale));
-						gg.selectAll('.tick text').attr('fill', panel.LowAxisColor);
-						gg.selectAll('.tick line').attr('stroke', panel.LowAxisColor);
-						gg.selectAll('path.domain').attr('stroke', panel.LowAxisColor);
+						ggLowSide.selectAll('.tick text').attr('fill', panel.LowAxisColor);
+						ggLowSide.selectAll('.tick line').attr('stroke', panel.LowAxisColor);
+						ggLowSide.selectAll('path.domain').attr('stroke', panel.LowAxisColor);
 					}
 							
 				};
@@ -713,13 +706,13 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
 					if (GroupNameFilter.length > 0)
 					{
-						var regex = new RegExp(GroupNameFilter, "");
+						var regexGroupNameFilter = new RegExp(GroupNameFilter, "");
 						var matchingGroups = [];
-						for(var i = 0; i < this.groupedRows.length; i++)
+						for(var groupedRowsIndex = 0; groupedRowsIndex < this.groupedRows.length; groupedRowsIndex++)
 						{
-							var groupName = this.groupedRows[i].key;
-							if (groupName.match(regex) != null)
-								matchingGroups.push(this.groupedRows[i]);
+							var groupName = this.groupedRows[groupedRowsIndex].key;
+							if (groupName.match(regexGroupNameFilter) != null)
+								matchingGroups.push(this.groupedRows[groupedRowsIndex]);
 						}
 						this.groupedRows = matchingGroups;
 					}
@@ -751,19 +744,19 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					
 					// figure out the max data points in each row of groups...
 					var pointsPerRow = [];
-					for(var i = 0; i < this.groupedRows.length/gcols; i++)
+					for(var j = 0; j < this.groupedRows.length/gcols; j++)
 						pointsPerRow.push(0);
-					for(var i = 0; i < this.groupedRows.length; i++)
+					for(var k = 0; k < this.groupedRows.length; k++)
 					{
-						var rr = Math.floor(i / gcols);
-						var u = this.groupedRows[i].values.length;
+						var rr = Math.floor(k / gcols);
+						var u = this.groupedRows[k].values.length;
 						if (pointsPerRow[rr] < u)
 							pointsPerRow[rr] = u;
 					}
 
 					var totalPoints = 0;
-					for(var i = 0; i < pointsPerRow.length; i++)
-						totalPoints += pointsPerRow[i];
+					for(var m = 0; m < pointsPerRow.length; m++)
+						totalPoints += pointsPerRow[m];
 					
 					var rowOverheadHeight = groupNameOffset + this.panel.LowSideMargin + this.panel.HighSideMargin;
 					var rowHeight = (h - (pointsPerRow.length * rowOverheadHeight)) / totalPoints;					
@@ -1072,13 +1065,13 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
 					if (GroupNameFilter.length > 0)
 					{
-						var regex = new RegExp(GroupNameFilter, "");
+						var regexGroupRows = new RegExp(GroupNameFilter, "");
 						var matchingGroups = [];
-						for(var i = 0; i < this.groupedRows.length; i++)
+						for(var n = 0; n < this.groupedRows.length; n++)
 						{
-							var groupName = this.groupedRows[i].key;
-							if (groupName.match(regex) != null)
-								matchingGroups.push(this.groupedRows[i]);
+							var groupName = this.groupedRows[n].key;
+							if (groupName.match(regexGroupRows) != null)
+								matchingGroups.push(this.groupedRows[n]);
 						}
 						this.groupedRows = matchingGroups;
 					}
@@ -1157,7 +1150,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			}
 
 						
-			function pulseHigh(svg) {
+			var pulseHigh = function(svg) {
 				var highFlashRects = svg.selectAll("rect.michaeldmoore-multistat-panel-bar.highflash");
 				
 				if ($.isNumeric(HighLimitBarFlashTimeout) && highFlashRects._groups.length > 0 && highFlashRects._groups[0].length > 0) {
@@ -1174,9 +1167,9 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 							.on("start", highRepeat);
 					  });
 				}
-			}
+			};
 
-			function pulseLow(svg) {
+			var pulseLow = function(svg) {
 				var lowFlashRects = svg.selectAll("rect.michaeldmoore-multistat-panel-bar.lowflash");
 				if ($.isNumeric(LowLimitBarFlashTimeout) && lowFlashRects._groups.length > 0 && lowFlashRects._groups[0].length > 0) {
 					lowFlashRects
@@ -1192,7 +1185,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 							.on("start", lowRepeat);
 					  });
 				}
-			}
+			};
 			
 
 			pulseHigh(this.svg);
@@ -1217,6 +1210,5 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
 MultistatPanelCtrl.templateUrl = 'module.html';
 
-export {
-    MultistatPanelCtrl as PanelCtrl
-};
+export { MultistatPanelCtrl as PanelCtrl };
+
