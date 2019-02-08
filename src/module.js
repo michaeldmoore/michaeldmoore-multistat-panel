@@ -134,7 +134,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 		else if (data[0].type == "table"){
 			this.data = data[0];
 
-			for(var i=0; i < this.data.columns.length; i++)
+			for(let i=0; i < this.data.columns.length; i++)
 				this.cols[i] = this.data.columns[i].text;
 			this.cols0 = [''].concat(this.cols);
 
@@ -155,7 +155,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 		if (dateTimeCol != -1 && this.panel.ShowDate) {
 			var maxDate = this.rows[0][dateTimeCol];
 
-			for(var i = 1; i < this.rows.length; i++){
+			for(let i = 1; i < this.rows.length; i++){
 				if (maxDate < this.rows[i][dateTimeCol])
 					maxDate = this.rows[i][dateTimeCol];
 			}
@@ -180,7 +180,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			var valueCol = 0;
 			var sortCol = 0;
 			var groupCol = -1;
-			for(var i=0; i < cols.length; i++){
+			for(let i = 0; i < cols.length; i++){
 				if (cols[i] == this.panel.DateTimeColName)
 					dateTimeCol = i;
 				if (cols[i] == this.panel.LabelColName)
@@ -197,9 +197,9 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			{
 				var regex = new RegExp(this.panel.LabelNameFilter, "");
 				this.matchingRows = [];
-				for(var row_index = 0; row_index < this.data.rows.length; row_index++)
+				for(let i = 0; i < this.data.rows.length; i++)
 				{
-					var dd = this.data.rows[row_index];
+					var dd = this.data.rows[i];
 					var label = dd[labelCol];
 					if (label.match(regex) != null)
 						this.matchingRows.push(dd);
@@ -708,11 +708,11 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					{
 						var regexGroupNameFilter = new RegExp(GroupNameFilter, "");
 						var matchingGroups = [];
-						for(var groupedRowsIndex = 0; groupedRowsIndex < this.groupedRows.length; groupedRowsIndex++)
+						for(let i = 0; i < this.groupedRows.length; i++)
 						{
-							var groupName = this.groupedRows[groupedRowsIndex].key;
+							var groupName = this.groupedRows[i].key;
 							if (groupName.match(regexGroupNameFilter) != null)
-								matchingGroups.push(this.groupedRows[groupedRowsIndex]);
+								matchingGroups.push(this.groupedRows[i]);
 						}
 						this.groupedRows = matchingGroups;
 					}
@@ -744,19 +744,19 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					
 					// figure out the max data points in each row of groups...
 					var pointsPerRow = [];
-					for(var j = 0; j < this.groupedRows.length/gcols; j++)
+					for(let i = 0; i < this.groupedRows.length/gcols; i++)
 						pointsPerRow.push(0);
-					for(var k = 0; k < this.groupedRows.length; k++)
+					for(let i = 0; i < this.groupedRows.length; i++)
 					{
-						var rr = Math.floor(k / gcols);
-						var u = this.groupedRows[k].values.length;
+						let rr = Math.floor(i / gcols);
+						let u = this.groupedRows[i].values.length;
 						if (pointsPerRow[rr] < u)
 							pointsPerRow[rr] = u;
 					}
 
 					var totalPoints = 0;
-					for(var m = 0; m < pointsPerRow.length; m++)
-						totalPoints += pointsPerRow[m];
+					for(let i = 0; i < pointsPerRow.length; i++)
+						totalPoints += pointsPerRow[i];
 					
 					var rowOverheadHeight = groupNameOffset + this.panel.LowSideMargin + this.panel.HighSideMargin;
 					var rowHeight = (h - (pointsPerRow.length * rowOverheadHeight)) / totalPoints;					
@@ -1031,7 +1031,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
 
 				if (lowSideMargin > 0) {	
-					var gg = svg
+					let gg = svg
 						.append("g")
 						.attr('transform', 'translate(' + (left + lowSideMargin) + ', 0)')
 						.classed('michaeldmoore-multistat-panel-valueaxis', true)
@@ -1042,18 +1042,18 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 				}
 				
 				if (highSideMargin > 0) {	
-					var gg = svg
+					let gg = svg
 						.append("g")
 						.attr('transform', 'translate(' + (left + w - highSideMargin) + ', 0)')
 						.classed('michaeldmoore-multistat-panel-valueaxis', true)
 						.call(d3.axisRight(valueScale).tickSizeInner(5).tickSizeOuter(10).ticks(5));
-					gg.selectAll('.tick text').attr('fill', panel.HighAxisColor);
+				  gg.selectAll('.tick text').attr('fill', panel.HighAxisColor);
 					gg.selectAll('.tick line').attr('stroke', panel.HighAxisColor);
 					gg.selectAll('path.domain').attr('stroke', panel.HighAxisColor);
 				}
 				};
 				
-				var groupNameOffset = 0;
+				let groupNameOffset = 0;
 				
 				if (this.panel.ShowGroupLabels)
 					groupNameOffset = Number(this.panel.GroupLabelFontSize.replace('%','')) * 0.15;
@@ -1066,12 +1066,12 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					if (GroupNameFilter.length > 0)
 					{
 						var regexGroupRows = new RegExp(GroupNameFilter, "");
-						var matchingGroups = [];
-						for(var n = 0; n < this.groupedRows.length; n++)
+						let matchingGroups = [];
+						for(let i = 0; i < this.groupedRows.length; i++)
 						{
-							var groupName = this.groupedRows[n].key;
+							let groupName = this.groupedRows[i].key;
 							if (groupName.match(regexGroupRows) != null)
-								matchingGroups.push(this.groupedRows[n]);
+								matchingGroups.push(this.groupedRows[i]);
 						}
 						this.groupedRows = matchingGroups;
 					}
@@ -1095,43 +1095,43 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					
 					
 					
-					var gap = 5;	
-					var gcols = (GroupCols <= 0 || GroupCols > this.groupedRows.length) ? this.groupedRows.length : GroupCols;
-					var dw = ((w + gap) / gcols);
+					let gap = 5;
+					let gcols = (GroupCols <= 0 || GroupCols > this.groupedRows.length) ? this.groupedRows.length : GroupCols;
+					let dw = ((w + gap) / gcols);
 
 					
 					
 					// figure out the max data points in each column of groups...
 					var pointsPerCol = [];
-					for(var i = 0; i < gcols; i++)
+					for(let i = 0; i < gcols; i++)
 						pointsPerCol.push(0);
-					for(var i = 0; i < this.groupedRows.length; i++)
+					for(let i = 0; i < this.groupedRows.length; i++)
 					{
-						var cc = i % gcols;
-						var u = this.groupedRows[i].values.length;
+						let cc = i % gcols;
+						let u = this.groupedRows[i].values.length;
 						if (pointsPerCol[cc] < u)
 							pointsPerCol[cc] = u;
 					}
 
-					var totalPoints = 0;
-					for(var i = 0; i < pointsPerCol.length; i++)
+					let totalPoints = 0;
+					for(let i = 0; i < pointsPerCol.length; i++)
 						totalPoints += pointsPerCol[i];
 					
 					var colOverheadWidth = this.panel.LowSideMargin + this.panel.HighSideMargin;
 					var colWidth = (w - (pointsPerCol.length * colOverheadWidth)) / totalPoints;					
 
-					var numRows = Math.ceil(this.groupedRows.length / gcols);
-					var dh = h / numRows;
-					var hh = dh;
-					for (var rr = 0; rr < numRows; rr++)
+					let numRows = Math.ceil(this.groupedRows.length / gcols);
+					let dh = h / numRows;
+					let hh = dh;
+					for (let rr = 0; rr < numRows; rr++)
 					{
 						var ww = 0;
-						for (var cc = 0; cc < gcols; cc++)
+						for (let cc = 0; cc < gcols; cc++)
 						{
-							var nn = pointsPerCol[cc];
-							var dw = colOverheadWidth + (nn * colWidth);
+							let nn = pointsPerCol[cc];
+							let dw = colOverheadWidth + (nn * colWidth);
 
-							var ii = cc + (rr * gcols);
+							let ii = cc + (rr * gcols);
 							if (ii < this.groupedRows.length)
 							{
 								plotGroupVertical(this.panel, this.svg, this.groupedRows[ii].values, nn, this.groupedRows[ii].key, 
