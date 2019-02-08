@@ -1,3 +1,4 @@
+/*jshint esversion: 6 */
 import {
     MetricsPanelCtrl
 } from 'app/plugins/sdk';
@@ -202,9 +203,9 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			{
 				var regex = new RegExp(this.panel.LabelNameFilter, "");
 				this.matchingRows = [];
-				for(var i = 0; i < this.data.rows.length; i++)
+				for(var row_index = 0; row_index < this.data.rows.length; row_index++)
 				{
-					var dd = this.data.rows[i];
+					var dd = this.data.rows[row_index];
 					var label = dd[labelCol];
 					if (label.match(regex) != null)
 						this.matchingRows.push(dd);
@@ -221,8 +222,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 				switch(this.panel.Aggregate) {
 					case 'first':
 						this.rows = d3.nest()
-							.key(function(d){return d[labelCol]})
-							.rollup(function(d){return d[0]})
+							.key(function(d){return d[labelCol];})
+							.rollup(function(d){return d[0];})
 							.entries(this.matchingRows)
 							.forEach(function(x){oo.push(x.value); });
 						this.rows = oo;
@@ -230,8 +231,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
 					case 'last':
 						this.rows = d3.nest()
-							.key(function(d){return d[labelCol]})
-							.rollup(function(d){return d[d.length - 1]})
+							.key(function(d){return d[labelCol];})
+							.rollup(function(d){return d[d.length - 1];})
 							.entries(this.matchingRows)
 							.forEach(function(x){oo.push(x.value); });
 						this.rows = oo;
@@ -239,7 +240,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
 					case 'mean':
 						this.rows = d3.nest()
-							.key(function(d){return d[labelCol]})
+							.key(function(d){return d[labelCol];})
 							.rollup(function(d){
 								var dd = Object.values(Object.assign({}, d[d.length - 1]));
 								dd[valueCol] = d3.mean(d, function(d) { return d[valueCol];});
@@ -252,7 +253,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
 					case 'max':
 						this.rows = d3.nest()
-							.key(function(d){return d[labelCol]})
+							.key(function(d){return d[labelCol];})
 							.rollup(function(d){
 								var dd = Object.values(Object.assign({}, d[d.length - 1]));
 								dd[valueCol] = d3.max(d, function(d) { return d[valueCol];});
@@ -265,7 +266,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
 					case 'min':
 						this.rows = d3.nest()
-							.key(function(d){return d[labelCol]})
+							.key(function(d){return d[labelCol];})
 							.rollup(function(d){
 								var dd = Object.values(Object.assign({}, d[d.length - 1]));
 								dd[valueCol] = d3.min(d, function(d) { return d[valueCol];});
@@ -375,7 +376,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 				var tooltipDiv = d3.select(".michaeldmoore-multistat-panel-tooltip-" + id);
 				tooltipDiv.transition()
 				.duration(200)
-				.style("opacity", .9);
+				.style("opacity", 0.9);
 				var html = "<table>";
 				for (i = 0; i < d.length; i++){
 					var cc = c[i];
@@ -392,14 +393,14 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 				tooltipDiv.html(html)
 				.style("left", d3.event.pageX + "px")
 				.style("top", (d3.event.pageY - 28) + "px");
-			}
+			};
 
 			var tooltipHide = function(id) {
 				var tooltipDiv = d3.selectAll(".michaeldmoore-multistat-panel-tooltip-" + id);
 				tooltipDiv.transition()		
 				.duration(500)		
 				.style("opacity", 0);	
-			}
+			};
 			
 			function scaleAndClipValue(d) {
 				var val = d * ScaleFactor;
@@ -479,7 +480,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 						.attr("width", w)
 						.attr("height", labelScale.bandwidth())
 						.attr("x", left)
-						.attr("y", function(d){return stripeScale(d)})
+						.attr("y", function(d){return stripeScale(d);})
 						.attr("fill", function(d) { 
 								oddeven = !oddeven;
 								return oddeven ? OddRowColor : EvenRowColor;
@@ -505,9 +506,9 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					if (panel.ShowValues && panel.ValuePosition == "top") {
 						var maxValueWidth = 0;
 						gg.append("text")
-						.text(function(d) {return (Number(d[valueCol]) * ScaleFactor).toFixed(ValueDecimals)})
+						.text(function(d) {return (Number(d[valueCol]) * ScaleFactor).toFixed(ValueDecimals);})
 						.attr("x", left + w)
-						.attr("y", function(d,i){return labelScale(d[labelCol]) + (labelScale.bandwidth() / 2)})
+						.attr("y", function(d,i){return labelScale(d[labelCol]) + (labelScale.bandwidth() / 2);})
 						.attr("font-family", "sans-serif")
 						.attr("font-size", panel.ValueFontSize)
 						.attr("fill", panel.ValueColor)
@@ -621,7 +622,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 							var val = scaleAndClipValue(d[valueCol]);
 							return d3.min([valueScale(val), valueScale(baseLineValue)]); 
 							})
-						.attr("y", function(d,i){return labelScale(d[labelCol])})
+						.attr("y", function(d,i){return labelScale(d[labelCol]);})
 						.attr("fill", function(d) { 
 							if (recolorHighLimitBar && (d[valueCol] * ScaleFactor > highLimitValue))
 								return HighLimitBarColor;
@@ -652,15 +653,15 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					
 					if (panel.ShowValues && panel.ValuePosition != "top") {
 						g.append("text")
-						.text(function(d) {return (Number(d[valueCol]) * ScaleFactor).toFixed(ValueDecimals)})
+						.text(function(d) {return (Number(d[valueCol]) * ScaleFactor).toFixed(ValueDecimals);})
 						.attr("x", function(d){
 							if (panel.ValuePosition == "bar base")
 								return valueScale(baseLineValue);// + 5;
 							else {
 								var val = scaleAndClipValue(d[valueCol]);
-								return valueScale(val) + ((val > baseLineValue))// ? - 5 : + 5)
+								return valueScale(val) + ((val > baseLineValue)); // ? - 5 : + 5)
 							}})
-						.attr("y", function(d,i){return labelScale(d[labelCol]) + (labelScale.bandwidth() / 2)})
+						.attr("y", function(d,i){return labelScale(d[labelCol]) + (labelScale.bandwidth() / 2);})
 						.attr("font-family", "sans-serif")
 						.attr("font-size", panel.ValueFontSize)
 						.attr("fill", panel.ValueColor)
@@ -698,7 +699,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 						gg.selectAll('path.domain').attr('stroke', panel.LowAxisColor);
 					}
 							
-				}
+				};
 
 				var groupNameOffset = 0;
 				
@@ -707,7 +708,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
 				if (groupCol >= 0){
 					this.groupedRows = d3.nest()
-						.key(function(d){return d[groupCol]})
+						.key(function(d){return d[groupCol];})
 						.entries(this.rows);
 
 					if (GroupNameFilter.length > 0)
@@ -860,7 +861,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 						.attr("class", "michaeldmoore-multistat-panel-row")
 						.attr("width", labelScale.bandwidth())
 						.attr("height", dh)
-						.attr("x", function(d,i){return stripeScale(d)})
+						.attr("x", function(d,i){return stripeScale(d);})
 						.attr("y", hh)
 						.attr("fill", function(d) { 
 								oddeven = !oddeven;
@@ -886,7 +887,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 				if (panel.ShowValues && panel.ValuePosition == "top") {
 					var maxValueHeight = 0;
 					gg.append("text")
-					.text(function(d) {return (Number(d[valueCol]) * ScaleFactor).toFixed(ValueDecimals)})
+					.text(function(d) {return (Number(d[valueCol]) * ScaleFactor).toFixed(ValueDecimals);})
 					.attr("x", function(d, i) { return labelScale(d[labelCol]) + (labelScale.bandwidth() / 2); })
 					.attr("y", hh)
 					.attr("font-family", "sans-serif")
@@ -989,7 +990,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 						var val = scaleAndClipValue(d[valueCol]);
 						return d3.min([valueScale(val), valueScale(baseLineValue)]); 
 						})
-					.attr("x", function(d, i) { return labelScale(d[labelCol]) })
+					.attr("x", function(d, i) { return labelScale(d[labelCol]);})
 					.attr("fill", function(d) { 
 						if (recolorHighLimitBar && (d[valueCol] * ScaleFactor > highLimitValue))
 							return HighLimitBarColor;
@@ -1013,7 +1014,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
 				if (panel.ShowValues && panel.ValuePosition != "top") {
 					gg.append("text")
-					.text(function(d) {return (Number(d[valueCol]) * ScaleFactor).toFixed(ValueDecimals)})
+					.text(function(d) {return (Number(d[valueCol]) * ScaleFactor).toFixed(ValueDecimals);})
 					.attr("x", function(d, i) { return labelScale(d[labelCol]) + (labelScale.bandwidth() / 2); })
 					.attr("y", function(d){
 						if (ValuePosition == "bar base")
@@ -1057,7 +1058,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					gg.selectAll('.tick line').attr('stroke', panel.HighAxisColor);
 					gg.selectAll('path.domain').attr('stroke', panel.HighAxisColor);
 				}
-				}
+				};
 				
 				var groupNameOffset = 0;
 				
@@ -1066,7 +1067,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
 				if (groupCol >= 0){
 					this.groupedRows = d3.nest()
-						.key(function(d){return d[groupCol]})
+						.key(function(d){return d[groupCol];})
 						.entries(this.rows);
 
 					if (GroupNameFilter.length > 0)
