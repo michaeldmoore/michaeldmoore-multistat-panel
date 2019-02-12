@@ -20,36 +20,36 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
         var panelDefaults = {
 			"BarPadding": 10,
-			"BaseLineColor": "red",
+			"BaseLineColor": "#ff0000",
 			"BaseLineValue": 0,
 			"DateTimeColName": "date",
 			"DateFormat": "YYYY-MM-DD HH:mm:ss",
 			"TooltipDateFormat": "YYYY-MM-DD HH:mm:ss",
 			"FlashHighLimitBar": false,
 			"FlashLowLimitBar": false,
-			"HighAxisColor": "white",
+			"HighAxisColor": "#ffffff",
 			"HighBarColor": "rgb(120, 128, 0)",
-			"HighLimitBarColor": "red",
-			"HighLimitBarFlashColor": "orange",
+			"HighLimitBarColor": "#ff0000",
+			"HighLimitBarFlashColor": "#ffa500",
 			"HighLimitBarFlashTimeout": 1000,
-			"HighLimitLineColor": "red",
+			"HighLimitLineColor": "#ff0000",
 			"HighLimitValue": 0.33,
 			"HighSideMargin": 20,
 			"Horizontal": false,
 			"LabelColName": "sensor",
 			"LabelNameFilter": "",
-			"LabelColor": "white",
-			"OutOfRangeLabelColor": "red",
-			"GroupLabelColor": "white",
+			"LabelColor": "#ffffff",
+			"OutOfRangeLabelColor": "#ff0000",
+			"GroupLabelColor": "#ffffff",
 			"LabelFontSize": "100%",
 			"GroupLabelFontSize": "200%",
 			"LabelMargin": null,
-			"LowAxisColor": "white",
+			"LowAxisColor": "#ffffff",
 			"LowBarColor": "teal",
-			"LowLimitBarColor": "red",
-			"LowLimitBarFlashColor": "orange",
+			"LowLimitBarColor": "#ff0000",
+			"LowLimitBarFlashColor": "#ffa500",
 			"LowLimitBarFlashTimeout": 200,
-			"LowLimitLineColor": "red",
+			"LowLimitLineColor": "#ff0000",
 			"LowLimitValue": null,
 			"LowSideMargin": 20,
 			"MaxLineColor": "rgb(74, 232, 12)",
@@ -75,7 +75,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			"TZOffsetHours": 0,
 			"ValueColName": "value",
 			"ValueDecimals": 2,
-			"ValueColor": "white",
+			"ValueColor": "#ffffff",
 			"ValueFontSize": "100%",
 			"OddRowColor": "rgba(33, 33, 34, 0.92)",
 			"EvenRowColor": "rgba(61, 61, 64, 0.78)",
@@ -443,7 +443,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 						.attr("height", dh)
 						.attr("x", left)
 						.attr("y", hh)
-						.attr("stroke", "white");*/
+						.attr("stroke", "#ffffff");*/
 						
 					var labels = data.map(function(d){ return d[labelCol]; });
 					while (labels.length < numRows)
@@ -823,7 +823,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 						.attr("height", dh)
 						.attr("x", left)
 						.attr("y", hh)
-						.attr("stroke", "white");*/
+						.attr("stroke", "#ffffff");*/
 
 
 					var labels = data.map(function(d){ return d[labelCol]; });
