@@ -93,7 +93,7 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 						"HighLimitBarFlashTimeout": 1000,
 						"HighLimitLineColor": "#ff0000",
 						"HighLimitValue": 0.33,
-						"HighSideMargin": 20,
+						"HighSideMargin": 22,
 						"Horizontal": false,
 						"LabelColName": "sensor",
 						"LabelNameFilter": "",
@@ -102,6 +102,7 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 						"GroupLabelColor": "#ffffff",
 						"LabelFontSize": "100%",
 						"GroupLabelFontSize": "200%",
+						"GroupGap": 5,
 						"LabelMargin": null,
 						"LowAxisColor": "#ffffff",
 						"LowBarColor": "teal",
@@ -110,7 +111,7 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 						"LowLimitBarFlashTimeout": 200,
 						"LowLimitLineColor": "#ff0000",
 						"LowLimitValue": null,
-						"LowSideMargin": 20,
+						"LowSideMargin": 22,
 						"MaxLineColor": "rgb(74, 232, 12)",
 						"MaxLineValue": 1,
 						"MinLineValue": 0,
@@ -165,10 +166,9 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 				_createClass(MultistatPanelCtrl, [{
 					key: 'onDataError',
 					value: function onDataError(err) {
-						this.alertSrv.set('Multistat Data Error', err.data.message == 'Found no column named time' ? 'Time-Series queries not yet supported' : err.data.message, 'error', 5000);
 						this.seriesList = [];
 						this.data = [];
-						this.render();
+						this.displayStatusMessage("Query failure, Status=" + err.status + ", " + err.statusText);
 					}
 				}, {
 					key: 'onInitEditMode',
@@ -189,15 +189,16 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 					value: function onDataReceived(data) {
 						this.cols = [];
 						if (data.length == 0) {
-							this.elem.html("<div style='position:absolute;top:50%;text-align:center;font-size:0.875rem;'>No data to show</div>");
+							console.log("data");
+							console.log(data);
+							this.displayStatusMessage("No data to show");
 							this.data = data;
 							this.rows = null;
-							this.render();
 						} else if (data[0].type == "table") {
 							this.data = data[0];
 
-							for (var _i = 0; _i < this.data.columns.length; _i++) {
-								this.cols[_i] = this.data.columns[_i].text;
+							for (var i = 0; i < this.data.columns.length; i++) {
+								this.cols[i] = this.data.columns[i].text;
 							}this.cols0 = [''].concat(this.cols);
 
 							this.render();
@@ -216,14 +217,19 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 						if (dateTimeCol != -1 && this.panel.ShowDate) {
 							var maxDate = this.rows[0][dateTimeCol];
 
-							for (var _i2 = 1; _i2 < this.rows.length; _i2++) {
-								if (maxDate < this.rows[_i2][dateTimeCol]) maxDate = this.rows[_i2][dateTimeCol];
+							for (var i = 1; i < this.rows.length; i++) {
+								if (maxDate < this.rows[i][dateTimeCol]) maxDate = this.rows[i][dateTimeCol];
 							}
 
 							var dd = moment(maxDate).add(this.panel.TZOffsetHours, 'h');
 
 							if (this.panel.DateFormat.toUpperCase() == 'ELAPSED') $maxDate.text(dd.fromNow()).show();else $maxDate.text(dd.format(this.panel.DateFormat)).show();
 						} else $maxDate.hide();
+					}
+				}, {
+					key: 'displayStatusMessage',
+					value: function displayStatusMessage(msg) {
+						this.elem.html("<div class='michaeldmoore-multistat-panel-statusmessage'>" + msg + "</div>");
 					}
 				}, {
 					key: 'onRender',
@@ -235,21 +241,26 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 							var valueCol = 0;
 							var sortCol = 0;
 							var groupCol = -1;
-							for (var _i3 = 0; _i3 < cols.length; _i3++) {
-								if (cols[_i3] == this.panel.DateTimeColName) dateTimeCol = _i3;
-								if (cols[_i3] == this.panel.LabelColName) labelCol = _i3;
-								if (cols[_i3] == this.panel.ValueColName) valueCol = _i3;
-								if (cols[_i3] == this.panel.SortColName) sortCol = _i3;
-								if (cols[_i3] == this.panel.GroupColName) groupCol = _i3;
+							for (var i = 0; i < cols.length; i++) {
+								if (cols[i] == this.panel.DateTimeColName) dateTimeCol = i;
+								if (cols[i] == this.panel.LabelColName) labelCol = i;
+								if (cols[i] == this.panel.ValueColName) valueCol = i;
+								if (cols[i] == this.panel.SortColName) sortCol = i;
+								if (cols[i] == this.panel.GroupColName) groupCol = i;
 							}
 
 							if (this.panel.LabelNameFilter.length > 0 && labelCol != -1) {
 								var regex = new RegExp(this.panel.LabelNameFilter, "");
 								this.matchingRows = [];
-								for (var _i4 = 0; _i4 < this.data.rows.length; _i4++) {
-									var dd = this.data.rows[_i4];
+								for (var _i = 0; _i < this.data.rows.length; _i++) {
+									var dd = this.data.rows[_i];
 									var label = dd[labelCol];
 									if (label.match(regex) != null) this.matchingRows.push(dd);
+								}
+
+								if (this.matchingRows.length == 0) {
+									this.displayStatusMessage("No data.  Regex filter '" + this.panel.LabelNameFilter + "' eliminated all " + this.data.rows.length + " rows from current query");
+									return;
 								}
 							} else this.matchingRows = this.data.rows;
 
@@ -328,6 +339,37 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 								this.rows = this.matchingRows;
 							}
 
+							var groupNameOffset = this.panel.ShowGroupLabels ? Number(this.panel.GroupLabelFontSize.replace('%', '')) * 0.15 : 0;
+
+							if (groupCol >= 0) {
+								this.groupedRows = d3.nest().key(function (d) {
+									return d[groupCol];
+								}).entries(this.rows);
+
+								if (this.panel.GroupNameFilter.length > 0) {
+									var regexGroupRows = new RegExp(this.panel.GroupNameFilter, "");
+									var matchingGroups = [];
+									for (var _i2 = 0; _i2 < this.groupedRows.length; _i2++) {
+										var groupName = this.groupedRows[_i2].key;
+										if (groupName.match(regexGroupRows) != null) matchingGroups.push(this.groupedRows[_i2]);
+									}
+
+									if (matchingGroups.length > 0) this.groupedRows = matchingGroups;else {
+										this.displayStatusMessage("No groups.  Group Regex filter '" + this.panel.GroupNameFilter + "' eliminated all " + this.groupedRows.length + " groups from current query");
+										return;
+									}
+								}
+
+								var groupSortString = this.panel.GroupSortString;
+
+								this.groupedRows.sort(function (a, b) {
+									var aPos = groupSortString.search(a.key);
+									var bPos = groupSortString.search(b.key);
+
+									if (aPos == bPos) return a.key.localeCompare(b.key);else if (aPos == -1) return 1;else if (bPos == -1) return -1;else return aPos - bPos;
+								});
+							} else this.groupedRows = null;
+
 							this.elem.html("<svg class='" + this.className + "'  style='height:" + this.ctrl.height + "px; width:100%'></svg>");
 							var $container = this.elem.find('.' + this.className);
 
@@ -383,9 +425,8 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 							var OddRowColor = this.panel.OddRowColor;
 							var EvenRowColor = this.panel.EvenRowColor;
 							var TZOffsetHours = this.panel.TZOffsetHours;
-							var GroupSortString = this.panel.GroupSortString;
 							var GroupCols = this.panel.GroupCols;
-							var GroupNameFilter = this.panel.GroupNameFilter;
+							var GroupGap = this.panel.GroupGap;
 							var ScaleFactor = Number(this.panel.ScaleFactor);
 							var LabelColor = this.panel.LabelColor;
 							var OutOfRangeLabelColor = this.panel.OutOfRangeLabelColor;
@@ -417,7 +458,7 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 								var tooltipDiv = d3.select(".michaeldmoore-multistat-panel-tooltip-" + id);
 								tooltipDiv.transition().duration(200).style("opacity", 0.9);
 								var html = "<table>";
-								for (i = 0; i < d.length; i++) {
+								for (var i = 0; i < d.length; i++) {
 									var cc = c[i];
 									var dd = d[i];
 
@@ -460,7 +501,6 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 
 									hh += groupNameOffset;
 									dh -= groupNameOffset;
-									w -= 10;
 
 									// draw border rectangle
 									/*svg.append("rect")
@@ -511,14 +551,12 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 
 									if (panel.ShowLabels) {
 										var maxLabelWidth = 0;
-										var labelAngle = panel.LableAngle;
+										var labelAngle = Number(panel.LableAngle);
 										gg.append("text").text(function (d) {
 											return d[labelCol];
 										}).attr("font-family", "sans-serif").attr("font-size", panel.LabelFontSize).attr("fill", function (d, i) {
 											return d[valueCol] * ScaleFactor > maxLineValue || d[valueCol] * ScaleFactor < minLineValue ? panel.OutOfRangeLabelColor : panel.LabelColor;
-										}).attr("text-anchor", "middle")
-										//.attr("text-anchor", "start")
-										.attr("dominant-baseline", "central").attr("transform", function (d, i) {
+										}).attr("text-anchor", "middle").attr("dominant-baseline", "central").attr("transform", function (d, i) {
 											var bbox = this.getBBox();
 											var s = Math.sin(labelAngle * Math.PI / 180);
 											var c = Math.cos(labelAngle * Math.PI / 180);
@@ -627,49 +665,23 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 									}
 								};
 
-								var groupNameOffset = 0;
-
-								if (this.panel.ShowGroupLabels) groupNameOffset = Number(this.panel.GroupLabelFontSize.replace('%', '')) * 0.15;
-
-								if (groupCol >= 0) {
-									this.groupedRows = d3.nest().key(function (d) {
-										return d[groupCol];
-									}).entries(this.rows);
-
-									if (GroupNameFilter.length > 0) {
-										var regexGroupNameFilter = new RegExp(GroupNameFilter, "");
-										var matchingGroups = [];
-										for (var _i5 = 0; _i5 < this.groupedRows.length; _i5++) {
-											var groupName = this.groupedRows[_i5].key;
-											if (groupName.match(regexGroupNameFilter) != null) matchingGroups.push(this.groupedRows[_i5]);
-										}
-										this.groupedRows = matchingGroups;
-									}
-
-									this.groupedRows.sort(function (a, b) {
-										var aPos = GroupSortString.search(a.key);
-										var bPos = GroupSortString.search(b.key);
-
-										if (aPos == bPos) return a.key.localeCompare(b.key);else if (aPos == -1) return 1;else if (bPos == -1) return -1;else return aPos - bPos;
-									});
-
-									var gap = 5;
+								if (this.groupedRows != null) {
 									var gcols = GroupCols <= 0 || GroupCols > this.groupedRows.length ? this.groupedRows.length : GroupCols;
-									var dw = (w + gap) / gcols;
+									var dw = (w + GroupGap) / gcols;
 
 									// figure out the max data points in each row of groups...
 									var pointsPerRow = [];
-									for (var _i6 = 0; _i6 < this.groupedRows.length / gcols; _i6++) {
+									for (var _i3 = 0; _i3 < this.groupedRows.length / gcols; _i3++) {
 										pointsPerRow.push(0);
-									}for (var _i7 = 0; _i7 < this.groupedRows.length; _i7++) {
-										var _rr = Math.floor(_i7 / gcols);
-										var u = this.groupedRows[_i7].values.length;
+									}for (var _i4 = 0; _i4 < this.groupedRows.length; _i4++) {
+										var _rr = Math.floor(_i4 / gcols);
+										var u = this.groupedRows[_i4].values.length;
 										if (pointsPerRow[_rr] < u) pointsPerRow[_rr] = u;
 									}
 
 									var totalPoints = 0;
-									for (var _i8 = 0; _i8 < pointsPerRow.length; _i8++) {
-										totalPoints += pointsPerRow[_i8];
+									for (var _i5 = 0; _i5 < pointsPerRow.length; _i5++) {
+										totalPoints += pointsPerRow[_i5];
 									}var rowOverheadHeight = groupNameOffset + this.panel.LowSideMargin + this.panel.HighSideMargin;
 									var rowHeight = (h - pointsPerRow.length * rowOverheadHeight) / totalPoints;
 
@@ -682,19 +694,15 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 										for (var cc = 0; cc < gcols; cc++) {
 											var ii = cc + rr * gcols;
 											if (ii < this.groupedRows.length) {
-												plotGroupHorizontal(this.panel, this.svg, this.groupedRows[ii].values, nn, this.groupedRows[ii].key, groupNameOffset, cc * dw, dw - gap, hh - dh, dh);
+												plotGroupHorizontal(this.panel, this.svg, this.groupedRows[ii].values, nn, this.groupedRows[ii].key, groupNameOffset, cc * dw, dw - GroupGap, hh - dh, dh);
 											}
 										}
 									}
 								} else {
-									this.groupedRows = null;
-
 									plotGroupHorizontal(this.panel, this.svg, this.rows, this.rows.length, '', 0, 0, w, 0, h);
 								}
 							} else {
-
 								var plotGroupVertical = function plotGroupVertical(panel, svg, data, numRows, groupName, groupNameOffset, left, w, hh, dh) {
-
 									// draw border rectangle
 									/*svg.append("rect")
          	.attr("width", w)
@@ -710,7 +718,6 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 
 									hh += groupNameOffset;
 									dh -= groupNameOffset;
-									w -= 10;
 
 									// draw border rectangle
 									/*svg.append("rect")
@@ -762,7 +769,7 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 
 									if (panel.ShowLabels) {
 										var maxLabelHeight = 0;
-										var labelAngle = panel.LableAngle;
+										var labelAngle = Number(panel.LableAngle);
 										gg.append("text").text(function (d) {
 											return d[labelCol];
 										}).attr("font-family", "sans-serif").attr("font-size", panel.LabelFontSize).attr("fill", function (d, i) {
@@ -866,49 +873,25 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 									}
 								};
 
-								var _groupNameOffset = 0;
+								var _groupNameOffset = this.panel.ShowGroupLabels ? Number(this.panel.GroupLabelFontSize.replace('%', '')) * 0.15 : 0;
 
-								if (this.panel.ShowGroupLabels) _groupNameOffset = Number(this.panel.GroupLabelFontSize.replace('%', '')) * 0.15;
-
-								if (groupCol >= 0) {
-									this.groupedRows = d3.nest().key(function (d) {
-										return d[groupCol];
-									}).entries(this.rows);
-
-									if (GroupNameFilter.length > 0) {
-										var regexGroupRows = new RegExp(GroupNameFilter, "");
-										var _matchingGroups = [];
-										for (var _i9 = 0; _i9 < this.groupedRows.length; _i9++) {
-											var _groupName = this.groupedRows[_i9].key;
-											if (_groupName.match(regexGroupRows) != null) _matchingGroups.push(this.groupedRows[_i9]);
-										}
-										this.groupedRows = _matchingGroups;
-									}
-
-									this.groupedRows.sort(function (a, b) {
-										var aPos = GroupSortString.search(a.key);
-										var bPos = GroupSortString.search(b.key);
-
-										if (aPos == bPos) return a.key.localeCompare(b.key);else if (aPos == -1) return 1;else if (bPos == -1) return -1;else return aPos - bPos;
-									});
-
-									var _gap = 5;
+								if (this.groupedRows != null) {
 									var _gcols = GroupCols <= 0 || GroupCols > this.groupedRows.length ? this.groupedRows.length : GroupCols;
-									var _dw = (w + _gap) / _gcols;
+									var _dw = (w + GroupGap) / _gcols;
 
 									// figure out the max data points in each column of groups...
 									var pointsPerCol = [];
-									for (var _i10 = 0; _i10 < _gcols; _i10++) {
+									for (var _i6 = 0; _i6 < _gcols; _i6++) {
 										pointsPerCol.push(0);
-									}for (var _i11 = 0; _i11 < this.groupedRows.length; _i11++) {
-										var _cc = _i11 % _gcols;
-										var _u = this.groupedRows[_i11].values.length;
+									}for (var _i7 = 0; _i7 < this.groupedRows.length; _i7++) {
+										var _cc = _i7 % _gcols;
+										var _u = this.groupedRows[_i7].values.length;
 										if (pointsPerCol[_cc] < _u) pointsPerCol[_cc] = _u;
 									}
 
 									var _totalPoints = 0;
-									for (var _i12 = 0; _i12 < pointsPerCol.length; _i12++) {
-										_totalPoints += pointsPerCol[_i12];
+									for (var _i8 = 0; _i8 < pointsPerCol.length; _i8++) {
+										_totalPoints += pointsPerCol[_i8];
 									}var colOverheadWidth = this.panel.LowSideMargin + this.panel.HighSideMargin;
 									var colWidth = (w - pointsPerCol.length * colOverheadWidth) / _totalPoints;
 
@@ -919,19 +902,16 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 										var ww = 0;
 										for (var _cc2 = 0; _cc2 < _gcols; _cc2++) {
 											var _nn = pointsPerCol[_cc2];
-											var _dw2 = colOverheadWidth + _nn * colWidth;
 
 											var _ii = _cc2 + _rr2 * _gcols;
 											if (_ii < this.groupedRows.length) {
-												plotGroupVertical(this.panel, this.svg, this.groupedRows[_ii].values, _nn, this.groupedRows[_ii].key, _groupNameOffset, ww, _dw2 - _gap, _hh - _dh, _dh);
-												ww += _dw2;
+												plotGroupVertical(this.panel, this.svg, this.groupedRows[_ii].values, _nn, this.groupedRows[_ii].key, _groupNameOffset, ww, _dw - GroupGap, _hh - _dh, _dh);
+												ww += _dw;
 											}
 										}
 										_hh += _dh;
 									}
 								} else {
-									this.groupedRows = null;
-
 									plotGroupVertical(this.panel, this.svg, this.rows, this.rows.length, '', 0, 0, w, 0, h);
 								}
 							}
@@ -957,7 +937,7 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 
 							pulseHigh(this.svg);
 							pulseLow(this.svg);
-						} else this.elem.html("<div style='position:absolute;top:50%;text-align:center;font-size:0.875rem;'>No data to show!!</div>");
+						} else this.displayStatusMessage("No data");
 
 						this.ctrl.renderingCompleted();
 					}

@@ -34,7 +34,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			"HighLimitBarFlashTimeout": 1000,
 			"HighLimitLineColor": "#ff0000",
 			"HighLimitValue": 0.33,
-			"HighSideMargin": 20,
+			"HighSideMargin": 22,
 			"Horizontal": false,
 			"LabelColName": "sensor",
 			"LabelNameFilter": "",
@@ -43,6 +43,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			"GroupLabelColor": "#ffffff",
 			"LabelFontSize": "100%",
 			"GroupLabelFontSize": "200%",
+			"GroupGap": 5,
 			"LabelMargin": null,
 			"LowAxisColor": "#ffffff",
 			"LowBarColor": "teal",
@@ -51,7 +52,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			"LowLimitBarFlashTimeout": 200,
 			"LowLimitLineColor": "#ff0000",
 			"LowLimitValue": null,
-			"LowSideMargin": 20,
+			"LowSideMargin": 22,
 			"MaxLineColor": "rgb(74, 232, 12)",
 			"MaxLineValue": 1,
 			"MinLineValue": 0,
@@ -90,7 +91,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
         var panel = {};
         var elem = {};
         var ctrl = {};
-		
+
         _.defaults(this.panel, panelDefaults);
 
         this.events.on('render', this.onRender.bind(this));
@@ -103,10 +104,9 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
     }
 
     onDataError(err) {
-        this.alertSrv.set('Multistat Data Error', err.data.message == 'Found no column named time' ? 'Time-Series queries not yet supported' : err.data.message, 'error', 5000);
         this.seriesList = [];
 		this.data = [];
-        this.render();
+		this.displayStatusMessage("Query failure, Status=" + err.status + ", " + err.statusText);
     }
 
     onInitEditMode() {
@@ -126,10 +126,11 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
     onDataReceived(data) {
 		this.cols = [];
 		if (data.length == 0){
-			this.elem.html("<div style='position:absolute;top:50%;text-align:center;font-size:0.875rem;'>No data to show</div>");
+			console.log("data");
+			console.log(data);
+			this.displayStatusMessage("No data to show");
 			this.data = data;
 			this.rows = null;
-			this.render();
 		}
 		else if (data[0].type == "table"){
 			this.data = data[0];
@@ -171,8 +172,13 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			$maxDate.hide();			
 	}
 
+	displayStatusMessage(msg)
+	{
+		this.elem.html("<div class='michaeldmoore-multistat-panel-statusmessage'>" + msg + "</div>");
+	}
 
-    onRender() {
+    onRender()
+	{	
 		if (this.data != null && this.data.rows != null) {
 			var cols = this.cols;
 			var dateTimeCol = -1;
@@ -203,6 +209,12 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					var label = dd[labelCol];
 					if (label.match(regex) != null)
 						this.matchingRows.push(dd);
+				}
+				
+				if (this.matchingRows.length == 0)
+				{
+					this.displayStatusMessage("No data.  Regex filter '" + this.panel.LabelNameFilter + "' eliminated all " + this.data.rows.length + " rows from current query");
+					return;
 				}
 			}
 			else
@@ -276,6 +288,56 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 				this.rows = this.matchingRows;
 			}		
 
+			
+			var groupNameOffset = this.panel.ShowGroupLabels ? Number(this.panel.GroupLabelFontSize.replace('%','')) * 0.15 : 0;
+			
+			if (groupCol >= 0){
+				this.groupedRows = d3.nest()
+					.key(function(d){return d[groupCol];})
+					.entries(this.rows);
+
+				if (this.panel.GroupNameFilter.length > 0)
+				{
+					var regexGroupRows = new RegExp(this.panel.GroupNameFilter, "");
+					let matchingGroups = [];
+					for(let i = 0; i < this.groupedRows.length; i++)
+					{
+						let groupName = this.groupedRows[i].key;
+						if (groupName.match(regexGroupRows) != null)
+							matchingGroups.push(this.groupedRows[i]);
+					}
+					
+					if (matchingGroups.length > 0)
+						this.groupedRows = matchingGroups;
+					else
+					{
+						this.displayStatusMessage("No groups.  Group Regex filter '" + this.panel.GroupNameFilter + "' eliminated all " + this.groupedRows.length + " groups from current query");
+						return;
+					}
+				}
+
+				let groupSortString = this.panel.GroupSortString;	
+				
+				this.groupedRows.sort(
+					function(a,b){
+						var aPos = groupSortString.search(a.key);
+						var bPos = groupSortString.search(b.key);
+						
+						if (aPos == bPos)
+							return a.key.localeCompare(b.key);
+						else if (aPos == -1)
+							return 1;
+						else if (bPos == -1)
+							return -1;
+						else
+							return aPos - bPos;
+					}
+				);
+			}
+			else
+				this.groupedRows = null;	
+			
+			
 			this.elem.html("<svg class='" + this.className + "'  style='height:" + this.ctrl.height + "px; width:100%'></svg>");
 			var $container = this.elem.find('.' + this.className);
 
@@ -331,9 +393,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			var OddRowColor = this.panel.OddRowColor;
 			var EvenRowColor = this.panel.EvenRowColor;
 			var TZOffsetHours = this.panel.TZOffsetHours;
-			var GroupSortString = this.panel.GroupSortString;
 			var GroupCols = this.panel.GroupCols;
-			var GroupNameFilter = this.panel.GroupNameFilter;
+			var GroupGap = this.panel.GroupGap;
 			var ScaleFactor = Number(this.panel.ScaleFactor);
 			var LabelColor = this.panel.LabelColor;
 			var OutOfRangeLabelColor = this.panel.OutOfRangeLabelColor;
@@ -372,7 +433,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 				.duration(200)
 				.style("opacity", 0.9);
 				var html = "<table>";
-				for (i = 0; i < d.length; i++){
+				for (var i = 0; i < d.length; i++){
 					var cc = c[i];
 					var dd = d[i];
 					
@@ -435,7 +496,6 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
 					hh += groupNameOffset;
 					dh -= groupNameOffset;
-					w -= 10;
 
 					// draw border rectangle
 					/*svg.append("rect")
@@ -487,8 +547,6 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 							});
 
 
-
-
 					var gg = svg
 						.append("g")
 						.selectAll("text")
@@ -517,14 +575,13 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					
 					if (panel.ShowLabels) {
 						var maxLabelWidth = 0;
-						var labelAngle = panel.LableAngle; 
+						var labelAngle = Number(panel.LableAngle); 
 						gg.append("text")
 						.text(function(d) { return d[labelCol]; })
 						.attr("font-family", "sans-serif")
 						.attr("font-size", panel.LabelFontSize)
 						.attr("fill", function(d,i){return d[valueCol] * ScaleFactor > maxLineValue || d[valueCol] * ScaleFactor < minLineValue ? panel.OutOfRangeLabelColor : panel.LabelColor; })
 						.attr("text-anchor", "middle")
-						//.attr("text-anchor", "start")
 						.attr("dominant-baseline", "central")
 						.attr("transform", function(d, i) { 
 							var bbox = this.getBBox();
@@ -564,8 +621,6 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 							w -= maxLabelWidth;
 						}
 					}
-
-					
 					
 					
 					var valueScale = d3.scaleLinear()
@@ -573,7 +628,6 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 						.range([left + labelMargin, left + w])
 						.nice();
 				
-
 							
 					function vLine(svg, value, color) {	
 						svg.append("line")
@@ -694,54 +748,10 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 							
 				};
 
-				var groupNameOffset = 0;
-				
-				if (this.panel.ShowGroupLabels)
-					groupNameOffset = Number(this.panel.GroupLabelFontSize.replace('%','')) * 0.15;
-
-				if (groupCol >= 0){
-					this.groupedRows = d3.nest()
-						.key(function(d){return d[groupCol];})
-						.entries(this.rows);
-
-					if (GroupNameFilter.length > 0)
-					{
-						var regexGroupNameFilter = new RegExp(GroupNameFilter, "");
-						var matchingGroups = [];
-						for(let i = 0; i < this.groupedRows.length; i++)
-						{
-							var groupName = this.groupedRows[i].key;
-							if (groupName.match(regexGroupNameFilter) != null)
-								matchingGroups.push(this.groupedRows[i]);
-						}
-						this.groupedRows = matchingGroups;
-					}
-						
-					this.groupedRows.sort(
-						function(a,b){
-							var aPos = GroupSortString.search(a.key);
-							var bPos = GroupSortString.search(b.key);
-							
-							if (aPos == bPos)
-								return a.key.localeCompare(b.key);
-							else if (aPos == -1)
-								return 1;
-							else if (bPos == -1)
-								return -1;
-							else
-								return aPos - bPos;
-						}
-					);
-					
-					
-					
-					
-					var gap = 5;	
+				if (this.groupedRows != null){
 					var gcols = (GroupCols <= 0 || GroupCols > this.groupedRows.length) ? this.groupedRows.length : GroupCols;
-					var dw = ((w + gap) / gcols);
+					var dw = ((w + GroupGap) / gcols);
 
-					
-					
 					// figure out the max data points in each row of groups...
 					var pointsPerRow = [];
 					for(let i = 0; i < this.groupedRows.length/gcols; i++)
@@ -773,24 +783,21 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 							var ii = cc + (rr * gcols);
 							if (ii < this.groupedRows.length)
 							{
-								plotGroupHorizontal(this.panel, this.svg, this.groupedRows[ii].values, nn, this.groupedRows[ii].key, groupNameOffset, cc * dw, dw - gap, hh - dh, dh);								
+								plotGroupHorizontal(this.panel, this.svg, this.groupedRows[ii].values, nn, this.groupedRows[ii].key, groupNameOffset, 
+									cc * dw, dw - GroupGap, hh - dh, dh);								
 							}
 						}
 					}
 				}
 				else {
-					this.groupedRows = null;
-
 					plotGroupHorizontal(this.panel, this.svg, this.rows, this.rows.length, '', 0, 0, w, 0, h);
 				}
 				
 			}
 			else {
-				
-				
-				var plotGroupVertical = function(panel, svg, data, numRows, groupName, groupNameOffset, left, w, hh, dh) {
-
-				// draw border rectangle
+				var plotGroupVertical = function(panel, svg, data, numRows, groupName, groupNameOffset, left, w, hh, dh) 
+				{
+					// draw border rectangle
 					/*svg.append("rect")
 						.attr("width", w)
 						.attr("height", dh)
@@ -812,10 +819,9 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 							.attr("text-anchor", "middle")
 							.attr("dominant-baseline", "central");
 					}
-					
+						
 					hh += groupNameOffset;
 					dh -= groupNameOffset;
-					w -= 10;
 
 					// draw border rectangle
 					/*svg.append("rect")
@@ -898,7 +904,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
 				if (panel.ShowLabels) {
 					var maxLabelHeight = 0;
-					var labelAngle = panel.LableAngle; 
+					var labelAngle = Number(panel.LableAngle); 
 					gg.append("text")
 					.text(function(d) { return d[labelCol]; })
 					.attr("font-family", "sans-serif")
@@ -1047,60 +1053,19 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 						.attr('transform', 'translate(' + (left + w - highSideMargin) + ', 0)')
 						.classed('michaeldmoore-multistat-panel-valueaxis', true)
 						.call(d3.axisRight(valueScale).tickSizeInner(5).tickSizeOuter(10).ticks(5));
-				  gg.selectAll('.tick text').attr('fill', panel.HighAxisColor);
+					gg.selectAll('.tick text').attr('fill', panel.HighAxisColor);
 					gg.selectAll('.tick line').attr('stroke', panel.HighAxisColor);
 					gg.selectAll('path.domain').attr('stroke', panel.HighAxisColor);
 				}
 				};
 				
-				let groupNameOffset = 0;
 				
-				if (this.panel.ShowGroupLabels)
-					groupNameOffset = Number(this.panel.GroupLabelFontSize.replace('%','')) * 0.15;
-
-				if (groupCol >= 0){
-					this.groupedRows = d3.nest()
-						.key(function(d){return d[groupCol];})
-						.entries(this.rows);
-
-					if (GroupNameFilter.length > 0)
-					{
-						var regexGroupRows = new RegExp(GroupNameFilter, "");
-						let matchingGroups = [];
-						for(let i = 0; i < this.groupedRows.length; i++)
-						{
-							let groupName = this.groupedRows[i].key;
-							if (groupName.match(regexGroupRows) != null)
-								matchingGroups.push(this.groupedRows[i]);
-						}
-						this.groupedRows = matchingGroups;
-					}
-						
-					this.groupedRows.sort(
-						function(a,b){
-							var aPos = GroupSortString.search(a.key);
-							var bPos = GroupSortString.search(b.key);
-							
-							if (aPos == bPos)
-								return a.key.localeCompare(b.key);
-							else if (aPos == -1)
-								return 1;
-							else if (bPos == -1)
-								return -1;
-							else
-								return aPos - bPos;
-						}
-					);
-					
-					
-					
-					
-					let gap = 5;
+				let groupNameOffset = this.panel.ShowGroupLabels ? Number(this.panel.GroupLabelFontSize.replace('%','')) * 0.15 : 0;
+				
+				if (this.groupedRows != null){
 					let gcols = (GroupCols <= 0 || GroupCols > this.groupedRows.length) ? this.groupedRows.length : GroupCols;
-					let dw = ((w + gap) / gcols);
+					let dw = ((w + GroupGap) / gcols);
 
-					
-					
 					// figure out the max data points in each column of groups...
 					var pointsPerCol = [];
 					for(let i = 0; i < gcols; i++)
@@ -1125,17 +1090,16 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					let hh = dh;
 					for (let rr = 0; rr < numRows; rr++)
 					{
-						var ww = 0;
+						let ww = 0;
 						for (let cc = 0; cc < gcols; cc++)
 						{
 							let nn = pointsPerCol[cc];
-							let dw = colOverheadWidth + (nn * colWidth);
 
 							let ii = cc + (rr * gcols);
 							if (ii < this.groupedRows.length)
 							{
-								plotGroupVertical(this.panel, this.svg, this.groupedRows[ii].values, nn, this.groupedRows[ii].key, 
-									groupNameOffset, ww, dw - gap, hh - dh, dh);								
+								plotGroupVertical(this.panel, this.svg, this.groupedRows[ii].values, nn, this.groupedRows[ii].key, groupNameOffset, 
+									ww, dw - GroupGap, hh - dh, dh);								
 								ww += dw;
 							}
 						}
@@ -1143,8 +1107,6 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					}
 				}
 				else {
-					this.groupedRows = null;
-
 					plotGroupVertical(this.panel, this.svg, this.rows, this.rows.length, '', 0, 0, w, 0, h);
 				}	
 			}
@@ -1192,8 +1154,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			pulseLow(this.svg);
 		}
 		else
-			this.elem.html("<div style='position:absolute;top:50%;text-align:center;font-size:0.875rem;'>No data to show!!</div>");
-
+			this.displayStatusMessage("No data");
 						
         this.ctrl.renderingCompleted();
     }
