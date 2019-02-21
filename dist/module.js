@@ -98,7 +98,7 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 						"LabelColName": "sensor",
 						"LabelNameFilter": "",
 						"LabelColor": "#ffffff",
-						"OutOfRangeLabelColor": "#ff0000",
+						"OutOfRangeLabelColor": "#ffffff",
 						"GroupLabelColor": "#ffffff",
 						"LabelFontSize": "100%",
 						"GroupLabelFontSize": "200%",
@@ -429,7 +429,6 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 							var GroupGap = this.panel.GroupGap;
 							var ScaleFactor = Number(this.panel.ScaleFactor);
 							var LabelColor = this.panel.LabelColor;
-							var OutOfRangeLabelColor = this.panel.OutOfRangeLabelColor;
 							var ValuePosition = this.panel.ValuePosition;
 
 							var minValue = d3.min(this.rows, function (d) {
@@ -515,15 +514,15 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 									});
 									while (labels.length < numRows) {
 										labels = labels.concat('_' + Math.random().toString(36).substr(2, 9));
-									}var labelScale = d3.scaleBand().domain(labels).rangeRound([hh + highSideMargin, hh + dh - lowSideMargin]).padding(barPadding / 100);
+									}var labelScale = d3.scaleBand().domain(labels).rangeRound([hh + highSideMargin, hh + dh - lowSideMargin]).paddingInner(barPadding / 100).paddingOuter(barPadding / 200);
 
 									var stripedata = data.concat(d3.range(data.length, numRows));
 
-									var stripeScale = d3.scaleBand().domain(stripedata).rangeRound([hh + highSideMargin, hh + dh - lowSideMargin]).padding(barPadding / 100);
+									var stripeScale = d3.scaleBand().domain(stripedata).rangeRound([hh + highSideMargin, hh + dh - lowSideMargin]);
 
 									// Draw background of alternating stripes 
 									var oddeven = false;
-									svg.append("g").selectAll("rect").data(stripedata).enter().append("rect").attr("class", "michaeldmoore-multistat-panel-row").attr("width", w).attr("height", labelScale.bandwidth()).attr("x", left).attr("y", function (d) {
+									svg.append("g").selectAll("rect").data(stripedata).enter().append("rect").attr("class", "michaeldmoore-multistat-panel-row").attr("width", w).attr("height", stripeScale.step()).attr("x", left).attr("y", function (d) {
 										return stripeScale(d);
 									}).attr("fill", function (d) {
 										oddeven = !oddeven;
@@ -732,15 +731,15 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 									});
 									while (labels.length < numRows) {
 										labels = labels.concat('_' + Math.random().toString(36).substr(2, 9));
-									}var labelScale = d3.scaleBand().domain(labels).range([left + lowSideMargin, left + w - highSideMargin]).padding(barPadding / 100);
+									}var labelScale = d3.scaleBand().domain(labels).range([left + lowSideMargin, left + w - highSideMargin]).paddingInner(barPadding / 100).paddingOuter(barPadding / 200);
 
 									var stripedata = data.concat(d3.range(data.length, numRows));
 
-									var stripeScale = d3.scaleBand().domain(stripedata).range([left + lowSideMargin, left + w - highSideMargin]).padding(barPadding / 100);
+									var stripeScale = d3.scaleBand().domain(stripedata).range([left + lowSideMargin, left + w - highSideMargin]);
 
 									// Draw background of alternating stripes 
 									var oddeven = false;
-									svg.append("g").selectAll("rect").data(stripedata).enter().append("rect").attr("class", "michaeldmoore-multistat-panel-row").attr("width", labelScale.bandwidth()).attr("height", dh).attr("x", function (d, i) {
+									svg.append("g").selectAll("rect").data(stripedata).enter().append("rect").attr("class", "michaeldmoore-multistat-panel-row").attr("width", stripeScale.step()).attr("height", dh).attr("x", function (d, i) {
 										return stripeScale(d);
 									}).attr("y", hh).attr("fill", function (d) {
 										oddeven = !oddeven;
@@ -773,7 +772,7 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 										gg.append("text").text(function (d) {
 											return d[labelCol];
 										}).attr("font-family", "sans-serif").attr("font-size", panel.LabelFontSize).attr("fill", function (d, i) {
-											return d[valueCol] * ScaleFactor > maxLineValue || d[valueCol] * ScaleFactor < minLineValue ? OutOfRangeLabelColor : LabelColor;
+											return d[valueCol] * ScaleFactor > maxLineValue || d[valueCol] * ScaleFactor < minLineValue ? panel.OutOfRangeLabelColor : LabelColor;
 										}).attr("text-anchor", "middle").attr("dominant-baseline", "central").attr("transform", function (d, i) {
 											var bbox = this.getBBox();
 											var s = Math.sin(labelAngle * Math.PI / 180);

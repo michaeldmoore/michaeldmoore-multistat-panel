@@ -39,7 +39,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			"LabelColName": "sensor",
 			"LabelNameFilter": "",
 			"LabelColor": "#ffffff",
-			"OutOfRangeLabelColor": "#ff0000",
+			"OutOfRangeLabelColor": "#ffffff",
 			"GroupLabelColor": "#ffffff",
 			"LabelFontSize": "100%",
 			"GroupLabelFontSize": "200%",
@@ -397,7 +397,6 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			var GroupGap = this.panel.GroupGap;
 			var ScaleFactor = Number(this.panel.ScaleFactor);
 			var LabelColor = this.panel.LabelColor;
-			var OutOfRangeLabelColor = this.panel.OutOfRangeLabelColor;
 			var ValuePosition = this.panel.ValuePosition;
 			
 			var minValue = d3.min(this.rows, function(d) { return Number(d[valueCol]) * ScaleFactor; });
@@ -509,18 +508,17 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					while (labels.length < numRows)
 						labels = labels.concat('_' + Math.random().toString(36).substr(2, 9));
 					
-
 					var labelScale = d3.scaleBand()
 								.domain(labels)
 								.rangeRound([hh + highSideMargin, hh + dh - lowSideMargin])
-								.padding(barPadding / 100);
+								.paddingInner(barPadding / 100)
+								.paddingOuter(barPadding / 200);
 				
 					var stripedata = data.concat(d3.range(data.length, numRows));
 					
 					var stripeScale = d3.scaleBand()
 								.domain(stripedata)
-								.rangeRound([hh + highSideMargin, hh + dh - lowSideMargin])
-								.padding(barPadding / 100);
+								.rangeRound([hh + highSideMargin, hh + dh - lowSideMargin]);
 				
 					// Draw background of alternating stripes 
 					var oddeven = false;
@@ -531,7 +529,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 						.append("rect")
 						.attr("class", "michaeldmoore-multistat-panel-row")
 						.attr("width", w)
-						.attr("height", labelScale.bandwidth())
+						.attr("height", stripeScale.step())
 						.attr("x", left)
 						.attr("y", function(d){return stripeScale(d);})
 						.attr("fill", function(d) { 
@@ -840,15 +838,15 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					var labelScale = d3.scaleBand()
 								.domain(labels)
 								.range([left + lowSideMargin, left + w - highSideMargin])
-								.padding(barPadding / 100);
+								.paddingInner(barPadding / 100)
+								.paddingOuter(barPadding / 200);
 
 								
 					var stripedata = data.concat(d3.range(data.length, numRows));
 					
 					var stripeScale = d3.scaleBand()
 								.domain(stripedata)
-								.range([left + lowSideMargin, left + w - highSideMargin])
-								.padding(barPadding / 100);
+								.range([left + lowSideMargin, left + w - highSideMargin]);
 						
 					// Draw background of alternating stripes 
 					var oddeven = false;
@@ -858,7 +856,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 						.enter()
 						.append("rect")
 						.attr("class", "michaeldmoore-multistat-panel-row")
-						.attr("width", labelScale.bandwidth())
+						.attr("width", stripeScale.step())
 						.attr("height", dh)
 						.attr("x", function(d,i){return stripeScale(d);})
 						.attr("y", hh)
@@ -909,7 +907,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					.text(function(d) { return d[labelCol]; })
 					.attr("font-family", "sans-serif")
 					.attr("font-size", panel.LabelFontSize)
-					.attr("fill", function(d,i){return d[valueCol] * ScaleFactor > maxLineValue || d[valueCol] * ScaleFactor < minLineValue ? OutOfRangeLabelColor : LabelColor; })
+					.attr("fill", function(d,i){return d[valueCol] * ScaleFactor > maxLineValue || d[valueCol] * ScaleFactor < minLineValue ? panel.OutOfRangeLabelColor : LabelColor; })
 					.attr("text-anchor", "middle")
 					.attr("dominant-baseline", "central")
 					.attr("transform", function(d, i) { 
