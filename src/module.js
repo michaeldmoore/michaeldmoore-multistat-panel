@@ -338,7 +338,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 				this.groupedRows = null;	
 			
 			
-			this.elem.html("<svg class='" + this.className + "'  style='height:" + this.ctrl.height + "px; width:100%'></svg>");
+			this.elem.html("<svg class='" + this.className + "'  style='height:100%; width:100%'></svg>");
+			//this.elem.html("<svg class='" + this.className + "'  style='height:" + this.ctrl.height + "px; width:100%'></svg>");
 			var $container = this.elem.find('.' + this.className);
 
 			var h = $container.height();
