@@ -334,8 +334,17 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					}
 				);
 			}
-			else
+			else {
 				this.groupedRows = null;	
+
+				if (this.panel.SortDirection != "none"){
+					var ascending = this.panel.SortDirection == "ascending";
+					this.rows.sort(function(x, y){
+						var comp = (x[sortCol] == y[sortCol]) ? 0 : ((x[sortCol] > y[sortCol]) ? 1 : -1);
+						return ascending ? comp : -comp;
+					});				
+				}
+			}
 			
 			
 			this.elem.html("<svg class='" + this.className + "'  style='height:100%; width:100%'></svg>");
@@ -344,15 +353,6 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
 			var h = $container.height();
 			var w = $container.width() - 15;
-
-			if (this.panel.SortDirection != "none"){
-				var ascending = this.panel.SortDirection == "ascending";
-				this.rows.sort(function(x, y){
-					var comp = (x[sortCol] == y[sortCol]) ? 0 : ((x[sortCol] > y[sortCol]) ? 1 : -1);
-					return ascending ? comp : -comp;
-				});				
-			}
-			
 			this.buildDateHtml(dateTimeCol);
 			
 			var horizontal = this.panel.Horizontal;
@@ -478,6 +478,13 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 						.attr("y", hh)
 						.attr("stroke", "yellow");*/
 
+					if (panel.SortDirection != "none"){
+						var ascending = panel.SortDirection == "ascending";
+						data.sort(function(x, y){
+							var comp = (x[sortCol] == y[sortCol]) ? 0 : ((x[sortCol] > y[sortCol]) ? 1 : -1);
+							return ascending ? comp : -comp;
+						});				
+					}
 					
 					// Add Above-High Side Group Names
 					if(groupName != '' && panel.ShowGroupLabels) {
@@ -803,6 +810,14 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 						.attr("x", left)
 						.attr("y", hh)
 						.attr("stroke", "yellow");*/
+
+					if (panel.SortDirection != "none"){
+						var ascending = panel.SortDirection == "ascending";
+						data.sort(function(x, y){
+							var comp = (x[sortCol] == y[sortCol]) ? 0 : ((x[sortCol] > y[sortCol]) ? 1 : -1);
+							return ascending ? comp : -comp;
+						});				
+					}
 
 					// Add Above-High Side Group Names
 					if(groupName != '' && panel.ShowGroupLabels) {

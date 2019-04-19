@@ -368,7 +368,17 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 
 									if (aPos == bPos) return a.key.localeCompare(b.key);else if (aPos == -1) return 1;else if (bPos == -1) return -1;else return aPos - bPos;
 								});
-							} else this.groupedRows = null;
+							} else {
+								this.groupedRows = null;
+
+								if (this.panel.SortDirection != "none") {
+									var ascending = this.panel.SortDirection == "ascending";
+									this.rows.sort(function (x, y) {
+										var comp = x[sortCol] == y[sortCol] ? 0 : x[sortCol] > y[sortCol] ? 1 : -1;
+										return ascending ? comp : -comp;
+									});
+								}
+							}
 
 							this.elem.html("<svg class='" + this.className + "'  style='height:100%; width:100%'></svg>");
 							//this.elem.html("<svg class='" + this.className + "'  style='height:" + this.ctrl.height + "px; width:100%'></svg>");
@@ -376,15 +386,6 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 
 							var h = $container.height();
 							var w = $container.width() - 15;
-
-							if (this.panel.SortDirection != "none") {
-								var ascending = this.panel.SortDirection == "ascending";
-								this.rows.sort(function (x, y) {
-									var comp = x[sortCol] == y[sortCol] ? 0 : x[sortCol] > y[sortCol] ? 1 : -1;
-									return ascending ? comp : -comp;
-								});
-							}
-
 							this.buildDateHtml(dateTimeCol);
 
 							var horizontal = this.panel.Horizontal;
@@ -493,6 +494,14 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
          	.attr("x", left)
          	.attr("y", hh)
          	.attr("stroke", "yellow");*/
+
+									if (panel.SortDirection != "none") {
+										var ascending = panel.SortDirection == "ascending";
+										data.sort(function (x, y) {
+											var comp = x[sortCol] == y[sortCol] ? 0 : x[sortCol] > y[sortCol] ? 1 : -1;
+											return ascending ? comp : -comp;
+										});
+									}
 
 									// Add Above-High Side Group Names
 									if (groupName != '' && panel.ShowGroupLabels) {
@@ -710,6 +719,14 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
          	.attr("x", left)
          	.attr("y", hh)
          	.attr("stroke", "yellow");*/
+
+									if (panel.SortDirection != "none") {
+										var ascending = panel.SortDirection == "ascending";
+										data.sort(function (x, y) {
+											var comp = x[sortCol] == y[sortCol] ? 0 : x[sortCol] > y[sortCol] ? 1 : -1;
+											return ascending ? comp : -comp;
+										});
+									}
 
 									// Add Above-High Side Group Names
 									if (groupName != '' && panel.ShowGroupLabels) {
