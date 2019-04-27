@@ -6,6 +6,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import "./css/multistat-panel.css!";
 import d3 from './external/d3';
+import {appEvents} from 'app/core/core';
 
 
 
@@ -13,10 +14,8 @@ import d3 from './external/d3';
 class MultistatPanelCtrl extends MetricsPanelCtrl {
 
     /** @ngInject */
-    constructor($scope, $injector, alertSrv) {
+    constructor($scope, $injector) {
         super($scope, $injector);
-
-        this.alertSrv = alertSrv;
 
         var panelDefaults = {
 			"BarPadding": 10,
@@ -142,7 +141,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			this.render();
 		}
 		else {
-          this.alertSrv.set('Non-Table type data received', 'Multistat does not support Time Series data sets', 'error', 5000);
+			appEvents.emit('alert-error', ['Non-Table type data received', 'Multistat does not support Time Series data sets']);
 		}
     }
 

@@ -1,9 +1,9 @@
 'use strict';
 
-System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment', './css/multistat-panel.css!', './external/d3'], function (_export, _context) {
+System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment', './css/multistat-panel.css!', './external/d3', 'app/core/core'], function (_export, _context) {
 	"use strict";
 
-	var MetricsPanelCtrl, $, _, moment, d3, _createClass, MultistatPanelCtrl;
+	var MetricsPanelCtrl, $, _, moment, d3, appEvents, _createClass, MultistatPanelCtrl;
 
 	function _classCallCheck(instance, Constructor) {
 		if (!(instance instanceof Constructor)) {
@@ -46,6 +46,8 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 			moment = _moment.default;
 		}, function (_cssMultistatPanelCss) {}, function (_externalD) {
 			d3 = _externalD.default;
+		}, function (_appCoreCore) {
+			appEvents = _appCoreCore.appEvents;
 		}],
 		execute: function () {
 			_createClass = function () {
@@ -70,12 +72,10 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 				_inherits(MultistatPanelCtrl, _MetricsPanelCtrl);
 
 				/** @ngInject */
-				function MultistatPanelCtrl($scope, $injector, alertSrv) {
+				function MultistatPanelCtrl($scope, $injector) {
 					_classCallCheck(this, MultistatPanelCtrl);
 
 					var _this = _possibleConstructorReturn(this, (MultistatPanelCtrl.__proto__ || Object.getPrototypeOf(MultistatPanelCtrl)).call(this, $scope, $injector));
-
-					_this.alertSrv = alertSrv;
 
 					var panelDefaults = {
 						"BarPadding": 10,
@@ -203,7 +203,7 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 
 							this.render();
 						} else {
-							this.alertSrv.set('Non-Table type data received', 'Multistat does not support Time Series data sets', 'error', 5000);
+							appEvents.emit('alert-error', ['Non-Table type data received', 'Multistat does not support Time Series data sets']);
 						}
 					}
 				}, {
