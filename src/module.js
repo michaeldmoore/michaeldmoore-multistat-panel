@@ -99,7 +99,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
         this.events.on('init-edit-mode', this.onInitEditMode.bind(this));
 
 		this.className = 'michaeldmoore-multistat-panel-' + this.panel.id;
-		this.svg = d3.select('.' + this.className).append('svg');	
+		//this.svg = d3.select('.' + this.className).append('svg');	
     }
 
     onDataError(err) {
@@ -360,11 +360,10 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			var lowSideMargin = this.panel.LowSideMargin >= 0 ? this.panel.LowSideMargin : 0;
 			var highSideMargin = this.panel.HighSideMargin >= 0 ? this.panel.HighSideMargin : 0;
 
+			this.svg = d3.select('.' + this.className).append('svg');	
 			this.svg.selectAll("rect.michaeldmoore-multistat-panel-bar.highflash").interrupt();
 			this.svg.selectAll("rect.michaeldmoore-multistat-panel-bar.lowflash").interrupt();
 
-			this.svg = d3.select('.' + this.className).append('svg');	
-			
 			var id = this.panel.id;
 			var barPadding = this.panel.BarPadding;
 			var baseLineValue = this.panel.BaseLineValue;

@@ -159,7 +159,7 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 					_this.events.on('init-edit-mode', _this.onInitEditMode.bind(_this));
 
 					_this.className = 'michaeldmoore-multistat-panel-' + _this.panel.id;
-					_this.svg = d3.select('.' + _this.className).append('svg');
+					//this.svg = d3.select('.' + this.className).append('svg');	
 					return _this;
 				}
 
@@ -394,10 +394,9 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 							var lowSideMargin = this.panel.LowSideMargin >= 0 ? this.panel.LowSideMargin : 0;
 							var highSideMargin = this.panel.HighSideMargin >= 0 ? this.panel.HighSideMargin : 0;
 
+							this.svg = d3.select('.' + this.className).append('svg');
 							this.svg.selectAll("rect.michaeldmoore-multistat-panel-bar.highflash").interrupt();
 							this.svg.selectAll("rect.michaeldmoore-multistat-panel-bar.lowflash").interrupt();
-
-							this.svg = d3.select('.' + this.className).append('svg');
 
 							var id = this.panel.id;
 							var barPadding = this.panel.BarPadding;
