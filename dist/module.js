@@ -188,13 +188,12 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 					key: 'onDataReceived',
 					value: function onDataReceived(data) {
 						this.cols = [];
+						//console.log('onDataReceived(' + JSON.stringify(data) + ')');
 						if (data.length == 0) {
-							console.log("data");
-							console.log(data);
 							this.displayStatusMessage("No data to show");
 							this.data = data;
 							this.rows = null;
-						} else if (data[0].type == "table") {
+						} else if (data[0].type == "table" || data[0].columns) {
 							this.data = data[0];
 
 							for (var i = 0; i < this.data.columns.length; i++) {
