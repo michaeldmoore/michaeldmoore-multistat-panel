@@ -1,98 +1,111 @@
 <div class="editor-row">
-  <div class="section gf-form-group">
-    <h5 class="section-heading">Lines and Limits</h5>
-	  
-	<div class="gf-form">
-	  <label class="gf-form-label width-7">Max Value</label>
-	  <input type="number" class="gf-form-input width-5" placeholder="auto" data-placement="right" 
-	    bs-tooltip="'Override automatic maximum scale value'" ng-model="ctrl.panel.MaxLineValue" ng-change="ctrl.render()" ng-model-onblur>
-      <gf-form-switch class="gf-form" label-class="width-6" label="Show Line" checked="ctrl.panel.ShowMaxLine" on-change="ctrl.render()"></gf-form-switch>
-	  <span class="gf-form-label michaeldmoore-multistat-panel-w3">
-		<spectrum-picker ng-model="ctrl.panel.MaxLineColor" ng-change="ctrl.render()" ></spectrum-picker>
-	  </span>
-	</div>
-	  
-    <div class="gf-form">
-	  <label class="gf-form-label width-7">BaseLine</label>
-	  <input type="number" class="gf-form-input width-5" placeholder="auto" data-placement="right" 
-		bs-tooltip="'Override automatic zero baseline value'" ng-model="ctrl.panel.BaseLineValue" ng-change="ctrl.render()" ng-model-onblur>
-      <gf-form-switch class="gf-form" label-class="width-6" label="Show Line" checked="ctrl.panel.ShowBaseLine" on-change="ctrl.render()"></gf-form-switch>
-	  <span class="gf-form-label michaeldmoore-multistat-panel-w3">
-		<spectrum-picker ng-model="ctrl.panel.BaseLineColor" ng-change="ctrl.render()" ></spectrum-picker>
-	  </span>
-	</div>
-
-    <div class="gf-form">
-	  <label class="gf-form-label width-7">Min Value</label>
-	  <input type="number" class="gf-form-input width-5" placeholder="auto" data-placement="right" 
-		bs-tooltip="'Override automatic minimum scale value'" ng-model="ctrl.panel.MinLineValue" ng-change="ctrl.render()" ng-model-onblur>
-      <gf-form-switch class="gf-form" label-class="width-6" label="Show Line" checked="ctrl.panel.ShowMinLine" on-change="ctrl.render()"></gf-form-switch>
-	  <span class="gf-form-label michaeldmoore-multistat-panel-w3">
-		<spectrum-picker ng-model="ctrl.panel.MinLineColor" ng-change="ctrl.render()" ></spectrum-picker>
-	  </span>
-	</div>
-
-    <div class="gf-form">
-	  <label class="gf-form-label width-7">High Limit</label>
-	  <input type="number" class="gf-form-input width-5" placeholder="auto" data-placement="right" 
-		bs-tooltip="'Set high limit value'" ng-model="ctrl.panel.HighLimitValue" ng-change="ctrl.render()" ng-model-onblur>
-      <gf-form-switch class="gf-form" label-class="width-6" label="Show Line" checked="ctrl.panel.ShowHighLimitLine" on-change="ctrl.render()"></gf-form-switch>
-	  <span class="gf-form-label michaeldmoore-multistat-panel-w3">
-		<spectrum-picker ng-model="ctrl.panel.HighLimitLineColor" ng-change="ctrl.render()" ></spectrum-picker>
-	  </span>
-		
-      <gf-form-switch class="gf-form" label-class="width-6" label="Color Bar" checked="ctrl.panel.RecolorHighLimitBar" on-change="ctrl.render()"></gf-form-switch>
-      <span class="gf-form-label michaeldmoore-multistat-panel-w3" ng-if="ctrl.panel.RecolorHighLimitBar">
-        <spectrum-picker ng-model="ctrl.panel.HighLimitBarColor" ng-change="ctrl.render()" ></spectrum-picker>
-      </span>
-	  <div ng-if="ctrl.panel.RecolorHighLimitBar">
-        <gf-form-switch class="gf-form" label-class="width-4" label="Flash" checked="ctrl.panel.FlashHighLimitBar" on-change="ctrl.render()"></gf-form-switch>
+   <div class="section gf-form-group">
+      <h5 class="section-heading">Lines and Limits</h5>
+      <div class="gf-form">
+         <label class="gf-form-label width-7">Max Value</label>
+         <input type="number" class="gf-form-input width-5" placeholder="auto" data-placement="right" 
+            bs-tooltip="'Override automatic maximum scale value'" ng-model="ctrl.panel.MaxLineValue" ng-change="ctrl.render()" ng-model-onblur>
+         <gf-form-switch class="gf-form" label-class="width-6" label="Show Line" checked="ctrl.panel.ShowMaxLine" on-change="ctrl.render()"></gf-form-switch>
+         <span class="gf-form-label">
+            <spectrum-picker ng-model="ctrl.panel.MaxLineColor" ng-change="ctrl.render()" ></spectrum-picker>
+         </span>
       </div>
-	  	  
-      <div class="gf-form" ng-if="ctrl.panel.RecolorHighLimitBar">
-        <span class="gf-form-label michaeldmoore-multistat-panel-w3" ng-if="ctrl.panel.FlashHighLimitBar">
-		  <spectrum-picker ng-model="ctrl.panel.HighLimitBarFlashColor" ng-change="ctrl.render()" ></spectrum-picker>
-        </span>
-		<div ng-if="ctrl.panel.FlashHighLimitBar">
-		  <label class="gf-form-label width-5">Rate</label>
-		</div>  
-		<div ng-if="ctrl.panel.FlashHighLimitBar">
-		    <input type="number" class="gf-form-input width-5" placeholder="auto" data-placement="right" min="100"
-		      bs-tooltip="'Set high limit flash timeout of 100 or more (in mS)'" ng-model="ctrl.panel.HighLimitBarFlashTimeout" ng-change="ctrl.render()" ng-model-onblur>
-		</div>
- 	  </div>
-	</div>
-
-	<div class="gf-form">
-	  <label class="gf-form-label width-7">Low Limit</label>
-	  <input type="number" class="gf-form-input width-5" placeholder="auto" data-placement="right" 
-		bs-tooltip="'Set Low limit value'" ng-model="ctrl.panel.LowLimitValue" ng-change="ctrl.render()" ng-model-onblur>
-      <gf-form-switch class="gf-form" label-class="width-6" label="Show Line" checked="ctrl.panel.ShowLowLimitLine" on-change="ctrl.render()"></gf-form-switch>
-	  <span class="gf-form-label michaeldmoore-multistat-panel-w3">
-		<spectrum-picker ng-model="ctrl.panel.LowLimitLineColor" ng-change="ctrl.render()" ></spectrum-picker>
-	  </span>
-		
-      <gf-form-switch class="gf-form" label-class="width-6" label="Color Bar" checked="ctrl.panel.RecolorLowLimitBar" on-change="ctrl.render()"></gf-form-switch>
-      <span class="gf-form-label michaeldmoore-multistat-panel-w3" ng-if="ctrl.panel.RecolorLowLimitBar">
-        <spectrum-picker ng-model="ctrl.panel.LowLimitBarColor" ng-change="ctrl.render()" ></spectrum-picker>
-      </span>
-	  <div ng-if="ctrl.panel.RecolorLowLimitBar">
-        <gf-form-switch class="gf-form" label-class="width-4" label="Flash" checked="ctrl.panel.FlashLowLimitBar" on-change="ctrl.render()"></gf-form-switch>
+      <div class="gf-form">
+         <label class="gf-form-label width-7">BaseLine</label>
+         <input type="number" class="gf-form-input width-5" placeholder="auto" data-placement="right" 
+            bs-tooltip="'Override automatic zero baseline value'" ng-model="ctrl.panel.BaseLineValue" ng-change="ctrl.render()" ng-model-onblur>
+         <gf-form-switch class="gf-form" label-class="width-6" label="Show Line" checked="ctrl.panel.ShowBaseLine" on-change="ctrl.render()"></gf-form-switch>
+         <span class="gf-form-label">
+            <spectrum-picker ng-model="ctrl.panel.BaseLineColor" ng-change="ctrl.render()" ></spectrum-picker>
+         </span>
       </div>
-	  	  
-      <div class="gf-form" ng-if="ctrl.panel.RecolorLowLimitBar">
-        <span class="gf-form-label michaeldmoore-multistat-panel-w3" ng-if="ctrl.panel.FlashLowLimitBar">
-		  <spectrum-picker ng-model="ctrl.panel.LowLimitBarFlashColor" ng-change="ctrl.render()" ></spectrum-picker>
-        </span>
-		<div ng-if="ctrl.panel.FlashLowLimitBar">
-		  <label class="gf-form-label width-5">Rate</label>
-		</div>  
-		<div ng-if="ctrl.panel.FlashLowLimitBar">
-		    <input type="number" class="gf-form-input width-5" placeholder="auto" data-placement="right" min="100"
-		      bs-tooltip="'Set Low limit flash timeout of 100 or more (in mS)'" ng-model="ctrl.panel.LowLimitBarFlashTimeout" ng-change="ctrl.render()" ng-model-onblur>
-		</div>
- 	  </div>
-	</div>
-
-  </div>
+      <div class="gf-form">
+         <label class="gf-form-label width-7">Min Value</label>
+         <input type="number" class="gf-form-input width-5" placeholder="auto" data-placement="right" 
+            bs-tooltip="'Override automatic minimum scale value'" ng-model="ctrl.panel.MinLineValue" ng-change="ctrl.render()" ng-model-onblur>
+         <gf-form-switch class="gf-form" label-class="width-6" label="Show Line" checked="ctrl.panel.ShowMinLine" on-change="ctrl.render()"></gf-form-switch>
+         <span class="gf-form-label">
+            <spectrum-picker ng-model="ctrl.panel.MinLineColor" ng-change="ctrl.render()" ></spectrum-picker>
+         </span>
+      </div>
+      <div class="gf-form">
+         <gf-form-switch class="gf-form" label-class="width-7" label="Show Bars" checked="ctrl.panel.ShowBars" on-change="ctrl.render()"></gf-form-switch>
+      </div>
+      <div class="gf-form" ng-if="ctrl.panel.ShowBars">
+         <label class="gf-form-label width-7">High Limit</label>
+         <input type="number" class="gf-form-input width-5" placeholder="auto" data-placement="right" 
+            bs-tooltip="'Set high limit value'" ng-model="ctrl.panel.HighLimitValue" ng-change="ctrl.render()" ng-model-onblur>
+         <gf-form-switch class="gf-form" label-class="width-6" label="Show Line" checked="ctrl.panel.ShowHighLimitLine" on-change="ctrl.render()"></gf-form-switch>
+         <span class="gf-form-label">
+            <spectrum-picker ng-model="ctrl.panel.HighLimitLineColor" ng-change="ctrl.render()" ></spectrum-picker>
+         </span>
+         <gf-form-switch class="gf-form" label-class="width-6" label="Color Bar" checked="ctrl.panel.RecolorHighLimitBar" on-change="ctrl.render()"></gf-form-switch>
+         <span class="gf-form-label" ng-if="ctrl.panel.RecolorHighLimitBar">
+            <spectrum-picker ng-model="ctrl.panel.HighLimitBarColor" ng-change="ctrl.render()" ></spectrum-picker>
+         </span>
+         <div ng-if="ctrl.panel.RecolorHighLimitBar">
+            <gf-form-switch class="gf-form" label-class="width-4" label="Flash" checked="ctrl.panel.FlashHighLimitBar" on-change="ctrl.render()"></gf-form-switch>
+         </div>
+         <div class="gf-form" ng-if="ctrl.panel.RecolorHighLimitBar">
+            <span class="gf-form-label" ng-if="ctrl.panel.FlashHighLimitBar">
+               <spectrum-picker ng-model="ctrl.panel.HighLimitBarFlashColor" ng-change="ctrl.render()" ></spectrum-picker>
+            </span>
+            <div ng-if="ctrl.panel.FlashHighLimitBar">
+               <label class="gf-form-label width-5">Rate</label>
+            </div>
+            <div ng-if="ctrl.panel.FlashHighLimitBar">
+               <input type="number" class="gf-form-input width-5" placeholder="auto" data-placement="right" min="100"
+                  bs-tooltip="'Set high limit flash timeout of 100 or more (in mS)'" ng-model="ctrl.panel.HighLimitBarFlashTimeout" ng-change="ctrl.render()" ng-model-onblur>
+            </div>
+         </div>
+      </div>
+      <div class="gf-form" ng-if="ctrl.panel.ShowBars">
+         <label class="gf-form-label width-7">Low Limit</label>
+         <input type="number" class="gf-form-input width-5" placeholder="auto" data-placement="right" 
+            bs-tooltip="'Set Low limit value'" ng-model="ctrl.panel.LowLimitValue" ng-change="ctrl.render()" ng-model-onblur>
+         <gf-form-switch class="gf-form" label-class="width-6" label="Show Line" checked="ctrl.panel.ShowLowLimitLine" on-change="ctrl.render()"></gf-form-switch>
+         <span class="gf-form-label">
+            <spectrum-picker ng-model="ctrl.panel.LowLimitLineColor" ng-change="ctrl.render()" ></spectrum-picker>
+         </span>
+         <gf-form-switch class="gf-form" label-class="width-6" label="Color Bar" checked="ctrl.panel.RecolorLowLimitBar" on-change="ctrl.render()"></gf-form-switch>
+         <span class="gf-form-label" ng-if="ctrl.panel.RecolorLowLimitBar">
+            <spectrum-picker ng-model="ctrl.panel.LowLimitBarColor" ng-change="ctrl.render()" ></spectrum-picker>
+         </span>
+         <div ng-if="ctrl.panel.RecolorLowLimitBar">
+            <gf-form-switch class="gf-form" label-class="width-4" label="Flash" checked="ctrl.panel.FlashLowLimitBar" on-change="ctrl.render()"></gf-form-switch>
+         </div>
+         <div class="gf-form" ng-if="ctrl.panel.RecolorLowLimitBar">
+            <span class="gf-form-label" ng-if="ctrl.panel.FlashLowLimitBar">
+               <spectrum-picker ng-model="ctrl.panel.LowLimitBarFlashColor" ng-change="ctrl.render()" ></spectrum-picker>
+            </span>
+            <div ng-if="ctrl.panel.FlashLowLimitBar">
+               <label class="gf-form-label width-5">Rate</label>
+            </div>
+            <div ng-if="ctrl.panel.FlashLowLimitBar">
+               <input type="number" class="gf-form-input width-5" placeholder="auto" data-placement="right" min="100"
+                  bs-tooltip="'Set Low limit flash timeout of 100 or more (in mS)'" ng-model="ctrl.panel.LowLimitBarFlashTimeout" ng-change="ctrl.render()" ng-model-onblur>
+            </div>
+         </div>
+      </div>
+      <div class="gf-form">
+         <gf-form-switch class="gf-form" label-class="width-7" label="Show Lines" checked="ctrl.panel.ShowLines" on-change="ctrl.render()"></gf-form-switch>
+            <div class="gf-form-select-wrapper" ng-if="ctrl.panel.ShowLines">
+               <select class="gf-form-input michaeldmoore-multistat-panel-w12" ng-model="ctrl.panel.CurveType" ng-options="f for f in ctrl.curveTypes" ng-change="ctrl.render()"></select>
+            </div>
+      </div>
+      <div class="gf-form" ng-if="ctrl.panel.ShowLines">
+         <label class="gf-form-label width-7">Line Width</label>
+         <input type="number" class="gf-form-input width-5" placeholder="auto" data-placement="right" 
+            bs-tooltip="'Set line width (or 0 to hide line)'" ng-model="ctrl.panel.LineWidth" ng-change="ctrl.render()" ng-model-onblur>
+         <span class="gf-form-label" ng-if="ctrl.panel.LineWidth">
+            <spectrum-picker ng-model="ctrl.panel.LineColor" ng-change="ctrl.render()" ></spectrum-picker>
+         </span>
+         <label class="gf-form-label width-7">Dot Size</label>
+         <input type="number" class="gf-form-input width-5" placeholder="auto" data-placement="right" 
+            bs-tooltip="'Set dot size (or 0 to hide dots)'" ng-model="ctrl.panel.DotSize" ng-change="ctrl.render()" ng-model-onblur>
+         <span class="gf-form-label" ng-if="ctrl.panel.DotSize">
+            <spectrum-picker ng-model="ctrl.panel.DotColor" ng-change="ctrl.render()" ></spectrum-picker>
+         </span>
+      </div>
+   </div>
 </div>

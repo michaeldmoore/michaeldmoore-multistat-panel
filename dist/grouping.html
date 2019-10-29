@@ -2,25 +2,23 @@
 <div class="section gf-form-group">
    <h5 class="section-heading">Grouping</h5>
    <div class="gf-form">
-	 <div class="gf-form-inline">
-		<label class="gf-form-label michaeldmoore-multistat-panel-w10">Group col</label>
-		<div class="gf-form-select-wrapper">
-		   <select class="gf-form-input michaeldmoore-multistat-panel-w16" ng-model="ctrl.panel.GroupColName" ng-options="f for f in ctrl.cols0" ng-change="ctrl.render()"bs-tooltip="'Choose grouping field (or leave blank for no grouping)'"></select>
-		</div>
-	 </div>
-  </div>
-   
+      <div class="gf-form-inline">
+         <label class="gf-form-label michaeldmoore-multistat-panel-w10">Group col</label>
+         <div class="gf-form-select-wrapper">
+            <select class="gf-form-input michaeldmoore-multistat-panel-w16" ng-model="ctrl.panel.GroupColName" ng-options="f for f in ctrl.cols0" ng-change="ctrl.render()"bs-tooltip="'Choose grouping field (or leave blank for no grouping)'"></select>
+         </div>
+      </div>
+   </div>
    <div class="gf-form" ng-if="ctrl.panel.GroupColName!=''">
       <label class="gf-form-label michaeldmoore-multistat-panel-w10">Columns Per Row</label>
       <input type="number" class="gf-form-input michaeldmoore-multistat-panel-w4" placeholder="0" data-placement="right" 
          bs-tooltip="'Set to value > 0 to break display into multiple row/columns'" ng-model="ctrl.panel.GroupCols" ng-change="ctrl.render()" ng-model-onblur>
-
-	  <div class="gf-form" ng-if="ctrl.panel.GroupColName!=''">
-		  <label class="gf-form-label michaeldmoore-multistat-panel-w6">Group Gap</label>
-		  <input type="number" class="gf-form-input width-6" data-placement="right" 
-			 bs-tooltip="'Horizontal gap between groups'" ng-model="ctrl.panel.GroupGap" ng-change="ctrl.render()" ng-model-onchange />	
-	  </div>
-	</div>
+      <div class="gf-form" ng-if="ctrl.panel.GroupColName!=''">
+         <label class="gf-form-label michaeldmoore-multistat-panel-w6">Group Gap</label>
+         <input type="number" class="gf-form-input width-6" data-placement="right" 
+            bs-tooltip="'Horizontal gap between groups'" ng-model="ctrl.panel.GroupGap" ng-change="ctrl.render()" ng-model-onchange />	
+      </div>
+   </div>
    <div class="gf-form" ng-if="ctrl.panel.GroupColName!=''">
       <label class="gf-form-label michaeldmoore-multistat-panel-w10">Group Name Filter</label>
       <input type="string" class="gf-form-input width-30" data-placement="right" 
@@ -39,7 +37,7 @@
             <select class="gf-form-input michaeldmoore-multistat-panel-w6" ng-model="ctrl.panel.GroupLabelFontSize" ng-options="f for f in ctrl.fontSizes" ng-change="ctrl.render()"></select>
          </div>
          <label class="gf-form-label michaeldmoore-multistat-panel-w6">Color</label>
-         <span class="gf-form-label michaeldmoore-annunciator-panel-w4">
+         <span class="gf-form-label">
             <spectrum-picker ng-model="ctrl.panel.GroupLabelColor" ng-change="ctrl.render()" ></spectrum-picker>
          </span>
       </div>
