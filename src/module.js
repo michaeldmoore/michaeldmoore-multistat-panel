@@ -552,7 +552,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 											.domain(stripedata)
 											.rangeRound([hh + highSideMargin, hh + dh - lowSideMargin]);
 
-									// Draw background of alternating stripes 
+									// Draw background of alternating stripes
 									var oddeven = false;
 									svg.append("g")
 											.selectAll("rect")
@@ -730,7 +730,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 													var bw = labelScale.step();
 													for (var i = 0; i < data.length; i++) {
 															var d = data[i];
-															var y = hh + (i + 0.5) * bw;
+															var y = hh + highSideMargin + (i + 0.5) * bw;
 															var x = valueScale(d[valueCol]);
 															points.push({
 																	x,
@@ -938,7 +938,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 											.domain(stripedata)
 											.range([left + lowSideMargin, left + w - highSideMargin]);
 
-									// Draw background of alternating stripes 
+									// Draw background of alternating stripes
 									var oddeven = false;
 									svg.append("g")
 											.selectAll("rect")
@@ -1317,7 +1317,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
 	link(scope, elem, attrs, ctrl) {
 			this.ctrl = ctrl;
-			this.elem = elem.find('.panel-content');
+			this.elem = elem;//.parent.find('.panel-content');
 	}
 }
 

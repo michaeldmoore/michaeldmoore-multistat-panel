@@ -535,7 +535,7 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 
 																		var stripeScale = d3.scaleBand().domain(stripedata).rangeRound([hh + highSideMargin, hh + dh - lowSideMargin]);
 
-																		// Draw background of alternating stripes 
+																		// Draw background of alternating stripes
 																		var oddeven = false;
 																		svg.append("g").selectAll("rect").data(stripedata).enter().append("rect").attr("class", "michaeldmoore-multistat-panel-row").attr("width", w).attr("height", stripeScale.step()).attr("x", left).attr("y", function (d) {
 																				return stripeScale(d);
@@ -650,7 +650,7 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 																						var bw = labelScale.step();
 																						for (var i = 0; i < data.length; i++) {
 																								var d = data[i];
-																								var y = hh + (i + 0.5) * bw;
+																								var y = hh + highSideMargin + (i + 0.5) * bw;
 																								var x = valueScale(d[valueCol]);
 																								points.push({
 																										x: x,
@@ -805,7 +805,7 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 
 																		var stripeScale = d3.scaleBand().domain(stripedata).range([left + lowSideMargin, left + w - highSideMargin]);
 
-																		// Draw background of alternating stripes 
+																		// Draw background of alternating stripes
 																		var oddeven = false;
 																		svg.append("g").selectAll("rect").data(stripedata).enter().append("rect").attr("class", "michaeldmoore-multistat-panel-row").attr("width", stripeScale.step()).attr("height", dh).attr("x", function (d, i) {
 																				return stripeScale(d);
@@ -1069,7 +1069,7 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 										key: 'link',
 										value: function link(scope, elem, attrs, ctrl) {
 												this.ctrl = ctrl;
-												this.elem = elem.find('.panel-content');
+												this.elem = elem; //.parent.find('.panel-content');
 										}
 								}]);
 
