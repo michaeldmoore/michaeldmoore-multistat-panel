@@ -772,10 +772,10 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
 											if (panel.DotSize) {
 													g1.append("circle")
-															.attr("r", panel.DotSize / 2)
+															.attr("r", panel.DotSize / 2.0)
 															.attr("fill", panel.DotColor)
 															.attr("cy", function(d) {
-																	return labelScale(d[labelCol]) + (bw / 2.0);
+																	return labelScale(d[labelCol]) + (bw * (1.0 - (barPadding/100.0)) / 2.0);
 															})
 															.attr("cx", function(d) {
 																	return valueScale(d[valueCol]);
@@ -1157,10 +1157,10 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
 											if (panel.DotSize) {
 													g2.append("circle")
-															.attr("r", panel.DotSize / 2)
+															.attr("r", panel.DotSize / 2.0)
 															.attr("fill", panel.DotColor)
 															.attr("cx", function(d) {
-																	return labelScale(d[labelCol]) + (bw / 2.0);
+																	return labelScale(d[labelCol]) + (bw * (1.0 - (barPadding/100.0)) / 2.0);
 															})
 															.attr("cy", function(d) {
 																	return valueScale(d[valueCol]);
@@ -1317,7 +1317,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
 	link(scope, elem, attrs, ctrl) {
 			this.ctrl = ctrl;
-			this.elem = elem;//.parent.find('.panel-content');
+			this.elem = elem.find('.panel-content') || elem;
 	}
 }
 
