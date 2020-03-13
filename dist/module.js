@@ -1069,7 +1069,11 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 										key: 'link',
 										value: function link(scope, elem, attrs, ctrl) {
 												this.ctrl = ctrl;
-												this.elem = elem.find('.panel-content') || elem;
+												this.elem = elem;
+
+												// for backward compatability (grafana 6.6.0 and earlier)
+												var panelContentElem = elem.find('.panel-content');
+												if (panelContentElem.length) this.elem = panelContentElem;
 										}
 								}]);
 
