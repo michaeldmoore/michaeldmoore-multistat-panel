@@ -21,6 +21,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			var panelDefaults = {
 					"BarPadding": 10,
 					"BaseLineColor": "#ff0000",
+					"BaseLineWidth": 1,
 					"BaseLineValue": 0,
 					"DateTimeColName": "date",
 					"DateFormat": "YYYY-MM-DD HH:mm:ss",
@@ -28,12 +29,14 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					"FlashHighLimitBar": false,
 					"FlashLowLimitBar": false,
 					"HighAxisColor": "#ffffff",
+					"HighAxisWidth": 1,
 					"HighBarColor": "rgb(120, 128, 0)",
 					"HighLimitBarColor": "#ff0000",
 					"HighLimitBarFlashColor": "#ffa500",
 					"HighLimitBarFlashTimeout": 1000,
 					"HighLimitLineColor": "#ff0000",
 					"HighLimitValue": 0.33,
+					"HighLmitLineWidth": 1,
 					"HighSideMargin": 22,
 					"Horizontal": false,
 					"LabelColName": "sensor",
@@ -46,15 +49,20 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					"GroupGap": 5,
 					"LabelMargin": null,
 					"LowAxisColor": "#ffffff",
+					"LowAxisWidth": 1,
 					"LowBarColor": "teal",
 					"LowLimitBarColor": "#ff0000",
 					"LowLimitBarFlashColor": "#ffa500",
 					"LowLimitBarFlashTimeout": 200,
 					"LowLimitLineColor": "#ff0000",
 					"LowLimitValue": null,
+					"LowLmitLineWidth": 1,
 					"LowSideMargin": 22,
 					"MaxLineColor": "rgb(74, 232, 12)",
+					"MaxLineWidth": 1,
 					"MaxLineValue": 1,
+					"MinLineColor": "#ff0000",
+					"MinLineWidth": 1,
 					"MinLineValue": 0,
 					"RecolorHighLimitBar": true,
 					"RecolorLowLimitBar": false,
@@ -663,9 +671,10 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 											.range([left + labelMargin, left + w])
 											.nice();
 
-									function vLine(svg, value, color) {
+									function vLine(svg, value, color, strokeWidth) {
 											svg.append("line")
 													.style("stroke", color)
+													.attr("stroke-width", strokeWidth == null ? 1 : strokeWidth)
 													.attr("y1", hh + highSideMargin)
 													.attr("x1", valueScale(value))
 													.attr("y2", hh + dh - lowSideMargin)
@@ -673,19 +682,19 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 									}
 
 									if (panel.ShowBaseLine)
-											vLine(svg, baseLineValue, panel.BaseLineColor);
+											vLine(svg, baseLineValue, panel.BaseLineColor, panel.BaseLineWidth);
 
 									if (panel.ShowMaxLine)
-											vLine(svg, maxLineValue, panel.MaxLineColor);
+											vLine(svg, maxLineValue, panel.MaxLineColor, panel.MaxLineWidth);
 
 									if (panel.ShowMinLine)
-											vLine(svg, minLineValue, panel.MinLineColor);
+											vLine(svg, minLineValue, panel.MinLineColor, panel.MinLineWidth);
 
 									if (panel.ShowHighLimitLine)
-											vLine(svg, highLimitValue, panel.HighLimitLineColor);
+											vLine(svg, highLimitValue, panel.HighLimitLineColor, panel.HighLimitLineWidth);
 
 									if (panel.ShowLowLimitLine)
-											vLine(svg, lowLimitValue, panel.LowLimitLineColor);
+											vLine(svg, lowLimitValue, panel.LowLimitLineColor, panel.LowLimitLineWidth);
 
 									if (panel.ShowBars) {
 											g1.append("rect")
@@ -818,8 +827,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 													.attr("class", "michaeldmoore-multistat-panel-valueaxis")
 													.call(d3.axisTop(valueScale));
 											ggHighSide.selectAll('.tick text').attr('fill', panel.HighAxisColor);
-											ggHighSide.selectAll('.tick line').attr('stroke', panel.HighAxisColor);
-											ggHighSide.selectAll('path.domain').attr('stroke', panel.HighAxisColor);
+											ggHighSide.selectAll('.tick line').attr('stroke', panel.HighAxisColor).attr('stroke-width', panel.HighAxisWidth);
+											ggHighSide.selectAll('path.domain').attr('stroke', panel.HighAxisColor).attr('stroke-width', panel.HighAxisWidth);
 									}
 
 									// Add Low Side Value Axis (X)
@@ -829,8 +838,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 													.attr("class", "michaeldmoore-multistat-panel-valueaxis")
 													.call(d3.axisBottom(valueScale));
 											ggLowSide.selectAll('.tick text').attr('fill', panel.LowAxisColor);
-											ggLowSide.selectAll('.tick line').attr('stroke', panel.LowAxisColor);
-											ggLowSide.selectAll('path.domain').attr('stroke', panel.LowAxisColor);
+											ggLowSide.selectAll('.tick line').attr('stroke', panel.LowAxisColor).attr('stroke-width', panel.LowAxisWidth);
+											ggLowSide.selectAll('path.domain').attr('stroke', panel.LowAxisColor).attr('stroke-width', panel.LowAxisWidth);
 									}
 
 							};
@@ -1047,9 +1056,10 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 											.range([hh, hh + dh])
 											.nice();
 
-									function hLine(svg, value, color) {
+									function hLine(svg, value, color, strokeWidth) {
 											svg.append("line")
 													.style("stroke", color)
+													.attr("stroke-width", strokeWidth == null ? 1 : strokeWidth)
 													.attr("x1", left + lowSideMargin)
 													.attr("y1", valueScale(value))
 													.attr("x2", left + w - highSideMargin)
@@ -1058,19 +1068,19 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
 
 									if (panel.ShowBaseLine)
-											hLine(svg, baseLineValue, panel.BaseLineColor);
+											hLine(svg, baseLineValue, panel.BaseLineColor, panel.BaseLineWidth);
 
 									if (panel.ShowMaxLine)
-											hLine(svg, maxLineValue, panel.MaxLineColor);
+											hLine(svg, maxLineValue, panel.MaxLineColor, panel.MaxLineWidth);
 
 									if (panel.ShowMinLine)
-											hLine(svg, minLineValue, panel.MinLineColor);
+											hLine(svg, minLineValue, panel.MinLineColor, panel.MinLineWidth);
 
 									if (panel.ShowHighLimitLine)
-											hLine(svg, highLimitValue, panel.HighLimitLineColor);
+											hLine(svg, highLimitValue, panel.HighLimitLineColor, panel.HighLimitLineWidth);
 
 									if (panel.ShowLowLimitLine)
-											hLine(svg, lowLimitValue, panel.LowLimitLineColor);
+											hLine(svg, lowLimitValue, panel.LowLimitLineColor, panel.LowLimitLineWidth);
 
 									if (panel.ShowBars) {
 											g2.append("rect")
@@ -1202,8 +1212,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 													.classed('michaeldmoore-multistat-panel-valueaxis', true)
 													.call(d3.axisLeft(valueScale).tickSizeInner(5).tickSizeOuter(10).ticks(5));
 											ggLowSide.selectAll('.tick text').attr('fill', panel.LowAxisColor);
-											ggLowSide.selectAll('.tick line').attr('stroke', panel.LowAxisColor);
-											ggLowSide.selectAll('path.domain').attr('stroke', panel.LowAxisColor);
+											ggLowSide.selectAll('.tick line').attr('stroke', panel.LowAxisColor).attr('stroke-width', panel.LowAxisWidth);
+											ggLowSide.selectAll('path.domain').attr('stroke', panel.LowAxisColor).attr('stroke-width', panel.LowAxisWidth);
 									}
 
 									if (highSideMargin > 0) {
@@ -1212,8 +1222,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 													.classed('michaeldmoore-multistat-panel-valueaxis', true)
 													.call(d3.axisRight(valueScale).tickSizeInner(5).tickSizeOuter(10).ticks(5));
 											ggHighSide.selectAll('.tick text').attr('fill', panel.HighAxisColor);
-											ggHighSide.selectAll('.tick line').attr('stroke', panel.HighAxisColor);
-											ggHighSide.selectAll('path.domain').attr('stroke', panel.HighAxisColor);
+											ggHighSide.selectAll('.tick line').attr('stroke', panel.HighAxisColor).attr('stroke-width', panel.HighAxisWidth);
+											ggHighSide.selectAll('path.domain').attr('stroke', panel.HighAxisColor).attr('stroke-width', panel.HighAxisWidth);
 									}
 							};
 
