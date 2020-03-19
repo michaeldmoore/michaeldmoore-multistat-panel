@@ -384,14 +384,6 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 																});
 														} else {
 																this.groupedRows = null;
-
-																if (this.panel.SortDirection != "none") {
-																		var ascending = this.panel.SortDirection == "ascending";
-																		this.rows.sort(function (x, y) {
-																				var comp = x[sortCol] == y[sortCol] ? 0 : x[sortCol] > y[sortCol] ? 1 : -1;
-																				return ascending ? comp : -comp;
-																		});
-																}
 														}
 
 														this.elem.html("<svg class='" + this.className + "'  style='height:100%; width:100%'></svg>");
@@ -511,8 +503,7 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 																		if (panel.SortDirection != "none") {
 																				var ascending = panel.SortDirection == "ascending";
 																				data.sort(function (x, y) {
-																						var comp = x[sortCol] == y[sortCol] ? 0 : x[sortCol] > y[sortCol] ? 1 : -1;
-																						return ascending ? comp : -comp;
+																						return ascending ? x[sortCol] - y[sortCol] : y[sortCol] - x[sortCol];
 																				});
 																		}
 
@@ -770,6 +761,7 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 																}
 														} else {
 																var plotGroupVertical = function plotGroupVertical(panel, svg, data, numRows, groupName, groupNameOffset, left, w, hh, dh) {
+
 																		// Draw border rectangle
 																		/*svg.append("rect")
                   	.attr("width", w)
@@ -781,8 +773,7 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 																		if (panel.SortDirection != "none") {
 																				var ascending = panel.SortDirection == "ascending";
 																				data.sort(function (x, y) {
-																						var comp = x[sortCol] == y[sortCol] ? 0 : x[sortCol] > y[sortCol] ? 1 : -1;
-																						return ascending ? comp : -comp;
+																						return ascending ? x[sortCol] - y[sortCol] : y[sortCol] - x[sortCol];
 																				});
 																		}
 

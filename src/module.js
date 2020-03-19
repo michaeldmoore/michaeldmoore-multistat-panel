@@ -364,14 +364,6 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 							);
 					} else {
 							this.groupedRows = null;
-
-							if (this.panel.SortDirection != "none") {
-									var ascending = this.panel.SortDirection == "ascending";
-									this.rows.sort(function(x, y) {
-											var comp = (x[sortCol] == y[sortCol]) ? 0 : ((x[sortCol] > y[sortCol]) ? 1 : -1);
-											return ascending ? comp : -comp;
-									});
-							}
 					}
 
 					this.elem.html("<svg class='" + this.className + "'  style='height:100%; width:100%'></svg>");
@@ -509,11 +501,10 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 										.attr("stroke", "yellow");*/
 
 									if (panel.SortDirection != "none") {
-											var ascending = panel.SortDirection == "ascending";
-											data.sort(function(x, y) {
-													var comp = (x[sortCol] == y[sortCol]) ? 0 : ((x[sortCol] > y[sortCol]) ? 1 : -1);
-													return ascending ? comp : -comp;
-											});
+										var ascending = panel.SortDirection == "ascending";
+										data.sort(function(x, y) {
+											return ascending ? x[sortCol] - y[sortCol] : y[sortCol] - x[sortCol];
+										});
 									}
 
 									// Add Above-High Side Group Names
@@ -886,6 +877,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
 					} else {
 							var plotGroupVertical = function(panel, svg, data, numRows, groupName, groupNameOffset, left, w, hh, dh) {
+
 									// Draw border rectangle
 									/*svg.append("rect")
 										.attr("width", w)
@@ -895,11 +887,10 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 										.attr("stroke", "yellow");*/
 
 									if (panel.SortDirection != "none") {
-											var ascending = panel.SortDirection == "ascending";
-											data.sort(function(x, y) {
-													var comp = (x[sortCol] == y[sortCol]) ? 0 : ((x[sortCol] > y[sortCol]) ? 1 : -1);
-													return ascending ? comp : -comp;
-											});
+										var ascending = panel.SortDirection == "ascending";
+										data.sort(function(x, y) {
+											return ascending ? x[sortCol] - y[sortCol] : y[sortCol] - x[sortCol];
+										});
 									}
 
 									// Add Above-High Side Group Names
