@@ -207,6 +207,13 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 									groupCol = i;
 					}
 
+					const groupedLabelFunc = function(obj){
+						if (groupCol != -1)
+							return obj[groupCol] + ':' + obj[labelCol];
+						else
+							return obj[labelCol];
+					};
+
 					if (this.panel.LabelNameFilter.length > 0 && labelCol != -1) {
 							var regex = new RegExp(this.panel.LabelNameFilter, "");
 							this.matchingRows = [];
@@ -230,9 +237,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 							switch (this.panel.Aggregate) {
 									case 'first':
 											this.rows = d3.nest()
-													.key(function(d) {
-															return d[labelCol];
-													})
+													.key(groupedLabelFunc)
 													.rollup(function(d) {
 															return d[0];
 													})
@@ -245,10 +250,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
 									case 'last':
 											this.rows = d3.nest()
-													.key(function(d) {
-															return d[labelCol];
-													})
-													.rollup(function(d) {
+											.key(groupedLabelFunc)
+											.rollup(function(d) {
 															return d[d.length - 1];
 													})
 													.entries(this.matchingRows)
@@ -260,10 +263,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
 									case 'mean':
 											this.rows = d3.nest()
-													.key(function(d) {
-															return d[labelCol];
-													})
-													.rollup(function(d) {
+											.key(groupedLabelFunc)
+											.rollup(function(d) {
 															var dd = Object.values(Object.assign({}, d[d.length - 1]));
 															dd[valueCol] = d3.mean(d, function(d) {
 																	return d[valueCol];
@@ -279,10 +280,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
 									case 'max':
 											this.rows = d3.nest()
-													.key(function(d) {
-															return d[labelCol];
-													})
-													.rollup(function(d) {
+											.key(groupedLabelFunc)
+											.rollup(function(d) {
 															var dd = Object.values(Object.assign({}, d[d.length - 1]));
 															dd[valueCol] = d3.max(d, function(d) {
 																	return d[valueCol];
@@ -298,10 +297,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
 									case 'min':
 											this.rows = d3.nest()
-													.key(function(d) {
-															return d[labelCol];
-													})
-													.rollup(function(d) {
+											.key(groupedLabelFunc)
+											.rollup(function(d) {
 															var dd = Object.values(Object.assign({}, d[d.length - 1]));
 															dd[valueCol] = d3.min(d, function(d) {
 																	return d[valueCol];

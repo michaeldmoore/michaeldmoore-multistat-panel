@@ -263,6 +263,10 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 																if (cols[i] == this.panel.GroupColName) groupCol = i;
 														}
 
+														var groupedLabelFunc = function groupedLabelFunc(obj) {
+																if (groupCol != -1) return obj[groupCol] + ':' + obj[labelCol];else return obj[labelCol];
+														};
+
 														if (this.panel.LabelNameFilter.length > 0 && labelCol != -1) {
 																var regex = new RegExp(this.panel.LabelNameFilter, "");
 																this.matchingRows = [];
@@ -283,9 +287,7 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 																this.rows = [];
 																switch (this.panel.Aggregate) {
 																		case 'first':
-																				this.rows = d3.nest().key(function (d) {
-																						return d[labelCol];
-																				}).rollup(function (d) {
+																				this.rows = d3.nest().key(groupedLabelFunc).rollup(function (d) {
 																						return d[0];
 																				}).entries(this.matchingRows).forEach(function (x) {
 																						oo.push(x.value);
@@ -294,9 +296,7 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 																				break;
 
 																		case 'last':
-																				this.rows = d3.nest().key(function (d) {
-																						return d[labelCol];
-																				}).rollup(function (d) {
+																				this.rows = d3.nest().key(groupedLabelFunc).rollup(function (d) {
 																						return d[d.length - 1];
 																				}).entries(this.matchingRows).forEach(function (x) {
 																						oo.push(x.value);
@@ -305,9 +305,7 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 																				break;
 
 																		case 'mean':
-																				this.rows = d3.nest().key(function (d) {
-																						return d[labelCol];
-																				}).rollup(function (d) {
+																				this.rows = d3.nest().key(groupedLabelFunc).rollup(function (d) {
 																						var dd = Object.values(Object.assign({}, d[d.length - 1]));
 																						dd[valueCol] = d3.mean(d, function (d) {
 																								return d[valueCol];
@@ -320,9 +318,7 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 																				break;
 
 																		case 'max':
-																				this.rows = d3.nest().key(function (d) {
-																						return d[labelCol];
-																				}).rollup(function (d) {
+																				this.rows = d3.nest().key(groupedLabelFunc).rollup(function (d) {
 																						var dd = Object.values(Object.assign({}, d[d.length - 1]));
 																						dd[valueCol] = d3.max(d, function (d) {
 																								return d[valueCol];
@@ -335,9 +331,7 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 																				break;
 
 																		case 'min':
-																				this.rows = d3.nest().key(function (d) {
-																						return d[labelCol];
-																				}).rollup(function (d) {
+																				this.rows = d3.nest().key(groupedLabelFunc).rollup(function (d) {
 																						var dd = Object.values(Object.assign({}, d[d.length - 1]));
 																						dd[valueCol] = d3.min(d, function (d) {
 																								return d[valueCol];
