@@ -208,6 +208,7 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 														this.displayStatusMessage("No data to show");
 														this.data = data;
 														this.rows = null;
+														this.render();
 												} else if (data[0].type == "table" || data[0].columns) {
 														this.data = data[0];
 
@@ -248,7 +249,7 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 								}, {
 										key: 'onRender',
 										value: function onRender() {
-												if (this.data != null && this.data.rows != null) {
+												if (this.data != null && this.data.rows && this.data.rows.length) {
 														var cols = this.cols;
 														var dateTimeCol = -1;
 														var labelCol = -1;
@@ -1047,7 +1048,9 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 
 														pulseHigh(this.svg);
 														pulseLow(this.svg);
-												} else this.displayStatusMessage("No data");
+												} else {
+														this.displayStatusMessage("No data");
+												}
 
 												// console.log((new XMLSerializer()).serializeToString(this.svg.node()));
 

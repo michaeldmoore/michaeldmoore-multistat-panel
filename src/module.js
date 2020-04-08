@@ -144,6 +144,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					this.displayStatusMessage("No data to show");
 					this.data = data;
 					this.rows = null;
+					this.render();
 			} else if (data[0].type == "table" || data[0].columns) {
 					this.data = data[0];
 
@@ -187,7 +188,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 	}
 
 	onRender() {
-			if (this.data != null && this.data.rows != null) {
+			if (this.data != null && this.data.rows && this.data.rows.length) {
 					var cols = this.cols;
 					var dateTimeCol = -1;
 					var labelCol = -1;
@@ -1301,8 +1302,9 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
 					pulseHigh(this.svg);
 					pulseLow(this.svg);
-			} else
-					this.displayStatusMessage("No data");
+			} else {
+				this.displayStatusMessage("No data");
+			}
 
 			// console.log((new XMLSerializer()).serializeToString(this.svg.node()));
 

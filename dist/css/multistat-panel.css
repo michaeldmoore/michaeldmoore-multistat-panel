@@ -29,11 +29,11 @@
 }
 
 .michaeldmoore-multistat-panel-statusmessage {
-	position: absolute;
-	top: 50%;
-	text-align: center;
-	font-size: 1rem;
-	color: white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-right: -50%;
+  transform: translate(-50%, -50%);
 }
 
 .michaeldmoore-multistat-panel-tooltip td:first-of-type{
@@ -109,4 +109,3 @@
   margin-right: .25rem;
   margin-bottom: 0px;
 }
-
