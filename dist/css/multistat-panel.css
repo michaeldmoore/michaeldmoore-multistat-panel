@@ -109,3 +109,15 @@
   margin-right: .25rem;
   margin-bottom: 0px;
 }
+
+.michaeldmoore-multistat-panel-w18 {
+  width: 17.75rem;
+  height: 37px;
+  margin-right: .25rem;
+  margin-bottom: 0px;
+}
+
+pre a {
+  display: contents;
+  text-decoration: underline;
+}

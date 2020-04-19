@@ -92,6 +92,7 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 												"HighAxisColor": "#ffffff",
 												"HighAxisWidth": 1,
 												"HighBarColor": "rgb(120, 128, 0)",
+												"RecolorColName": null,
 												"HighLimitBarColor": "#ff0000",
 												"HighLimitBarFlashColor": "#ffa500",
 												"HighLimitBarFlashTimeout": 1000,
@@ -127,6 +128,7 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 												"MinLineValue": null,
 												"RecolorHighLimitBar": false,
 												"RecolorLowLimitBar": false,
+												"RecolorRules": [],
 												"ShowBaseLine": false,
 												"ShowDate": false,
 												"Aggregate": "last",
@@ -164,9 +166,9 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 												"CurveType": "Monotone"
 										};
 
-										var panel = {};
-										var elem = {};
-										var ctrl = {};
+										//			var panel = {};
+										//			var elem = {};
+										//			var ctrl = {};
 
 										_.defaults(_this.panel, panelDefaults);
 
@@ -195,6 +197,7 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 												this.fontSizes = ['20%', '30%', '50%', '70%', '80%', '100%', '110%', '120%', '150%', '170%', '200%', '250%', '300%', '350%', '400%'];
 												this.valuePositions = ['bar base', 'bar end', 'top'];
 												this.curveTypes = ['Linear', 'Monotone', 'Cardinal', 'Catmull-Rom'];
+												this.matchTypes = ['exact', 'subset', 'list', 'reg-ex'];
 												this.addEditorTab('Columns', 'public/plugins/michaeldmoore-multistat-panel/columns.html', 2);
 												this.addEditorTab('Layout', 'public/plugins/michaeldmoore-multistat-panel/layout.html', 3);
 												this.addEditorTab('Grouping', 'public/plugins/michaeldmoore-multistat-panel/grouping.html', 4);
@@ -258,12 +261,14 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 														var valueCol = 0;
 														var sortCol = 0;
 														var groupCol = -1;
+														var recolorCol = -1;
 														for (var i = 0; i < cols.length; i++) {
 																if (cols[i] == this.panel.DateTimeColName) dateTimeCol = i;
 																if (cols[i] == this.panel.LabelColName) labelCol = i;
 																if (cols[i] == this.panel.ValueColName) valueCol = i;
 																if (cols[i] == this.panel.SortColName) sortCol = i;
 																if (cols[i] == this.panel.GroupColName) groupCol = i;
+																if (cols[i] == this.panel.RecolorColName) recolorCol = i;
 														}
 
 														var groupedLabelFunc = function groupedLabelFunc(obj) {
@@ -416,12 +421,14 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 														var LowLimitBarColor = this.panel.LowLimitBarColor;
 														var LowLimitBarFlashColor = this.panel.LowLimitBarFlashColor;
 														var LowLimitBarFlashTimeout = this.panel.LowLimitBarFlashTimeout;
+														var RecolorRules = this.panel.RecolorRules;
 														var recolorLowLimitBar = this.panel.RecolorLowLimitBar;
 														var flashHighLimitBar = this.panel.FlashHighLimitBar;
 														var flashLowLimitBar = this.panel.FlashLowLimitBar;
 														var showTooltips = this.panel.ShowTooltips;
 														var DateTimeColName = this.panel.DateTimeColName;
 														var DateFormat = this.panel.DateFormat;
+														var RecolorColName = this.panel.RecolorColName;
 														var TooltipDateFormat = this.panel.TooltipDateFormat;
 														var ValueColName = this.panel.ValueColName;
 														var ValueDecimals = this.panel.ValueDecimals;
@@ -484,6 +491,42 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 																if (val < minLineValue) val = minLineValue;
 
 																return val;
+														};
+
+														var getBarColor = function getBarColor(d) {
+																if (recolorCol != -1 && RecolorRules.length) {
+																		var recolorString = d[recolorCol];
+
+																		if (recolorString) {
+																				var recolorRule = RecolorRules.find(function (r) {
+																						var match = false;
+																						if (r.pattern) {
+																								switch (r.matchType) {
+																										case 'reg-ex':
+																												var re = RegExp(r.pattern);
+																												return re.test(recolorString);
+
+																										case 'list':
+																												return r.pattern.indexOf(recolorString) != -1;
+
+																										case 'subset':
+																												return recolorString.indexOf(r.pattern) != -1;
+
+																										default:
+																												return r.pattern === recolorString;
+																								}
+																						}
+																						return false;
+																				});
+
+																				if (recolorRule) return recolorRule.color;
+																		}
+																}
+
+																var value = d[valueCol] * ScaleFactor;
+																if (recolorHighLimitBar && value > highLimitValue) return HighLimitBarColor;
+																if (recolorLowLimitBar && value < lowLimitValue) return LowLimitBarColor;
+																return value > baseLineValue ? highBarColor : lowBarColor;
 														};
 
 														if (horizontal) {
@@ -626,9 +669,7 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 																				}).attr("y", function (d, i) {
 																						return labelScale(d[labelCol]);
 																				}).attr("fill", function (d) {
-																						if (recolorHighLimitBar && d[valueCol] * ScaleFactor > highLimitValue) return HighLimitBarColor;
-																						if (recolorLowLimitBar && d[valueCol] * ScaleFactor < lowLimitValue) return LowLimitBarColor;
-																						return d[valueCol] * ScaleFactor > baseLineValue ? highBarColor : lowBarColor;
+																						return getBarColor(d);
 																				}).classed("highflash", function (d) {
 																						return recolorHighLimitBar && flashHighLimitBar && d[valueCol] * ScaleFactor > highLimitValue;
 																				}).classed("lowflash", function (d) {
@@ -894,9 +935,7 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 																				}).attr("x", function (d, i) {
 																						return labelScale(d[labelCol]);
 																				}).attr("fill", function (d) {
-																						if (recolorHighLimitBar && d[valueCol] * ScaleFactor > highLimitValue) return HighLimitBarColor;
-																						if (recolorLowLimitBar && d[valueCol] * ScaleFactor < lowLimitValue) return LowLimitBarColor;
-																						return d[valueCol] * ScaleFactor > baseLineValue ? highBarColor : lowBarColor;
+																						return getBarColor(d);
 																				}).classed("highflash", function (d) {
 																						return recolorHighLimitBar && flashHighLimitBar && d[valueCol] * ScaleFactor > highLimitValue;
 																				}).classed("lowflash", function (d) {

@@ -1,4 +1,5 @@
 /*jshint esversion: 6 */
+/*jshint -W087 */
 import {
 	MetricsPanelCtrl
 } from 'app/plugins/sdk';
@@ -33,6 +34,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 				"HighAxisColor": "#ffffff",
 				"HighAxisWidth": 1,
 				"HighBarColor": "rgb(120, 128, 0)",
+				"RecolorColName": null,
 				"HighLimitBarColor": "#ff0000",
 				"HighLimitBarFlashColor": "#ffa500",
 				"HighLimitBarFlashTimeout": 1000,
@@ -68,6 +70,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 				"MinLineValue": null,
 				"RecolorHighLimitBar": false,
 				"RecolorLowLimitBar": false,
+				"RecolorRules": [],
 				"ShowBaseLine": false,
 				"ShowDate": false,
 				"Aggregate": "last",
@@ -105,9 +108,9 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 				"CurveType": "Monotone"
 			};
 
-			var panel = {};
-			var elem = {};
-			var ctrl = {};
+//			var panel = {};
+//			var elem = {};
+//			var ctrl = {};
 
 			_.defaults(this.panel, panelDefaults);
 
@@ -132,6 +135,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			this.fontSizes = ['20%', '30%', '50%', '70%', '80%', '100%', '110%', '120%', '150%', '170%', '200%', '250%', '300%', '350%', '400%'];
 			this.valuePositions = ['bar base', 'bar end', 'top'];
 			this.curveTypes = ['Linear', 'Monotone', 'Cardinal', 'Catmull-Rom'];
+			this.matchTypes = ['exact', 'subset', 'list', 'reg-ex'];
 			this.addEditorTab('Columns', 'public/plugins/michaeldmoore-multistat-panel/columns.html', 2);
 			this.addEditorTab('Layout', 'public/plugins/michaeldmoore-multistat-panel/layout.html', 3);
 			this.addEditorTab('Grouping', 'public/plugins/michaeldmoore-multistat-panel/grouping.html', 4);
@@ -197,6 +201,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					var valueCol = 0;
 					var sortCol = 0;
 					var groupCol = -1;
+					var recolorCol = -1;
 					for (let i = 0; i < cols.length; i++) {
 							if (cols[i] == this.panel.DateTimeColName)
 									dateTimeCol = i;
@@ -208,6 +213,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 									sortCol = i;
 							if (cols[i] == this.panel.GroupColName)
 									groupCol = i;
+							if (cols[i] == this.panel.RecolorColName)
+									recolorCol = i;
 					}
 
 					const groupedLabelFunc = function(obj){
@@ -399,12 +406,14 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					var LowLimitBarColor = this.panel.LowLimitBarColor;
 					var LowLimitBarFlashColor = this.panel.LowLimitBarFlashColor;
 					var LowLimitBarFlashTimeout = this.panel.LowLimitBarFlashTimeout;
+					var RecolorRules = this.panel.RecolorRules;
 					var recolorLowLimitBar = this.panel.RecolorLowLimitBar;
 					var flashHighLimitBar = this.panel.FlashHighLimitBar;
 					var flashLowLimitBar = this.panel.FlashLowLimitBar;
 					var showTooltips = this.panel.ShowTooltips;
 					var DateTimeColName = this.panel.DateTimeColName;
 					var DateFormat = this.panel.DateFormat;
+					var RecolorColName = this.panel.RecolorColName;
 					var TooltipDateFormat = this.panel.TooltipDateFormat;
 					var ValueColName = this.panel.ValueColName;
 					var ValueDecimals = this.panel.ValueDecimals;
@@ -487,6 +496,45 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 									val = minLineValue;
 
 							return val;
+					};
+
+					var getBarColor = function(d) {
+						if (recolorCol != -1 && RecolorRules.length){
+							let recolorString = d[recolorCol];
+
+							if (recolorString) {
+								let recolorRule = RecolorRules.find(r => {
+									let match = false;
+									if (r.pattern) {
+										switch(r.matchType) {
+											case 'reg-ex':
+												let re = RegExp(r.pattern);
+												return re.test(recolorString);
+
+											case 'list':
+												return r.pattern.indexOf(recolorString) != -1;
+
+											case 'subset':
+												return recolorString.indexOf(r.pattern) != -1;
+
+											default:
+												return r.pattern===recolorString;
+										}
+									}
+									return false;
+								});
+
+								if (recolorRule)
+									return recolorRule.color;
+							}
+						}
+
+						let value = d[valueCol] * ScaleFactor;
+						if (recolorHighLimitBar && (value > highLimitValue))
+							return HighLimitBarColor;
+						if (recolorLowLimitBar && (value < lowLimitValue))
+							return LowLimitBarColor;
+						return (value > baseLineValue) ? highBarColor : lowBarColor;
 					};
 
 					if (horizontal) {
@@ -702,13 +750,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 													.attr("y", function(d, i) {
 															return labelScale(d[labelCol]);
 													})
-													.attr("fill", function(d) {
-															if (recolorHighLimitBar && (d[valueCol] * ScaleFactor > highLimitValue))
-																	return HighLimitBarColor;
-															if (recolorLowLimitBar && (d[valueCol] * ScaleFactor < lowLimitValue))
-																	return LowLimitBarColor;
-															return (d[valueCol] * ScaleFactor > baseLineValue) ? highBarColor : lowBarColor;
-													})
+													.attr("fill", function(d) { return getBarColor(d);})
 													.classed("highflash", function(d) {
 															return recolorHighLimitBar && flashHighLimitBar && (d[valueCol] * ScaleFactor > highLimitValue);
 													})
@@ -1088,13 +1130,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 													.attr("x", function(d, i) {
 															return labelScale(d[labelCol]);
 													})
-													.attr("fill", function(d) {
-															if (recolorHighLimitBar && (d[valueCol] * ScaleFactor > highLimitValue))
-																	return HighLimitBarColor;
-															if (recolorLowLimitBar && (d[valueCol] * ScaleFactor < lowLimitValue))
-																	return LowLimitBarColor;
-															return (d[valueCol] * ScaleFactor > baseLineValue) ? highBarColor : lowBarColor;
-													})
+													.attr("fill", function(d) { return getBarColor(d);})
 													.classed("highflash", function(d) {
 															return recolorHighLimitBar && flashHighLimitBar && (d[valueCol] * ScaleFactor > highLimitValue);
 													})
