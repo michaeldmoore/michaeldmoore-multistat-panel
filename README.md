@@ -257,8 +257,24 @@ Putting it all together, the displays can make a truly unforgettable and un-igno
 ## Recolor Rules
 (New feature added with version 1.3.0)
 
+Any column of data can be designated as a 'recolor column'.  Once set, an extensible array of recolor rules appears, each having a pattern, a match type and an override color.
+In the sample below, the recolor column is set to 'room', which is also used in this example as the bar label column.
+![image](https://user-images.githubusercontent.com/3724718/79685187-964da980-822e-11ea-9f7a-b1f9437138de.png)
 
+The pattern 'kitchen' is set for an exact match, so that the kitchen bar color is changed, in this case to yellow.
 
+Multiple rules can de defined, evaluated in order until a match is found.
 
+If none of the rules match the given recolor value, the bar colors are not overridden, and the colors based on the bar's numeric value are displayed.
+![image](https://user-images.githubusercontent.com/3724718/79685382-6bfceb80-8230-11ea-9aed-fef873b257b4.png)
+
+In this case, the second rule 'room' with a subset match type sets all the bars containing the word 'room' blue.
+
+The 'List' rule match type uses a comma seperated list of names.  In this case, the 'bed room' match applies over the more general 'room' rule as it appears higher up in the list of recoloring rules
+![image](https://user-images.githubusercontent.com/3724718/79685532-723f9780-8231-11ea-82ac-034cd6d67452.png)
+
+A final option - 'Reg ex' uses the rule pattern as a regular expression, for those brave enough to work out the syntax (!)
+
+## Conclusion
 
 If you find this useful, and/or if you can think of additional features that you would find useful - make an entry on the project's [GitHub/issues page](https://github.com/michaeldmoore/michaeldmoore-multistat-panel/issues)

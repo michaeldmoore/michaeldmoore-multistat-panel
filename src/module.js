@@ -164,6 +164,20 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			}
 	}
 
+	onReorderRecolorRules(index, up) {
+		const RecolorRules = this.ctrl.panel.RecolorRules;
+		if (up) {
+			if (index)
+				RecolorRules[index] = RecolorRules.splice(index-1, 1, RecolorRules[index])[0];
+		}
+		else {
+			if (index+1 < RecolorRules.length)
+				RecolorRules[index] = RecolorRules.splice(index+1, 1, RecolorRules[index])[0];
+		}
+
+		this.render();
+	}
+
 	buildDateHtml(dateTimeCol) {
 			var $title = this.elem.closest('.panel-container').find('.panel-title');
 			var $maxDate = $title.find('span.michaeldmoore-multistat-panel-maxDate');

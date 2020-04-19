@@ -106,12 +106,10 @@ Setting the format string to the reserved keyword "ELAPSED" displays the time as
             </span>
             <span class="michaeldmoore-multistat-panel-w2"></span>
             <span class="gf-form-label">
-               <i class="fa fa-arrow-up pointer" ng-disabled="$index===0"
-                  ng-click="ctrl.panel.RecolorRules[$index] = ctrl.panel.RecolorRules.splice($index-1, 1, ctrl.panel.RecolorRules[$index])[0]; ctrl.render();"></i>
+               <i class="fa fa-arrow-up pointer" ng-click="ctrl.onReorderRecolorRules($index,1)"></i>
             </span>
             <span class="gf-form-label">
-               <i class="fa fa-arrow-down pointer" ng-disabled="$index < ctrl.panel.RecolorRules.length"
-                  ng-click="ctrl.panel.RecolorRules[$index] = ctrl.panel.RecolorRules.splice($index+1, 1, ctrl.panel.RecolorRules[$index])[0]; ctrl.render();"></i>
+               <i class="fa fa-arrow-down pointer" ng-click="ctrl.onReorderRecolorRules($index,0)"></i>
             </span>
 
             <label class="gf-form-label width-5">Rule {{$index + 1}}</label>

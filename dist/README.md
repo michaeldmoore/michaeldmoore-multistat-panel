@@ -1,4 +1,6 @@
 # michaeldmoore-multistat-panel
+*New Version (1.3.0) - Now with rules-based bar re-coloring!* [see here](README.md#Recolor-Rules)
+
 
 ## Custom multistat panel for Grafana, inspired by the built-in SingleStat panel
 
@@ -251,5 +253,12 @@ Putting it all together, the displays can make a truly unforgettable and un-igno
 
 (In retrospect, setting the Rate parameter to 300 or 400 works just as well, without risk of inducing epilepsy...
  ![calm-alarms](https://user-images.githubusercontent.com/3724718/30007967-6780c14a-90ce-11e7-809d-289d180ea310.gif)
+
+## Recolor Rules
+(New feature added with version 1.3.0)
+
+
+
+
 
 If you find this useful, and/or if you can think of additional features that you would find useful - make an entry on the project's [GitHub/issues page](https://github.com/michaeldmoore/michaeldmoore-multistat-panel/issues)

@@ -227,6 +227,18 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 												}
 										}
 								}, {
+										key: 'onReorderRecolorRules',
+										value: function onReorderRecolorRules(index, up) {
+												var RecolorRules = this.ctrl.panel.RecolorRules;
+												if (up) {
+														if (index) RecolorRules[index] = RecolorRules.splice(index - 1, 1, RecolorRules[index])[0];
+												} else {
+														if (index + 1 < RecolorRules.length) RecolorRules[index] = RecolorRules.splice(index + 1, 1, RecolorRules[index])[0];
+												}
+
+												this.render();
+										}
+								}, {
 										key: 'buildDateHtml',
 										value: function buildDateHtml(dateTimeCol) {
 												var $title = this.elem.closest('.panel-container').find('.panel-title');
