@@ -72,10 +72,10 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 								_inherits(MultistatPanelCtrl, _MetricsPanelCtrl);
 
 								/** @ngInject */
-								function MultistatPanelCtrl($scope, $injector) {
+								function MultistatPanelCtrl($scope, $injector, variableSrv) {
 										_classCallCheck(this, MultistatPanelCtrl);
 
-										var _this = _possibleConstructorReturn(this, (MultistatPanelCtrl.__proto__ || Object.getPrototypeOf(MultistatPanelCtrl)).call(this, $scope, $injector));
+										var _this = _possibleConstructorReturn(this, (MultistatPanelCtrl.__proto__ || Object.getPrototypeOf(MultistatPanelCtrl)).call(this, $scope, $injector, variableSrv));
 
 										var panelDefaults = {
 												"timeFrom": null,
@@ -166,22 +166,37 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 												"CurveType": "Monotone"
 										};
 
-										//			var panel = {};
-										//			var elem = {};
-										//			var ctrl = {};
-
 										_.defaults(_this.panel, panelDefaults);
+
+										variableSrv.variables.forEach(function (v) {
+												console.log("variable[" + v.name + "]=" + v.current.value);
+												_this.updateNamedValue(_this.panel, v.name.split('_'), v.current.value);
+										});
 
 										_this.events.on('render', _this.onRender.bind(_this));
 										_this.events.on('data-received', _this.onDataReceived.bind(_this));
 										_this.events.on('data-error', _this.onDataError.bind(_this));
 										_this.events.on('init-edit-mode', _this.onInitEditMode.bind(_this));
+										_this.events.on('data-snapshot-load', _this.onDataSnapshotLoad.bind(_this));
 
 										_this.className = 'michaeldmoore-multistat-panel-' + _this.panel.id;
 										return _this;
 								}
 
 								_createClass(MultistatPanelCtrl, [{
+										key: 'updateNamedValue',
+										value: function updateNamedValue(obj, names, value) {
+												var name = names.shift();
+												if (obj[name]) {
+														if (names.length) this.updateNamedValue(obj[name], names, value);else obj[name] = Number(value);
+												}
+										}
+								}, {
+										key: 'onDataSnapshotLoad',
+										value: function onDataSnapshotLoad(snapshotData) {
+												this.onDataReceived(snapshotData);
+										}
+								}, {
 										key: 'onDataError',
 										value: function onDataError(err) {
 												this.seriesList = [];
@@ -488,6 +503,8 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 
 																		html += "<tr><td>" + cc + "</td><td>" + dd + "</td></tr>";
 																}
+																html += "<tr><td>" + "Link" + "</td><td>" + "<a href=www.google.com>google</a>" + "</td></tr>";
+
 																html += "</table>";
 																tooltipDiv.html(html).style("left", d3.event.pageX + "px").style("top", d3.event.pageY - 28 + "px");
 														};

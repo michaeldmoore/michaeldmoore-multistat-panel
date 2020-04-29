@@ -16,8 +16,8 @@ import {
 class MultistatPanelCtrl extends MetricsPanelCtrl {
 
 	/** @ngInject */
-	constructor($scope, $injector) {
-			super($scope, $injector);
+	constructor($scope, $injector, variableSrv) {
+			super($scope, $injector, variableSrv);
 
 			var panelDefaults = {
 				"timeFrom": null,
@@ -108,18 +108,34 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 				"CurveType": "Monotone"
 			};
 
-//			var panel = {};
-//			var elem = {};
-//			var ctrl = {};
-
 			_.defaults(this.panel, panelDefaults);
+
+			variableSrv.variables.forEach(v => {
+				console.log("variable["+v.name+"]="+v.current.value);
+				this.updateNamedValue(this.panel, v.name.split('_'), v.current.value);
+			});
 
 			this.events.on('render', this.onRender.bind(this));
 			this.events.on('data-received', this.onDataReceived.bind(this));
 			this.events.on('data-error', this.onDataError.bind(this));
 			this.events.on('init-edit-mode', this.onInitEditMode.bind(this));
+			this.events.on('data-snapshot-load', this.onDataSnapshotLoad.bind(this));
 
 			this.className = 'michaeldmoore-multistat-panel-' + this.panel.id;
+	}
+
+	updateNamedValue(obj, names, value) {
+		let name = names.shift();
+		if (obj[name]) {
+				if (names.length)
+						this.updateNamedValue(obj[name], names, value);
+				else
+						obj[name] = Number(value);
+		}
+	}
+
+	onDataSnapshotLoad(snapshotData) {
+		this.onDataReceived(snapshotData);
 	}
 
 	onDataError(err) {
@@ -489,6 +505,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
 									html += "<tr><td>" + cc + "</td><td>" + dd + "</td></tr>";
 							}
+							html += "<tr><td>" + "Link" + "</td><td>" + "<a href=www.google.com>google</a>" + "</td></tr>";
+
 							html += "</table>";
 							tooltipDiv.html(html)
 									.style("left", d3.event.pageX + "px")
