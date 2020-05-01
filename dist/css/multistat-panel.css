@@ -16,7 +16,7 @@
 	position: absolute;
 	width: auto;
 	height: auto;
-	padding: 10px;
+  padding: 10px;
 	background-color: white;
 	color: black;
 	-webkit-border-radius: 10px;
@@ -25,7 +25,6 @@
 	-webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
 	-moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
 	box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
-	pointer-events: none;
 }
 
 .michaeldmoore-multistat-panel-statusmessage {
@@ -38,6 +37,11 @@
 
 .michaeldmoore-multistat-panel-tooltip td:first-of-type{
 	padding-right: 1em;
+}
+
+.michaeldmoore-multistat-panel-tooltip a {
+  color: blue;
+  text-decoration: blue underline;
 }
 
 .michaeldmoore-multistat-panel-w2 {

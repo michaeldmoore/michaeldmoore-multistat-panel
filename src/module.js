@@ -8,10 +8,8 @@ import 'jquery.flot';
 import _ from 'lodash';
 import moment from 'moment';
 import "./css/multistat-panel.css!";
-import d3 from './external/d3';
-import {
-	appEvents
-} from 'app/core/core';
+import d3 from './external/d3.min';
+import {appEvents} from 'app/core/core';
 
 class MultistatPanelCtrl extends MetricsPanelCtrl {
 
@@ -93,6 +91,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 				"ValueFontSize": "100%",
 				"OddRowColor": "rgba(33, 33, 34, 0.92)",
 				"EvenRowColor": "rgba(61, 61, 64, 0.78)",
+				"OutlineColor": "rgba(245, 255, 0, 0.1)",
 				"GroupSortString": "",
 				"GroupCols": 0,
 				"GroupNameFilter": "",
@@ -111,7 +110,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 			_.defaults(this.panel, panelDefaults);
 
 			variableSrv.variables.forEach(v => {
-				console.log("variable["+v.name+"]="+v.current.value);
+				console.log("dashboard variable["+v.name+"]="+v.current.value);
 				this.updateNamedValue(this.panel, v.name.split('_'), v.current.value);
 			});
 
@@ -442,20 +441,18 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					var flashLowLimitBar = this.panel.FlashLowLimitBar;
 					var showTooltips = this.panel.ShowTooltips;
 					var DateTimeColName = this.panel.DateTimeColName;
-					var DateFormat = this.panel.DateFormat;
-					var RecolorColName = this.panel.RecolorColName;
 					var TooltipDateFormat = this.panel.TooltipDateFormat;
 					var ValueColName = this.panel.ValueColName;
 					var ValueDecimals = this.panel.ValueDecimals;
 					var OddRowColor = this.panel.OddRowColor;
 					var EvenRowColor = this.panel.EvenRowColor;
+					var OutlineColor = this.panel.OutlineColor;
 					var TZOffsetHours = this.panel.TZOffsetHours;
 					var GroupCols = this.panel.GroupCols;
 					var GroupGap = this.panel.GroupGap;
 					var ScaleFactor = Number(this.panel.ScaleFactor);
 					var LabelColor = this.panel.LabelColor;
 					var ValuePosition = this.panel.ValuePosition;
-					var DisplayMode = this.panel.DisplayMode;
 
 					var minValue = d3.min(this.rows, function(d) {
 							return Number(d[valueCol]) * ScaleFactor;
@@ -485,39 +482,90 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 							maxLineValue = highLimitValue;
 
 					d3.select("body").append("div")
-							.attr("class", "michaeldmoore-multistat-panel-tooltip michaeldmoore-multistat-panel-tooltip-" + id)
+							.attr("id", "michaeldmoore-multistat-panel-tooltip-" + id)
 							.style("opacity", 0);
 
-					var tooltipShow = function(d, c, id) {
-							var tooltipDiv = d3.select(".michaeldmoore-multistat-panel-tooltip-" + id);
-							tooltipDiv.transition()
-									.duration(200)
-									.style("opacity", 0.9);
-							var html = "<table>";
-							for (var i = 0; i < d.length; i++) {
-									var cc = c[i];
-									var dd = d[i];
+					var getTooltipContent = function(d) {
+						var html = "<table>";
+						for (var i = 0; i < d.length; i++) {
+								var cc = cols[i];
+								var dd = d[i];
 
-									if (cc == DateTimeColName)
-											dd = moment(dd).add(TZOffsetHours, 'h').format(TooltipDateFormat);
-									else if (cc == ValueColName && $.isNumeric(dd))
-											dd = Number(dd).toFixed(ValueDecimals);
+								if (cc == DateTimeColName)
+										dd = moment(dd).add(TZOffsetHours, 'h').format(TooltipDateFormat);
+								else if (cc == ValueColName && $.isNumeric(dd))
+										dd = Number(dd).toFixed(ValueDecimals);
 
-									html += "<tr><td>" + cc + "</td><td>" + dd + "</td></tr>";
-							}
-							html += "<tr><td>" + "Link" + "</td><td>" + "<a href=www.google.com>google</a>" + "</td></tr>";
+								html += "<tr><td>" + cc + "</td><td>" + dd + "</td></tr>";
+						}
+						html += "<tr><td>" + "Link" + "</td><td>" + "<a href=http://www.google.com>google</a>" + "</td></tr>";
 
-							html += "</table>";
-							tooltipDiv.html(html)
-									.style("left", d3.event.pageX + "px")
-									.style("top", (d3.event.pageY - 28) + "px");
+						html += "</table>";
+						return html;
+					};
+
+					var tooltipShow = function(id, d) {
+						if (showTooltips){
+							const tooltipDivID = "#michaeldmoore-multistat-panel-tooltip-" + id;
+							const tooltipDiv = d3.selectAll(tooltipDivID);
+							tooltipDiv
+									.classed("michaeldmoore-multistat-panel-tooltip", true)
+									.html(getTooltipContent(d))
+									.on("mouseover", function() {
+										console.log("tooltip-mouseOVER  ---------->>>>>");
+									})
+//									.on("mousemove", function() {
+//										console.log("tooltip-mousemove");
+//									})
+									.on("mouseout", function() {
+										console.log("tooltip-mouseout   <<<<<-----------");
+									})
+									.on("mouseleave", function() {
+										console.log("tooltip-mouseLEAVE <<<<<<----------");
+									});
+
+							const $tooltipDiv = $(tooltipDivID);
+							const www = $tooltipDiv.width();
+							const hhh = $tooltipDiv.height();
+
+							tooltipDiv
+									.transition()
+									.duration(500)
+									.style("opacity", 1.0)
+									.style("left", (d3.event.pageX - www/2) + "px")
+									.style("top", (d3.event.pageY - hhh/2) + "px");
+								}
+					};
+
+					var trackTooltips = function(id) {
+						const tooltipDivID = "#michaeldmoore-multistat-panel-tooltip-" + id;
+
+//						console.log('bar mousemove('+d3.event.pageX+', '+d3.event.pageY+')');
+
+						const $tooltipDiv = $(tooltipDivID);
+						const www = $tooltipDiv.width();
+						const hhh = $tooltipDiv.height();
+
+						const tooltipDiv = d3.selectAll(tooltipDivID);
+						tooltipDiv
+							.transition()
+							.duration(500)
+							.style("opacity", 1.0)
+							.style("left", (d3.event.pageX - www/2) + "px")
+							.style("top", (d3.event.pageY - hhh/2) + "px");
 					};
 
 					var tooltipHide = function(id) {
-							var tooltipDiv = d3.selectAll(".michaeldmoore-multistat-panel-tooltip-" + id);
-							tooltipDiv.transition()
-									.duration(500)
-									.style("opacity", 0);
+						const tooltipDiv = d3.selectAll("#michaeldmoore-multistat-panel-tooltip-" + id);
+						tooltipDiv
+								.transition().delay(2000)
+								.duration(1000)
+								.style("opacity", 0.1)
+								.on("end", function () {
+									d3.select(this)
+										.html('')
+										.classed("michaeldmoore-multistat-panel-tooltip", false);
+									});
 					};
 
 					var scaleAndClipValue = function(d) {
@@ -531,34 +579,41 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 					};
 
 					var getBarColor = function(d) {
-						if (recolorCol != -1 && RecolorRules.length){
+						if (recolorCol != -1){
 							let recolorString = d[recolorCol];
 
-							if (recolorString) {
-								let recolorRule = RecolorRules.find(r => {
-									let match = false;
-									if (r.pattern) {
-										switch(r.matchType) {
-											case 'reg-ex':
-												let re = RegExp(r.pattern);
-												return re.test(recolorString);
+							if (RecolorRules.length){
+								if (recolorString) {
+									let recolorRule = RecolorRules.find(r => {
+										if (r.pattern) {
+											switch(r.matchType) {
+												case 'reg-ex':
+													let re = RegExp(r.pattern);
+													return re.test(recolorString);
 
-											case 'list':
-												return r.pattern.indexOf(recolorString) != -1;
+												case 'list':
+													return r.pattern.indexOf(recolorString) != -1;
 
-											case 'subset':
-												return recolorString.indexOf(r.pattern) != -1;
+												case 'subset':
+													return recolorString.indexOf(r.pattern) != -1;
 
-											default:
-												return r.pattern===recolorString;
+												default:
+													return r.pattern===recolorString;
+											}
 										}
-									}
-									return false;
-								});
+										return false;
+									});
 
-								if (recolorRule)
-									return recolorRule.color;
+									if (recolorRule)
+										return recolorRule.color;
+								}
 							}
+
+							// no matching rule found, check if recolorString is a valid color
+							const s = new Option().style;
+							s.color = recolorString;
+							if (s.color !== '')
+								return recolorString;
 						}
 
 						let value = d[valueCol] * ScaleFactor;
@@ -648,13 +703,6 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 											.attr("fill", function(d) {
 													oddeven = !oddeven;
 													return oddeven ? OddRowColor : EvenRowColor;
-											})
-											.on("mouseover", function(d, i) {
-													if (showTooltips && i < data.length)
-															tooltipShow(d, cols, id);
-											})
-											.on("mouseout", function() {
-													tooltipHide(id);
 											});
 
 									var g1 = svg.append("g")
@@ -709,13 +757,6 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 															var y = labelScale(d[labelCol]) + (labelScale.bandwidth() / 2);
 															var x = left + a / 2;
 															return "translate(" + x + "," + y + ") rotate(" + labelAngle + ")";
-													})
-													.on("mouseover", function(d) {
-															if (showTooltips)
-																	tooltipShow(d, cols, id);
-													})
-													.on("mouseout", function() {
-															tooltipHide(id);
 													})
 													.each(function(d, i) {
 															var bbox = this.getBBox();
@@ -788,15 +829,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 													})
 													.classed("lowflash", function(d) {
 															return recolorLowLimitBar && flashLowLimitBar && (d[valueCol] * ScaleFactor < lowLimitValue);
-													})
-													.on("mouseover", function(d) {
-															if (showTooltips)
-																	tooltipShow(d, cols, id);
-													})
-													.on("mouseout", function() {
-															tooltipHide(id);
 													});
-									}
+												}
 
 									if (panel.ShowLines) {
 											if (panel.LineWidth) {
@@ -885,6 +919,30 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 													.attr("dominant-baseline", "central");
 									}
 
+									svg.append("g")
+											.selectAll("rect")
+											.data(stripedata)
+											.enter()
+											.append("rect")
+											.attr("width", w)
+											.attr("height", stripeScale.step())
+											.attr("x", left)
+											.attr("y", function(d) {
+													return stripeScale(d);
+											})
+											.attr("fill", "rgba(0,0,0,0)")
+											.attr("stroke", OutlineColor)
+											.on("mouseover", function(d, i) {
+												if (showTooltips && i < data.length)
+														tooltipShow(id, d);
+											})
+											.on("mousemove", function() {
+												trackTooltips(id);
+											})
+											.on("mouseleave", function() {
+													tooltipHide(id);
+											});
+
 									// Add High Side Value Axis (X)
 									if (highSideMargin > 0) {
 											var ggHighSide = svg.append("g")
@@ -906,7 +964,6 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 											ggLowSide.selectAll('.tick line').attr('stroke', panel.LowAxisColor).attr('stroke-width', panel.LowAxisWidth);
 											ggLowSide.selectAll('path.domain').attr('stroke', panel.LowAxisColor).attr('stroke-width', panel.LowAxisWidth);
 									}
-
 							};
 
 							if (this.groupedRows != null) {
@@ -1029,13 +1086,6 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 											.attr("fill", function(d) {
 													oddeven = !oddeven;
 													return oddeven ? OddRowColor : EvenRowColor;
-											})
-											.on("mouseover", function(d, i) {
-													if (showTooltips && i < data.length)
-															tooltipShow(d, cols, id);
-											})
-											.on("mouseout", function() {
-													tooltipHide(id);
 											});
 
 									var g2 = svg.append("g")
@@ -1091,13 +1141,6 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 															var x = labelScale(d[labelCol]) + (labelScale.bandwidth() / 2);
 															var y = hh + dh - b / 2;
 															return "translate(" + x + "," + y + ") rotate(" + labelAngle + ")";
-													})
-													.on("mouseover", function(d) {
-															if (showTooltips)
-																	tooltipShow(d, cols, id);
-													})
-													.on("mouseout", function() {
-															tooltipHide(id);
 													})
 													.each(function(d, i) {
 															var bbox = this.getBBox();
@@ -1168,13 +1211,6 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 													})
 													.classed("lowflash", function(d) {
 															return recolorLowLimitBar && flashLowLimitBar && (d[valueCol] * ScaleFactor < lowLimitValue);
-													})
-													.on("mouseover", function(d) {
-															if (showTooltips)
-																	tooltipShow(d, cols, id);
-													})
-													.on("mouseout", function() {
-															tooltipHide(id);
 													});
 									}
 
@@ -1264,6 +1300,27 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 																	return (d[valueCol] * ScaleFactor > baseLineValue) ? "text-before-edge" : "text-after-edge";
 													});
 									}
+
+										svg.append("g")
+												.selectAll("rect")
+												.data(stripedata)
+												.enter()
+												.append("rect")
+												.attr("width", stripeScale.step())
+												.attr("height", dh)
+												.attr("x", function(d, i) {
+														return stripeScale(d);
+												})
+												.attr("y", hh)
+												.attr("fill", "rgba(0,0,0,0)")
+												.attr("stroke", OutlineColor)
+												.on("mouseover", function(d, i) {
+													if (showTooltips && i < data.length)
+															tooltipShow(id, d);
+												})
+												.on("mouseleave", function() {
+														tooltipHide(id);
+												});
 
 									if (lowSideMargin > 0) {
 											let ggLowSide = svg.append("g")
