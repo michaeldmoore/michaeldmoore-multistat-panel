@@ -1,6 +1,5 @@
 <div class="editor-row">
    <div class="section gf-form-group">
-      <h5 class="section-heading">Lines and Limits</h5>
       <div class="gf-form">
          <label class="gf-form-label width-7">Max Value</label>
          <input type="number" class="gf-form-input width-5" placeholder="auto" data-placement="right"
@@ -59,6 +58,9 @@
             <input type="number" class="gf-form-input width-4" placeholder="auto" data-placement="right"
                bs-tooltip="'Set line width'" ng-model="ctrl.panel.HighLimitLineWidth" ng-change="ctrl.render()" ng-model-onblur>
          </div>
+      </div>
+      <div class="gf-form" ng-if="ctrl.panel.ShowBars">
+         <span class="width-7"/>
          <gf-form-switch class="gf-form" label-class="width-6" label="Color Bar" checked="ctrl.panel.RecolorHighLimitBar" on-change="ctrl.render()"></gf-form-switch>
          <span class="gf-form-label" ng-if="ctrl.panel.RecolorHighLimitBar">
             <spectrum-picker ng-model="ctrl.panel.HighLimitBarColor" ng-change="ctrl.render()" ></spectrum-picker>
@@ -71,10 +73,10 @@
                <spectrum-picker ng-model="ctrl.panel.HighLimitBarFlashColor" ng-change="ctrl.render()" ></spectrum-picker>
             </span>
             <div ng-if="ctrl.panel.FlashHighLimitBar">
-               <label class="gf-form-label width-5">Rate</label>
+               <label class="gf-form-label width-3">Rate</label>
             </div>
             <div ng-if="ctrl.panel.FlashHighLimitBar">
-               <input type="number" class="gf-form-input width-5" placeholder="auto" data-placement="right" min="100"
+               <input type="number" class="gf-form-input width-4" placeholder="auto" data-placement="right" min="100"
                   bs-tooltip="'Set high limit flash timeout of 100 or more (in mS)'" ng-model="ctrl.panel.HighLimitBarFlashTimeout" ng-change="ctrl.render()" ng-model-onblur>
             </div>
          </div>
@@ -92,6 +94,9 @@
             <input type="number" class="gf-form-input width-4" placeholder="auto" data-placement="right"
                bs-tooltip="'Set line width'" ng-model="ctrl.panel.LowLimitLineWidth" ng-change="ctrl.render()" ng-model-onblur>
          </div>
+      </div>
+      <div class="gf-form" ng-if="ctrl.panel.ShowBars">
+         <span class="width-7"/>
          <gf-form-switch class="gf-form" label-class="width-6" label="Color Bar" checked="ctrl.panel.RecolorLowLimitBar" on-change="ctrl.render()"></gf-form-switch>
          <span class="gf-form-label" ng-if="ctrl.panel.RecolorLowLimitBar">
             <spectrum-picker ng-model="ctrl.panel.LowLimitBarColor" ng-change="ctrl.render()" ></spectrum-picker>
@@ -104,10 +109,10 @@
                <spectrum-picker ng-model="ctrl.panel.LowLimitBarFlashColor" ng-change="ctrl.render()" ></spectrum-picker>
             </span>
             <div ng-if="ctrl.panel.FlashLowLimitBar">
-               <label class="gf-form-label width-5">Rate</label>
+               <label class="gf-form-label width-3">Rate</label>
             </div>
             <div ng-if="ctrl.panel.FlashLowLimitBar">
-               <input type="number" class="gf-form-input width-5" placeholder="auto" data-placement="right" min="100"
+               <input type="number" class="gf-form-input width-4" placeholder="auto" data-placement="right" min="100"
                   bs-tooltip="'Set Low limit flash timeout of 100 or more (in mS)'" ng-model="ctrl.panel.LowLimitBarFlashTimeout" ng-change="ctrl.render()" ng-model-onblur>
             </div>
          </div>
@@ -125,7 +130,7 @@
          <span class="gf-form-label" ng-if="ctrl.panel.LineWidth">
             <spectrum-picker ng-model="ctrl.panel.LineColor" ng-change="ctrl.render()" ></spectrum-picker>
          </span>
-         <label class="gf-form-label width-7">Dot Size</label>
+         <label class="gf-form-label width-5">Dot Size</label>
          <input type="number" class="gf-form-input width-5" placeholder="auto" data-placement="right"
             bs-tooltip="'Set dot size (or 0 to hide dots)'" ng-model="ctrl.panel.DotSize" ng-change="ctrl.render()" ng-model-onblur>
          <span class="gf-form-label" ng-if="ctrl.panel.DotSize">

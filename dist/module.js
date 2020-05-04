@@ -110,6 +110,7 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 												"GroupLabelFontSize": "200%",
 												"GroupGap": 5,
 												"LabelMargin": null,
+												"Links": [],
 												"LowAxisColor": "#ffffff",
 												"LowAxisWidth": 1,
 												"LowBarColor": "teal",
@@ -219,6 +220,7 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 												this.addEditorTab('Grouping', 'public/plugins/michaeldmoore-multistat-panel/grouping.html', 4);
 												this.addEditorTab('Options', 'public/plugins/michaeldmoore-multistat-panel/options.html', 5);
 												this.addEditorTab('Lines-and-Limits', 'public/plugins/michaeldmoore-multistat-panel/linesandlimits.html', 6);
+												this.addEditorTab('Bar links', 'public/plugins/michaeldmoore-multistat-panel/barlinks.html', 7);
 										}
 								}, {
 										key: 'onDataReceived',
@@ -250,6 +252,18 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 														if (index) RecolorRules[index] = RecolorRules.splice(index - 1, 1, RecolorRules[index])[0];
 												} else {
 														if (index + 1 < RecolorRules.length) RecolorRules[index] = RecolorRules.splice(index + 1, 1, RecolorRules[index])[0];
+												}
+
+												this.render();
+										}
+								}, {
+										key: 'onReorderLinks',
+										value: function onReorderLinks(index, up) {
+												var Links = this.ctrl.panel.Links;
+												if (up) {
+														if (index) Links[index] = Links.splice(index - 1, 1, Links[index])[0];
+												} else {
+														if (index + 1 < Links.length) Links[index] = Links.splice(index + 1, 1, Links[index])[0];
 												}
 
 												this.render();
@@ -445,6 +459,7 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 														var HighLimitBarFlashColor = this.panel.HighLimitBarFlashColor;
 														var HighLimitBarFlashTimeout = this.panel.HighLimitBarFlashTimeout;
 														var recolorHighLimitBar = this.panel.RecolorHighLimitBar;
+														var Links = this.panel.Links;
 														var lowLimitValue = this.panel.LowLimitValue;
 														var LowLimitBarColor = this.panel.LowLimitBarColor;
 														var LowLimitBarFlashColor = this.panel.LowLimitBarFlashColor;
@@ -468,6 +483,8 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 														var LabelColor = this.panel.LabelColor;
 														var ValuePosition = this.panel.ValuePosition;
 
+														var tooltipDivID = "michaeldmoore-multistat-panel-tooltip-" + id;
+
 														var minValue = d3.min(this.rows, function (d) {
 																return Number(d[valueCol]) * ScaleFactor;
 														});
@@ -488,41 +505,70 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 
 														if ($.isNumeric(highLimitValue) && maxLineValue < highLimitValue) maxLineValue = highLimitValue;
 
-														d3.select("body").append("div").attr("id", "michaeldmoore-multistat-panel-tooltip-" + id).style("opacity", 0);
+														$('#' + tooltipDivID).remove();
+
+														var translateValues = function translateValues(s, d) {
+																// lookup column index corresponding to the substitution tokens and replace with this bar's value
+																var s1 = s;
+																var re = /\{[^}]+\}/g;
+																var g = re.exec(s);
+																while (g) {
+																		for (var i = 0; i < cols.length; i++) {
+																				if (g == '{' + cols[i] + '}') {
+																						s1 = s1.replace(g, d[i]);
+																						break;
+																				}
+																		}
+																		//							console.log('match ['+g+'], lastIndex='+re.lastIndex+', s="'+s1+'"');
+																		g = re.exec(s);
+																}
+																//						console.log('"'+s+'" => "'+s1+'"');
+																return s1;
+														};
 
 														var getTooltipContent = function getTooltipContent(d) {
 																var html = "<table>";
-																for (var i = 0; i < d.length; i++) {
-																		var cc = cols[i];
-																		var dd = d[i];
+																//html += "<tr><td>" + "ID" + "</td><td>" + id + "</td></tr>";
+																if (showTooltips) {
+																		for (var i = 0; i < d.length; i++) {
+																				var cc = cols[i];
+																				var dd = d[i];
 
-																		if (cc == DateTimeColName) dd = moment(dd).add(TZOffsetHours, 'h').format(TooltipDateFormat);else if (cc == ValueColName && $.isNumeric(dd)) dd = Number(dd).toFixed(ValueDecimals);
+																				if (cc == DateTimeColName) dd = moment(dd).add(TZOffsetHours, 'h').format(TooltipDateFormat);else if (cc == ValueColName && $.isNumeric(dd)) dd = Number(dd).toFixed(ValueDecimals);
 
-																		html += "<tr><td>" + cc + "</td><td>" + dd + "</td></tr>";
+																				html += "<tr><td>" + cc + "</td><td>" + dd + "</td></tr>";
+																		}
 																}
-																html += "<tr><td>" + "Link" + "</td><td>" + "<a href=http://www.google.com>google</a>" + "</td></tr>";
+
+																Links.forEach(function (l) {
+																		html += "<tr><td align='right'><i class='fa fa-link'></i></td><td><a href='" + translateValues(l.url, d) + (l.newtab ? "' target='_blank'" : "'") + ">" + l.name + "</a></td></tr>";
+																});
 
 																html += "</table>";
 																return html;
 														};
 
+														var isInTooltip = false;
 														var tooltipShow = function tooltipShow(id, d) {
-																if (showTooltips) {
-																		var tooltipDivID = "#michaeldmoore-multistat-panel-tooltip-" + id;
-																		var tooltipDiv = d3.selectAll(tooltipDivID);
+																if (showTooltips || Links.length) {
+
+																		if ($('#' + tooltipDivID).length == 0) {
+																				d3.select("body").append("div").attr("id", tooltipDivID).style("opacity", 0);
+																		}
+
+																		//							const tooltipDivID = "#michaeldmoore-multistat-panel-tooltip-" + id;
+																		var tooltipDiv = d3.selectAll('#' + tooltipDivID);
 																		tooltipDiv.classed("michaeldmoore-multistat-panel-tooltip", true).html(getTooltipContent(d)).on("mouseover", function () {
-																				console.log("tooltip-mouseOVER  ---------->>>>>");
-																		})
-																		//									.on("mousemove", function() {
-																		//										console.log("tooltip-mousemove");
-																		//									})
-																		.on("mouseout", function () {
-																				console.log("tooltip-mouseout   <<<<<-----------");
+																				if (!isInTooltip) {
+																						isInTooltip = true;
+																						tooltipHide(id, true);
+																				}
 																		}).on("mouseleave", function () {
-																				console.log("tooltip-mouseLEAVE <<<<<<----------");
+																				isInTooltip = false;
+																				tooltipHide(id, false);
 																		});
 
-																		var $tooltipDiv = $(tooltipDivID);
+																		var $tooltipDiv = $('#' + tooltipDivID);
 																		var www = $tooltipDiv.width();
 																		var hhh = $tooltipDiv.height();
 
@@ -530,24 +576,17 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 																}
 														};
 
-														var trackTooltips = function trackTooltips(id) {
-																var tooltipDivID = "#michaeldmoore-multistat-panel-tooltip-" + id;
+														var tooltipHide = function tooltipHide(id, cancel) {
+																var tooltipDiv = d3.selectAll('#' + tooltipDivID);
 
-																//						console.log('bar mousemove('+d3.event.pageX+', '+d3.event.pageY+')');
-
-																var $tooltipDiv = $(tooltipDivID);
-																var www = $tooltipDiv.width();
-																var hhh = $tooltipDiv.height();
-
-																var tooltipDiv = d3.selectAll(tooltipDivID);
-																tooltipDiv.transition().duration(500).style("opacity", 1.0).style("left", d3.event.pageX - www / 2 + "px").style("top", d3.event.pageY - hhh / 2 + "px");
-														};
-
-														var tooltipHide = function tooltipHide(id) {
-																var tooltipDiv = d3.selectAll("#michaeldmoore-multistat-panel-tooltip-" + id);
-																tooltipDiv.transition().delay(2000).duration(1000).style("opacity", 0.1).on("end", function () {
-																		d3.select(this).html('').classed("michaeldmoore-multistat-panel-tooltip", false);
-																});
+																if (cancel) {
+																		//console.log("cancelling tooltip hide");
+																		tooltipDiv.transition().style("opacity", 1.0);
+																} else {
+																		tooltipDiv.transition().duration(2000).style("opacity", 0).on("end", function () {
+																				d3.select(this).html('').classed("michaeldmoore-multistat-panel-tooltip", false);
+																		});
+																}
 														};
 
 														var scaleAndClipValue = function scaleAndClipValue(d) {
@@ -675,7 +714,8 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 																				g1.append("text").text(function (d) {
 																						return d[labelCol];
 																				}).attr("font-family", "sans-serif").attr("font-size", panel.LabelFontSize).attr("fill", function (d, i) {
-																						return d[valueCol] * ScaleFactor > maxLineValue || d[valueCol] * ScaleFactor < minLineValue ? panel.OutOfRangeLabelColor : panel.LabelColor;
+																						var value = d[valueCol] * ScaleFactor;
+																						return value > maxLineValue || value < minLineValue ? panel.OutOfRangeLabelColor : panel.LabelColor;
 																				}).attr("text-anchor", "middle").attr("dominant-baseline", "central").attr("transform", function (d, i) {
 																						var bbox = this.getBBox();
 																						var s = Math.sin(labelAngle * Math.PI / 180);
@@ -806,11 +846,11 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 																		svg.append("g").selectAll("rect").data(stripedata).enter().append("rect").attr("width", w).attr("height", stripeScale.step()).attr("x", left).attr("y", function (d) {
 																				return stripeScale(d);
 																		}).attr("fill", "rgba(0,0,0,0)").attr("stroke", OutlineColor).on("mouseover", function (d, i) {
-																				if (showTooltips && i < data.length) tooltipShow(id, d);
-																		}).on("mousemove", function () {
-																				trackTooltips(id);
+																				if (showTooltips || Links.length /* && i < data.length*/) tooltipShow(id, d);
 																		}).on("mouseleave", function () {
-																				tooltipHide(id);
+																				if (!isInTooltip) {
+																						tooltipHide(id, false);
+																				}
 																		});
 
 																		// Add High Side Value Axis (X)
@@ -1070,9 +1110,9 @@ System.register(['app/plugins/sdk', 'jquery', 'jquery.flot', 'lodash', 'moment',
 																		svg.append("g").selectAll("rect").data(stripedata).enter().append("rect").attr("width", stripeScale.step()).attr("height", dh).attr("x", function (d, i) {
 																				return stripeScale(d);
 																		}).attr("y", hh).attr("fill", "rgba(0,0,0,0)").attr("stroke", OutlineColor).on("mouseover", function (d, i) {
-																				if (showTooltips && i < data.length) tooltipShow(id, d);
+																				if (showTooltips || Links.length /* && i < data.length*/) tooltipShow(id, d);
 																		}).on("mouseleave", function () {
-																				tooltipHide(id);
+																				tooltipHide(id, false);
 																		});
 
 																		if (lowSideMargin > 0) {
