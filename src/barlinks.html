@@ -3,32 +3,31 @@
     <div ng-repeat="link in ctrl.panel.Links">
       <div class="gf-form">
         <div class="gf-form-inline">
+          <span class="gf-form-label"> <i class="fa fa-trash pointer"
+              ng-click="ctrl.panel.Links.splice($index,1); ctrl.render();"></i>
+          </span>
+          <span class="michaeldmoore-multistat-panel-w2"></span>
           <span class="gf-form-label">
-            <i class="fa fa-trash pointer" ng-click="ctrl.panel.Links.splice($index,1); ctrl.render();"></i>
-         </span>
-         <span class="michaeldmoore-multistat-panel-w2"></span>
-         <span class="gf-form-label">
             <i class="fa fa-arrow-up pointer" ng-click="ctrl.onReorderLinks($index,1)"></i>
-         </span>
-         <span class="gf-form-label">
+          </span>
+          <span class="gf-form-label">
             <i class="fa fa-arrow-down pointer" ng-click="ctrl.onReorderLinks($index,0)"></i>
-         </span>
+          </span>
 
-         <label class="gf-form-label width-5">Name</label>
-         <input type="string" class="gf-form-input michaeldmoore-multistat-panel-w8"
-            ng-model="link.name"
+          <label class="gf-form-label width-5">Name</label>
+          <input type="string" class="gf-form-input michaeldmoore-multistat-panel-w8" ng-model="link.name"
             ng-change="ctrl.render()">
 
-          <gf-form-switch class="gf-form" label-class="width-5" label="New tab" checked="link.newtab" on-change="ctrl.render()"></gf-form-switch>
+          <gf-form-switch class="gf-form" label-class="width-5" label="New tab" checked="link.newtab"
+            on-change="ctrl.render()"></gf-form-switch>
         </div>
       </div>
       <div>
         <div class="gf-form">
           <div class="gf-form-inline">
-            <span class="width-8"/>
+            <span class="width-8" />
             <label class="gf-form-label width-5">URL</label>
-            <input type="string" class="gf-form-input michaeldmoore-multistat-panel-w25"
-              ng-model="link.url"
+            <input type="string" class="gf-form-input michaeldmoore-multistat-panel-w25" ng-model="link.url"
               ng-change="ctrl.render()">
           </div>
         </div>
@@ -36,10 +35,10 @@
     </div>
 
     <div class="gf-form-button-row"">
-    <button class="btn btn-inverse" ng-click="ctrl.panel.Links.push({name:'', url:'', newtab:true})">
+    <button class=" btn btn-inverse" ng-click="ctrl.panel.Links.push({name:'', url:'', newtab:true})">
       <i class="fa fa-plus"></i>
       &nbsp;Add a link
-    </button>
-   </div>
+      </button>
+    </div>
   </div>
 </div>

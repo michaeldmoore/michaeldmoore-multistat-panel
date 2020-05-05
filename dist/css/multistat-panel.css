@@ -3,28 +3,35 @@
   top: 50%;
   text-align: center;
   vertical-align: middle;
-  font-size: .875rem;
+  font-size: 0.875rem;
 }
 
 .michaeldmoore-multistat-panel-maxDate {
   margin-right: 4em;
-  float:right;
+  float: right;
   padding-left: 20px;
 }
 
 .michaeldmoore-multistat-panel-tooltip {
-	position: absolute;
-	width: auto;
-	height: auto;
-  padding: 10px;
-	background-color: white;
-	color: black;
-	-webkit-border-radius: 10px;
-	-moz-border-radius: 10px;
-	border-radius: 10px;
-	-webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
-	-moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
-	box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+  position: absolute;
+  width: auto;
+  height: auto;
+  padding: 5px;
+  font-size: 10px;
+  background-color: black;
+  color: white;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  -webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+  -moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.michaeldmoore-multistat-panel-tooltip th {
+  font-weight: bold;
+  text-align: center;
+  border-bottom: 1px solid white;
 }
 
 .michaeldmoore-multistat-panel-statusmessage {
@@ -35,8 +42,8 @@
   transform: translate(-50%, -50%);
 }
 
-.michaeldmoore-multistat-panel-tooltip td:first-of-type{
-	padding-right: 1em;
+.michaeldmoore-multistat-panel-tooltip td:first-of-type {
+  padding-right: 1em;
 }
 
 .michaeldmoore-multistat-panel-tooltip a {
@@ -47,84 +54,84 @@
 .michaeldmoore-multistat-panel-w2 {
   width: 1.75rem;
   height: 37px;
-  margin-right: .25rem;
+  margin-right: 0.25rem;
   margin-bottom: 0px;
 }
 
 .michaeldmoore-multistat-panel-w3 {
   width: 2.75rem;
   height: 37px;
-  margin-right: .25rem;
+  margin-right: 0.25rem;
   margin-bottom: 0px;
 }
 
 .michaeldmoore-multistat-panel-w4 {
   width: 3.75rem;
   height: 37px;
-  margin-right: .25rem;
+  margin-right: 0.25rem;
   margin-bottom: 0px;
 }
 
 .michaeldmoore-multistat-panel-w5 {
   width: 4.75rem;
   height: 37px;
-  margin-right: .25rem;
+  margin-right: 0.25rem;
   margin-bottom: 0px;
 }
 
 .michaeldmoore-multistat-panel-w6 {
   width: 5.75rem;
   height: 37px;
-  margin-right: .25rem;
+  margin-right: 0.25rem;
   margin-bottom: 0px;
 }
 
 .michaeldmoore-multistat-panel-w7 {
   width: 6.75rem;
   height: 37px;
-  margin-right: .25rem;
+  margin-right: 0.25rem;
   margin-bottom: 0px;
 }
 
 .michaeldmoore-multistat-panel-w8 {
   width: 7.75rem;
   height: 37px;
-  margin-right: .25rem;
+  margin-right: 0.25rem;
   margin-bottom: 0px;
 }
 
 .michaeldmoore-multistat-panel-w9 {
   width: 8.75rem;
   height: 37px;
-  margin-right: .25rem;
+  margin-right: 0.25rem;
   margin-bottom: 0px;
 }
 
 .michaeldmoore-multistat-panel-w10 {
   width: 9.75rem;
   height: 37px;
-  margin-right: .25rem;
+  margin-right: 0.25rem;
   margin-bottom: 0px;
 }
 
 .michaeldmoore-multistat-panel-w16 {
   width: 15.75rem;
   height: 37px;
-  margin-right: .25rem;
+  margin-right: 0.25rem;
   margin-bottom: 0px;
 }
 
 .michaeldmoore-multistat-panel-w18 {
   width: 17.75rem;
   height: 37px;
-  margin-right: .25rem;
+  margin-right: 0.25rem;
   margin-bottom: 0px;
 }
 
 .michaeldmoore-multistat-panel-w25 {
   width: 24.75rem;
   height: 37px;
-  margin-right: .25rem;
+  margin-right: 0.25rem;
   margin-bottom: 0px;
 }
 
