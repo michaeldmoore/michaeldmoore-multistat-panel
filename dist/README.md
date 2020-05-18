@@ -1,6 +1,8 @@
 # michaeldmoore-multistat-panel
 *New Version (1.3.0) - Now with rules-based bar re-coloring!* [see here](README.md#Recolor-Rules)
 
+*New Version (1.4.0) - Now with restyles tooltips and clickable per-bar links!* [see here](README.md#Clickable tooltips & links)
+
 
 ## Custom multistat panel for Grafana, inspired by the built-in SingleStat panel
 
@@ -274,6 +276,30 @@ The 'List' rule match type uses a comma seperated list of names.  In this case, 
 ![image](https://user-images.githubusercontent.com/3724718/79685532-723f9780-8231-11ea-82ac-034cd6d67452.png)
 
 A final option - 'Reg ex' uses the rule pattern as a regular expression, for those brave enough to work out the syntax (!)
+
+
+
+## Clickable tooltips & links
+
+Version 1.4.0 introduces an upgraded per-bar tooltip system, with improved styling and clickable per-bar url links
+
+![image](https://user-images.githubusercontent.com/3724718/82230928-4e509e00-9924-11ea-909c-6b0bda7bb0d9.png)
+
+
+
+#### Bar-links
+
+New with this version, clickable URLs with bar-specific name/parameter substitutions - ideal for drill-downs or data look-ups etc.
+
+These bar-links are automatically appended to the tool tips (see above).  Both the display names and the generated URLs can include substitution tokens, matching the names of the columns, surrounded by '{' and '}' characters.  These are replaced by the values of these data elements.
+
+
+
+Any number of bar-links can be defined, using the Bar Links section of the panel editor
+
+![image](https://user-images.githubusercontent.com/3724718/82231097-9079df80-9924-11ea-85fc-1d5d8e5e003f.png)
+
+
 
 ## Conclusion
 

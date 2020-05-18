@@ -179,6 +179,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
           _this.events.on("init-edit-mode", _this.onInitEditMode.bind(_this));
           _this.events.on("data-snapshot-load", _this.onDataSnapshotLoad.bind(_this));
 
+          //    this.className = this.panelID;
           _this.className = "michaeldmoore-multistat-panel-" + _this.panel.id;
           return _this;
         }
@@ -489,6 +490,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
               var LabelColor = this.panel.LabelColor;
               var ValuePosition = this.panel.ValuePosition;
 
+              var panelID = "michaeldmoore-multistat-panel-" + id;
               var tooltipDivID = "michaeldmoore-multistat-panel-tooltip-" + id;
 
               var minValue = d3.min(this.rows, function (d) {
@@ -546,7 +548,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                 var html = "";
                 if (showTooltips) {
                   html += "<table>";
-                  if (labelCol != -1) html += "<thead><tr class='michaeldmoore-multistat-panel-tooltip-title'><th>" + cols[labelCol] + "</th><th>" + d[labelCol] + "</th></tr></thead>";
+                  if (labelCol != -1) html += "<thead><tr class='michaeldmoore-multistat-panel-tooltip-title'><th colspan='2' align='center'>" + d[labelCol] + "</th></tr></thead>";
                   html += "<tbody>";
                   for (var i = 0; i < d.length; i++) {
                     if (i != labelCol) {
@@ -564,7 +566,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                 if (Links.length) {
                   html += "<table><tbody>";
                   Links.forEach(function (l) {
-                    html += "<tr><td align='right'><i class='fa fa-link'></i></td><td><a href='" + translateValues(l.url, d) + (l.newtab ? "' target='_blank'" : "'") + ">" + l.name + "</a></td></tr>";
+                    html += "<tr><td align='right'><i class='fa fa-link'></i></td><td><a href='" + translateValues(l.url, d) + (l.newtab ? "' target='_blank'" : "'") + ">" + translateValues(l.name, d) + "</a></td></tr>";
                   });
                   html += "</tbody></table>";
                 }
@@ -572,32 +574,50 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
               };
 
               var isInTooltip = false;
-              var tooltipShow = function tooltipShow(id, d) {
+              var $panel;
+              var $panelContent;
+              var panelContent;
+              var tooltipShow = function tooltipShow(d) {
                 if (showTooltips || Links.length) {
                   if ($("#" + tooltipDivID).length == 0) {
-                    d3.select("body").append("div").attr("id", tooltipDivID).style("opacity", 0);
+                    $panel = $("." + panelID);
+                    $panelContent = $panel.parent().parent().parent().parent();
+                    panelContent = d3.selectAll($panelContent);
+                    panelContent.append("div").attr("id", tooltipDivID).style("opacity", 0);
                   }
 
                   var tooltipDiv = d3.selectAll("#" + tooltipDivID);
                   tooltipDiv.classed("michaeldmoore-multistat-panel-tooltip", true).html(getTooltipContent(d)).on("mouseover", function () {
                     if (!isInTooltip) {
                       isInTooltip = true;
-                      tooltipHide(id, true);
+                      tooltipHide(true);
                     }
                   }).on("mouseleave", function () {
                     isInTooltip = false;
-                    tooltipHide(id, false);
+                    tooltipHide(false);
                   });
 
                   var $tooltipDiv = $("#" + tooltipDivID);
-                  var www = $tooltipDiv.width();
-                  var hhh = $tooltipDiv.height();
+                  var tooltipWidth = $tooltipDiv.width();
+                  var tooltipHeight = $tooltipDiv.height();
+                  var minTop = 28;
 
-                  tooltipDiv.transition().duration(500).style("opacity", 1.0).style("left", d3.event.pageX - www / 2 + "px").style("top", d3.event.pageY - hhh / 2 + "px");
+                  var mouseCoordinates = d3.mouse(panelContent.node());
+                  var Left = mouseCoordinates[0] - tooltipWidth / 2;
+                  var Top = mouseCoordinates[1] + minTop - tooltipHeight / 2;
+
+                  var panelWidth = $panel.width();
+                  var panelHeight = $panel.height();
+
+                  if (Left < 0) Left = 0;else if (Left > panelWidth - tooltipWidth) Left = panelWidth - tooltipWidth;
+
+                  if (Top < 0) Top = 0;else if (Top > panelHeight + minTop - tooltipHeight) Top = panelHeight + minTop - tooltipHeight;
+
+                  tooltipDiv.transition().duration(200).style("opacity", 1.0).style("left", Left + "px").style("top", Top + "px");
                 }
               };
 
-              var tooltipHide = function tooltipHide(id, cancel) {
+              var tooltipHide = function tooltipHide(cancel) {
                 var tooltipDiv = d3.selectAll("#" + tooltipDivID);
 
                 if (cancel) {
@@ -860,11 +880,11 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
 
                   svg.append("g").selectAll("rect").data(stripedata).enter().append("rect").attr("width", w).attr("height", stripeScale.step()).attr("x", left).attr("y", function (d) {
                     return stripeScale(d);
-                  }).attr("fill", "rgba(0,0,0,0)").attr("stroke", OutlineColor).on("mouseover", function (d, i) {
-                    if (showTooltips || Links.length /* && i < data.length*/) tooltipShow(id, d);
+                  }).attr("fill", "rgba(0,0,0,0)").attr("stroke", OutlineColor).on("mouseover", function (d) {
+                    if (showTooltips || Links.length /* && i < data.length*/) tooltipShow(d);
                   }).on("mouseleave", function () {
                     if (!isInTooltip) {
-                      tooltipHide(id, false);
+                      tooltipHide(false);
                     }
                   });
 
@@ -1116,12 +1136,12 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                     });
                   }
 
-                  svg.append("g").selectAll("rect").data(stripedata).enter().append("rect").attr("width", stripeScale.step()).attr("height", dh).attr("x", function (d, i) {
+                  svg.append("g").selectAll("rect").data(stripedata).enter().append("rect").attr("width", stripeScale.step()).attr("height", dh).attr("x", function (d) {
                     return stripeScale(d);
-                  }).attr("y", hh).attr("fill", "rgba(0,0,0,0)").attr("stroke", OutlineColor).on("mouseover", function (d, i) {
-                    if (showTooltips || Links.length /* && i < data.length*/) tooltipShow(id, d);
+                  }).attr("y", hh).attr("fill", "rgba(0,0,0,0)").attr("stroke", OutlineColor).on("mouseover", function (d) {
+                    if (showTooltips || Links.length) tooltipShow(d);
                   }).on("mouseleave", function () {
-                    tooltipHide(id, false);
+                    tooltipHide(false);
                   });
 
                   if (lowSideMargin > 0) {

@@ -8,7 +8,6 @@ import _ from "lodash";
 import moment from "moment";
 import "./css/multistat-panel.css!";
 import d3 from "./external/d3.min";
-//import { appEvents } from "app/core/core";
 
 class MultistatPanelCtrl extends MetricsPanelCtrl {
   /** @ngInject */
@@ -119,6 +118,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
     this.events.on("init-edit-mode", this.onInitEditMode.bind(this));
     this.events.on("data-snapshot-load", this.onDataSnapshotLoad.bind(this));
 
+    //    this.className = this.panelID;
     this.className = "michaeldmoore-multistat-panel-" + this.panel.id;
   }
 
@@ -554,6 +554,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
       var LabelColor = this.panel.LabelColor;
       var ValuePosition = this.panel.ValuePosition;
 
+      var panelID = "michaeldmoore-multistat-panel-" + id;
       var tooltipDivID = "michaeldmoore-multistat-panel-tooltip-" + id;
 
       var minValue = d3.min(this.rows, function (d) {
@@ -617,9 +618,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
           html += "<table>";
           if (labelCol != -1)
             html +=
-              "<thead><tr class='michaeldmoore-multistat-panel-tooltip-title'><th>" +
-              cols[labelCol] +
-              "</th><th>" +
+              "<thead><tr class='michaeldmoore-multistat-panel-tooltip-title'><th colspan='2' align='center'>" +
               d[labelCol] +
               "</th></tr></thead>";
           html += "<tbody>";
@@ -649,7 +648,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
               translateValues(l.url, d) +
               (l.newtab ? "' target='_blank'" : "'") +
               ">" +
-              l.name +
+              translateValues(l.name, d) +
               "</a></td></tr>";
           });
           html += "</tbody></table>";
@@ -658,10 +657,16 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
       };
 
       var isInTooltip = false;
-      var tooltipShow = function (id, d) {
+      var $panel;
+      var $panelContent;
+      var panelContent;
+      var tooltipShow = function (d) {
         if (showTooltips || Links.length) {
           if ($("#" + tooltipDivID).length == 0) {
-            d3.select("body")
+            $panel = $("." + panelID);
+            $panelContent = $panel.parent().parent().parent().parent();
+            panelContent = d3.selectAll($panelContent);
+            panelContent
               .append("div")
               .attr("id", tooltipDivID)
               .style("opacity", 0);
@@ -674,28 +679,44 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
             .on("mouseover", function () {
               if (!isInTooltip) {
                 isInTooltip = true;
-                tooltipHide(id, true);
+                tooltipHide(true);
               }
             })
             .on("mouseleave", function () {
               isInTooltip = false;
-              tooltipHide(id, false);
+              tooltipHide(false);
             });
 
           const $tooltipDiv = $("#" + tooltipDivID);
-          const www = $tooltipDiv.width();
-          const hhh = $tooltipDiv.height();
+          const tooltipWidth = $tooltipDiv.width();
+          const tooltipHeight = $tooltipDiv.height();
+          const minTop = 28;
+
+          const mouseCoordinates = d3.mouse(panelContent.node());
+          let Left = mouseCoordinates[0] - tooltipWidth / 2;
+          let Top = mouseCoordinates[1] + minTop - tooltipHeight / 2;
+
+          let panelWidth = $panel.width();
+          let panelHeight = $panel.height();
+
+          if (Left < 0) Left = 0;
+          else if (Left > panelWidth - tooltipWidth)
+            Left = panelWidth - tooltipWidth;
+
+          if (Top < 0) Top = 0;
+          else if (Top > panelHeight + minTop - tooltipHeight)
+            Top = panelHeight + minTop - tooltipHeight;
 
           tooltipDiv
             .transition()
-            .duration(500)
+            .duration(200)
             .style("opacity", 1.0)
-            .style("left", d3.event.pageX - www / 2 + "px")
-            .style("top", d3.event.pageY - hhh / 2 + "px");
+            .style("left", Left + "px")
+            .style("top", Top + "px");
         }
       };
 
-      var tooltipHide = function (id, cancel) {
+      var tooltipHide = function (cancel) {
         const tooltipDiv = d3.selectAll("#" + tooltipDivID);
 
         if (cancel) {
@@ -1126,13 +1147,13 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
             })
             .attr("fill", "rgba(0,0,0,0)")
             .attr("stroke", OutlineColor)
-            .on("mouseover", function (d, i) {
+            .on("mouseover", function (d) {
               if (showTooltips || Links.length /* && i < data.length*/)
-                tooltipShow(id, d);
+                tooltipShow(d);
             })
             .on("mouseleave", function () {
               if (!isInTooltip) {
-                tooltipHide(id, false);
+                tooltipHide(false);
               }
             });
 
@@ -1596,18 +1617,17 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
             .append("rect")
             .attr("width", stripeScale.step())
             .attr("height", dh)
-            .attr("x", function (d, i) {
+            .attr("x", function (d) {
               return stripeScale(d);
             })
             .attr("y", hh)
             .attr("fill", "rgba(0,0,0,0)")
             .attr("stroke", OutlineColor)
-            .on("mouseover", function (d, i) {
-              if (showTooltips || Links.length /* && i < data.length*/)
-                tooltipShow(id, d);
+            .on("mouseover", function (d) {
+              if (showTooltips || Links.length) tooltipShow(d);
             })
             .on("mouseleave", function () {
-              tooltipHide(id, false);
+              tooltipHide(false);
             });
 
           if (lowSideMargin > 0) {
