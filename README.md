@@ -1,7 +1,7 @@
 # michaeldmoore-multistat-panel
 *New Version (1.3.0) - Now with rules-based bar re-coloring!* [see here](README.md#Recolor-Rules)
 
-*New Version (1.4.0) - Now with restyles tooltips and clickable per-bar links!* [see here](README.md#Clickable tooltips & links)
+*New Version (1.4.0) - Now with restyles tooltips and clickable per-bar links!* [see here](README.md#Clickable-tooltips-&-links)
 
 
 ## Custom multistat panel for Grafana, inspired by the built-in SingleStat panel
