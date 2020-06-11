@@ -9,6 +9,7 @@
         on-change="ctrl.render()"
       ></gf-form-switch>
     </div>
+
     <div class="gf-form">
       <label class="gf-form-label michaeldmoore-multistat-panel-w9"
         >Label Margin</label
@@ -37,6 +38,7 @@
         ng-model-onblur
       />
     </div>
+    
     <div class="gf-form">
       <label class="gf-form-label michaeldmoore-multistat-panel-w9"
         >Low Side Margin</label
@@ -72,6 +74,7 @@
         ng-model-onblur
       />
     </div>
+    
     <div class="gf-form">
       <label class="gf-form-label michaeldmoore-multistat-panel-w9"
         >High Side Margin</label
@@ -107,39 +110,7 @@
         ng-model-onblur
       />
     </div>
-    <div class="gf-form">
-      <label class="gf-form-label michaeldmoore-multistat-panel-w9"
-        >High Bar Color</label
-      >
-      <span class="gf-form-label">
-        <spectrum-picker
-          ng-model="ctrl.panel.HighBarColor"
-          ng-change="ctrl.render()"
-        ></spectrum-picker>
-      </span>
-      <label class="gf-form-label michaeldmoore-multistat-panel-w8"
-        >Low Bar Color</label
-      >
-      <span class="gf-form-label">
-        <spectrum-picker
-          ng-model="ctrl.panel.LowBarColor"
-          ng-change="ctrl.render()"
-        ></spectrum-picker>
-      </span>
-      <label class="gf-form-label michaeldmoore-multistat-panel-w8"
-        >Bar Padding %</label
-      >
-      <input
-        type="number"
-        class="gf-form-input width-4"
-        placeholder="auto"
-        data-placement="right"
-        bs-tooltip="'Override automatic maximum scale value'"
-        ng-model="ctrl.panel.BarPadding"
-        ng-change="ctrl.render()"
-        ng-model-onblur
-      />
-    </div>
+    
     <div class="gf-form">
       <label class="gf-form-label michaeldmoore-multistat-panel-w9"
         >Odd Row Color</label
@@ -168,6 +139,20 @@
           ng-change="ctrl.render()"
         ></spectrum-picker>
       </span>
+    </div>
+
+    <div class="gf-form">
+      <label class="gf-form-label michaeldmoore-multistat-panel-w9">inter-Bar Pad %</label>
+      <input
+        type="number"
+        class="gf-form-input width-3"
+        placeholder="auto"
+        data-placement="right"
+        bs-tooltip="'Inter-bar gap, as percentage of bar width'"
+        ng-model="ctrl.panel.BarPadding"
+        ng-change="ctrl.render()"
+        ng-model-onblur
+      />
     </div>
   </div>
 </div>

@@ -40,7 +40,7 @@
         </div>
       </div>
     </div>
-    <div class="gf-form" ng-if="ctrl.panel.GroupColName!=''">
+    <div class="gf-form" ng-if="ctrl.cols.includes(ctrl.panel.GroupColName)">
       <gf-form-switch
         class="gf-form"
         label-class="width-8"
@@ -156,15 +156,19 @@
       />
     </div>
     <div class="gf-form">
-      <gf-form-switch
-        class="gf-form"
-        label-class="width-8"
-        label="Tooltips"
-        checked="ctrl.panel.ShowTooltips"
-        on-change="ctrl.render()"
-      ></gf-form-switch>
-      <div class="gf-form" ng-if="ctrl.panel.ShowTooltips">
-        <label class="gf-form-label width-7">Date Format</label>
+      <label class="gf-form-label width-8">Tool tips</label>
+
+      <div class="gf-form-select-wrapper">
+        <select
+          class="gf-form-input width-5"
+          ng-model="ctrl.panel.ToolTipType"
+          ng-options="t for t in [''].concat(ctrl.tooltipTypes)"
+          ng-change="ctrl.render()"
+        ></select>
+      </div>
+
+      <div class="gf-form" ng-if="ctrl.tooltipTypes.includes(ctrl.panel.ToolTipType)">
+        <label class="gf-form-label width-6">Date Format</label>
         <input
           type="string"
           class="gf-form-input width-11"

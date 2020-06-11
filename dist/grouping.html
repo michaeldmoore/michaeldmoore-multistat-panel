@@ -16,7 +16,7 @@
         </div>
       </div>
     </div>
-    <div class="gf-form" ng-if="ctrl.panel.GroupColName!=''">
+    <div class="gf-form" ng-if="ctrl.cols.includes(ctrl.panel.GroupColName)">
       <label class="gf-form-label michaeldmoore-multistat-panel-w9"
         >Columns Per Row</label
       >
@@ -30,7 +30,7 @@
         ng-change="ctrl.render()"
         ng-model-onblur
       />
-      <div class="gf-form" ng-if="ctrl.panel.GroupColName!=''">
+      <div class="gf-form" ng-if="ctrl.cols.includes(ctrl.panel.GroupColName)">
         <label class="gf-form-label michaeldmoore-multistat-panel-w6"
           >Group Gap</label
         >
@@ -45,7 +45,7 @@
         />
       </div>
     </div>
-    <div class="gf-form" ng-if="ctrl.panel.GroupColName!=''">
+    <div class="gf-form" ng-if="ctrl.cols.includes(ctrl.panel.GroupColName)">
       <label class="gf-form-label michaeldmoore-multistat-panel-w9"
         >Group Name Filter</label
       >
@@ -59,7 +59,7 @@
         ng-model-onchange
       />
     </div>
-    <div class="gf-form" ng-if="ctrl.panel.GroupColName!=''">
+    <div class="gf-form" ng-if="ctrl.cols.includes(ctrl.panel.GroupColName)">
       <label class="gf-form-label michaeldmoore-multistat-panel-w9"
         >Group Sort Order</label
       >
@@ -73,7 +73,7 @@
         ng-model-onchange
       />
     </div>
-    <div class="gf-form" ng-if="ctrl.panel.GroupColName!=''">
+    <div class="gf-form" ng-if="ctrl.cols.includes(ctrl.panel.GroupColName)">
       <gf-form-switch
         class="gf-form"
         label-class="michaeldmoore-multistat-panel-w9"

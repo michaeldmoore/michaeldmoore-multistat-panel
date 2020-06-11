@@ -17,7 +17,7 @@
       <label class="gf-form-label width-6">Label Filter</label>
       <input
         type="string"
-        class="gf-form-input width-28"
+        class="gf-form-input width-27"
         data-placement="right"
         bs-tooltip="'RegEX pattern for filtering labels by name - leave blank for no filtering\ne.g. use partial string matches seperated by pipe (|) chars.'"
         ng-model="ctrl.panel.LabelNameFilter"
@@ -27,31 +27,17 @@
     </div>
     <div class="gf-form">
       <div class="gf-form-inline">
-        <label class="gf-form-label width-6">Value col</label>
-        <div class="gf-form-select-wrapper">
-          <select
-            class="gf-form-input michaeldmoore-multistat-panel-w12"
-            ng-model="ctrl.panel.ValueColName"
-            ng-options="f for f in ctrl.cols"
-            ng-change="ctrl.render()"
-          ></select>
-        </div>
         <label class="gf-form-label width-6">Scale Factor</label>
         <input
           type="number"
-          class="gf-form-input width-3"
+          class="gf-form-input width-7"
           data-placement="right"
           bs-tooltip="'Scale factor - all input values are multiplied by this factor before being displayed'"
           ng-model="ctrl.panel.ScaleFactor"
           ng-change="ctrl.render()"
           ng-model-onblur
         />
-      </div>
-    </div>
-    <div class="gf-form">
-      <div class="gf-form-inline">
-        <span class="width-8" />
-        <label class="gf-form-label width-7">Decimals</label>
+        <label class="gf-form-label width-4">Decimals</label>
         <input
           type="number"
           class="gf-form-input width-4"
@@ -72,7 +58,80 @@
         </div>
       </div>
     </div>
+
     <div class="gf-form">
+      <div class="gf-form-inline">
+        <label class="gf-form-label width-6">Value cols</label>
+        <span class="michaeldmoore-multistat-panel-w2"></span>
+        <span class="gf-form-label">
+          <i
+            class="fa fa-plus"
+            ng-click="ctrl.panel.Values.push({Name:'', HighBarColor:'rgb(120, 128, 0)', LowBarColor:'teal'}); ctrl.render();"
+            ></i>
+        </span>
+        <span class="michaeldmoore-multistat-panel-w2"></span>
+        <div class="gf-form-inline" ng-if="ctrl.panel.Values.length > 1">
+          <label class="gf-form-label michaeldmoore-multistat-panel-w8">multi-Bar Pad %</label>
+          <input
+            type="number"
+            class="gf-form-input width-3"
+            placeholder="auto"
+            data-placement="right"
+            bs-tooltip="'Inter-multi-bar gap, as percentage of bar width'"
+            ng-model="ctrl.panel.MultiBarPadding"
+            ng-change="ctrl.render()"
+            ng-model-onblur
+          />
+        </div>
+      </div>  
+    </div>
+
+    <div class="gf-form" ng-repeat="value in ctrl.panel.Values">
+
+      <span class="gf-form-label">
+        <i
+          class="fa fa-arrow-up pointer"
+          ng-click="ctrl.onReorderValues($index,1)"
+        ></i>
+      </span>
+      <span class="gf-form-label">
+        <i
+          class="fa fa-arrow-down pointer"
+          ng-click="ctrl.onReorderValues($index,0)"
+        ></i>
+      </span>
+
+      <div class="gf-form-select-wrapper">
+        <select
+          class="gf-form-input michaeldmoore-multistat-panel-w12"
+          ng-model="value.Name"
+          ng-options="f for f in ctrl.cols"
+          ng-change="ctrl.render()"
+        ></select>
+      </div>
+      <label class="gf-form-label width-4">+ Color</label>
+      <span class="gf-form-label">
+        <spectrum-picker
+          ng-model="value.HighBarColor"
+          ng-change="ctrl.render()"
+        ></spectrum-picker>
+      </span>
+      <label class="gf-form-label width-4">- Color</label>
+      <span class="gf-form-label">
+        <spectrum-picker
+          ng-model="value.LowBarColor"
+          ng-change="ctrl.render()"
+        ></spectrum-picker>
+      </span>
+      <span class="gf-form-label" ng-if="ctrl.panel.Values.length > 1">
+        <i
+          class="fa fa-trash pointer"
+          ng-click="ctrl.panel.Values.splice($index,1); ctrl.render();"
+        ></i>
+      </span>
+    </div>
+
+    <div class="gf-form-button-row">
       <div class="gf-form-inline">
         <label class="gf-form-label width-6">Group col</label>
         <div class="gf-form-select-wrapper">
@@ -98,7 +157,10 @@
           ></select>
         </div>
       </div>
-      <div class="gf-form" ng-if="ctrl.panel.DateTimeColName != ''">
+      <div
+        class="gf-form"
+        ng-if="ctrl.cols.includes(ctrl.panel.DateTimeColName)"
+      >
         <label class="gf-form-label width-6">TZ Offset Hrs</label>
         <input
           type="number"
@@ -109,11 +171,6 @@
           ng-change="ctrl.render()"
           ng-model-onblur
         />
-      </div>
-    </div>
-    <div class="gf-form" ng-if="ctrl.panel.DateTimeColName != ''">
-      <div class="gf-form-inline">
-        <span class="width-8" />
         <gf-form-switch
           class="gf-form"
           label-class="width-7"
@@ -121,11 +178,16 @@
           checked="ctrl.panel.ShowDate"
           on-change="ctrl.render()"
         ></gf-form-switch>
+      </div>
+    </div>
+    <div class="gf-form" ng-if="ctrl.cols.includes(ctrl.panel.DateTimeColName)">
+      <div class="gf-form-inline">
+        <span class="width-6" />
         <div class="gf-form" ng-if="ctrl.panel.ShowDate">
-          <label class="gf-form-label width-4">Format</label>
+          <label class="gf-form-label width-7">'As of' Format</label>
           <input
             type="string"
-            class="gf-form-input width-11"
+            class="gf-form-input width-18"
             data-placement="right"
             bs-tooltip="'Date formatting string - e.g. MMMM Do YYYY, h:mm:ss a'"
             ng-model="ctrl.panel.DateFormat"
@@ -136,7 +198,8 @@
             class="gf-form-label query-keyword"
             ng-click="ctrl.showTZDateFormat = !ctrl.showTZDateFormat"
           >
-            Show Help
+            <i class="fa fa-question-circle"></i>
+            &nbsp;
             <i class="fa fa-caret-down" ng-show="ctrl.showTZDateFormat"></i>
             <i class="fa fa-caret-right" ng-hide="ctrl.showTZDateFormat"></i>
           </label>
@@ -170,7 +233,7 @@ Setting the format string to the reserved keyword "ELAPSED" displays the time as
         </div>
         <div
           class="gf-form-select-wrapper"
-          ng-if="ctrl.panel.SortColName != ''"
+          ng-if="ctrl.cols.includes(ctrl.panel.SortColName)"
         >
           <select
             class="gf-form-input width-8"
@@ -203,7 +266,7 @@ Setting the format string to the reserved keyword "ELAPSED" displays the time as
 
     <div
       class="gf-form"
-      ng-if="ctrl.panel.RecolorColName != ''"
+      ng-if="ctrl.cols.includes(ctrl.panel.RecolorColName)"
       ng-repeat="rule in ctrl.panel.RecolorRules"
     >
       <div class="gf-form">
@@ -254,7 +317,10 @@ Setting the format string to the reserved keyword "ELAPSED" displays the time as
       </div>
     </div>
 
-    <div class="gf-form-button-row" ng-if="ctrl.panel.RecolorColName != ''">
+    <div
+      class="gf-form-button-row"
+      ng-if="ctrl.cols.includes(ctrl.panel.RecolorColName)"
+    >
       <button
         class="btn btn-inverse"
         ng-click="ctrl.panel.RecolorRules.push({pattern:'', matchType:'exact', color:'#777'})"
