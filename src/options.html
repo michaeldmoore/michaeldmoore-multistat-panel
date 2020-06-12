@@ -167,6 +167,19 @@
         ></select>
       </div>
 
+      <label class="gf-form-label width-5" ng-if="ctrl.tooltipTypes.includes(ctrl.panel.ToolTipType)">Font size</label>
+      <div class="gf-form-select-wrapper" ng-if="ctrl.tooltipTypes.includes(ctrl.panel.ToolTipType)">
+        <select
+          class="gf-form-input michaeldmoore-multistat-panel-w6"
+          ng-model="ctrl.panel.ToolTipFontSize"
+          ng-options="f for f in ctrl.fontSizes"
+          ng-change="ctrl.render()"
+        ></select>
+      </div>
+    </div>
+    <div class="gf-form">
+      <span class="michaeldmoore-multistat-panel-w2"></span>
+
       <div class="gf-form" ng-if="ctrl.tooltipTypes.includes(ctrl.panel.ToolTipType)">
         <label class="gf-form-label width-6">Date Format</label>
         <input
