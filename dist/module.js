@@ -145,6 +145,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
             SortDirection: "ascending",
             TZOffsetHours: 0,
             ToolTipType: "",
+            ToolTipFontSize: "100%",
             ValueColName: "temperature",
             Values: [],
             ValueDecimals: 2,
@@ -507,6 +508,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
               var flashHighLimitBar = this.panel.FlashHighLimitBar;
               var flashLowLimitBar = this.panel.FlashLowLimitBar;
               var tooltipType = this.panel.ToolTipType;
+              var tooltipFontSize = this.panel.ToolTipFontSize;
               var DateTimeColName = this.panel.DateTimeColName;
               var TooltipDateFormat = this.panel.TooltipDateFormat;
               var ValueColName = this.panel.ValueColName;
@@ -594,20 +596,22 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
               var getTooltipContent = function getTooltipContent(d) {
                 var html = "";
                 if (tooltipType) {
-                  html += "<table>";
+                  html += "<table style='font-size:" + tooltipFontSize.replace("%", "") / 100 + "em'>";
                   if (labelCol != -1) html += "<thead><tr class='michaeldmoore-multistat-panel-tooltip-title'><th colspan='2' align='center'>" + d[labelCol] + "</th></tr></thead>";
-                  html += "<tbody>";
-                  for (var i = 0; i < d.length; i++) {
-                    if (i != labelCol) {
-                      var cc = cols[i];
-                      var dd = d[i];
+                  if (Array.isArray(d)) {
+                    html += "<tbody>";
+                    for (var i = 0; i < d.length; i++) {
+                      if (i != labelCol) {
+                        var cc = cols[i];
+                        var dd = d[i];
 
-                      if (cc == DateTimeColName) dd = moment(dd).add(TZOffsetHours, "h").format(TooltipDateFormat);else if (cc == ValueColName && $.isNumeric(dd)) dd = Number(dd).toFixed(ValueDecimals);
+                        if (cc == DateTimeColName) dd = moment(dd).add(TZOffsetHours, "h").format(TooltipDateFormat);else if (cc == ValueColName && $.isNumeric(dd)) dd = Number(dd).toFixed(ValueDecimals);
 
-                      html += "<tr><td>" + cc + "</td><td>" + dd + "</td></tr>";
+                        html += "<tr><td>" + cc + "</td><td>" + dd + "</td></tr>";
+                      }
                     }
+                    html += "</tbody></table>";
                   }
-                  html += "</tbody></table>";
                 }
 
                 if (Links.length) {
@@ -625,43 +629,43 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
               var $panelContent;
               var panelContent;
               var tooltipShow = function tooltipShow(d) {
-                if (tooltipType || Links.length) {
-                  if ($("#" + tooltipDivID).length == 0) {
-                    $panel = $("." + panelID);
-                    $panelContent = $panel.parent().parent().parent().parent();
-                    panelContent = d3.selectAll($panelContent);
-                    panelContent.append("div").attr("id", tooltipDivID).style("opacity", 0);
-                  }
-
-                  var tooltipDiv = d3.selectAll("#" + tooltipDivID);
-                  tooltipDiv.classed("michaeldmoore-multistat-panel-" + tooltipType + "-tooltip", true).html(getTooltipContent(d)).on("mouseover", function () {
-                    if (!isInTooltip) {
-                      isInTooltip = true;
-                      tooltipHide(true);
-                    }
-                  }).on("mouseleave", function () {
-                    isInTooltip = false;
-                    tooltipHide(false);
-                  });
-
-                  var $tooltipDiv = $("#" + tooltipDivID);
-                  var tooltipWidth = $tooltipDiv.width();
-                  var tooltipHeight = $tooltipDiv.height();
-                  var minTop = 28;
-
-                  var mouseCoordinates = d3.mouse(panelContent.node());
-                  var Left = mouseCoordinates[0] - tooltipWidth / 2;
-                  var Top = mouseCoordinates[1] + minTop - tooltipHeight / 2;
-
-                  var panelWidth = $panel.width();
-                  var panelHeight = $panel.height();
-
-                  if (Left < 0) Left = 0;else if (Left > panelWidth - tooltipWidth) Left = panelWidth - tooltipWidth;
-
-                  if (Top < 0) Top = 0;else if (Top > panelHeight + minTop - tooltipHeight) Top = panelHeight + minTop - tooltipHeight;
-
-                  tooltipDiv.transition().duration(200).style("opacity", 1.0).style("left", Left + "px").style("top", Top + "px");
+                //        if ((tooltipType && Array.isArray(d)) || Links.length) {
+                if ($("#" + tooltipDivID).length == 0) {
+                  $panel = $("." + panelID);
+                  $panelContent = $panel.parent().parent().parent().parent();
+                  panelContent = d3.selectAll($panelContent);
+                  panelContent.append("div").attr("id", tooltipDivID).style("opacity", 0);
                 }
+
+                var tooltipDiv = d3.selectAll("#" + tooltipDivID);
+                tooltipDiv.classed("michaeldmoore-multistat-panel-" + tooltipType + "-tooltip", true).html(getTooltipContent(d)).on("mouseover", function () {
+                  if (!isInTooltip) {
+                    isInTooltip = true;
+                    tooltipHide(true);
+                  }
+                }).on("mouseleave", function () {
+                  isInTooltip = false;
+                  tooltipHide(false);
+                });
+
+                var $tooltipDiv = $("#" + tooltipDivID);
+                var tooltipWidth = $tooltipDiv.width();
+                var tooltipHeight = $tooltipDiv.height();
+                var minTop = 28;
+
+                var mouseCoordinates = d3.mouse(panelContent.node());
+                var Left = mouseCoordinates[0] - tooltipWidth / 2;
+                var Top = mouseCoordinates[1] + minTop - tooltipHeight / 2;
+
+                var panelWidth = $panel.width();
+                var panelHeight = $panel.height();
+
+                if (Left < 0) Left = 0;else if (Left > panelWidth - tooltipWidth) Left = panelWidth - tooltipWidth;
+
+                if (Top < 0) Top = 0;else if (Top > panelHeight + minTop - tooltipHeight) Top = panelHeight + minTop - tooltipHeight;
+
+                tooltipDiv.transition().duration(200).style("opacity", 1.0).style("left", Left + "px").style("top", Top + "px");
+                //        }
               };
 
               var tooltipHide = function tooltipHide(cancel) {
@@ -955,7 +959,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                   svg.append("g").selectAll("rect").data(stripedata).enter().append("rect").attr("width", w).attr("height", stripeScale.step()).attr("x", left).attr("y", function (d) {
                     return stripeScale(d);
                   }).attr("fill", "rgba(0,0,0,0)").attr("stroke", OutlineColor).on("mouseover", function (d) {
-                    if (tooltipType || Links.length /* && i < data.length*/) tooltipShow(d);
+                    if (tooltipType && Array.isArray(d) || Links.length) tooltipShow(d);
                   }).on("mouseleave", function () {
                     if (!isInTooltip) {
                       tooltipHide(false);
@@ -1245,9 +1249,11 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                   svg.append("g").selectAll("rect").data(stripedata).enter().append("rect").attr("width", stripeScale.step()).attr("height", dh).attr("x", function (d) {
                     return stripeScale(d);
                   }).attr("y", hh).attr("fill", "rgba(0,0,0,0)").attr("stroke", OutlineColor).on("mouseover", function (d) {
-                    if (tooltipType || Links.length) tooltipShow(d);
+                    if (tooltipType && Array.isArray(d) || Links.length) tooltipShow(d);
                   }).on("mouseleave", function () {
-                    tooltipHide(false);
+                    if (!isInTooltip) {
+                      tooltipHide(false);
+                    }
                   });
 
                   if (lowSideMargin > 0) {
