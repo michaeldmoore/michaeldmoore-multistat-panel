@@ -67,11 +67,13 @@
           <i
             class="fa fa-plus"
             ng-click="ctrl.panel.Values.push({Name:'', HighBarColor:'rgb(120, 128, 0)', LowBarColor:'teal'}); ctrl.render();"
-            ></i>
+          ></i>
         </span>
         <span class="michaeldmoore-multistat-panel-w2"></span>
         <div class="gf-form-inline" ng-if="ctrl.panel.Values.length > 1">
-          <label class="gf-form-label michaeldmoore-multistat-panel-w8">multi-Bar Pad %</label>
+          <label class="gf-form-label michaeldmoore-multistat-panel-w8"
+            >multi-Bar Pad %</label
+          >
           <input
             type="number"
             class="gf-form-input width-3"
@@ -83,11 +85,10 @@
             ng-model-onblur
           />
         </div>
-      </div>  
+      </div>
     </div>
 
     <div class="gf-form" ng-repeat="value in ctrl.panel.Values">
-
       <span class="gf-form-label">
         <i
           class="fa fa-arrow-up pointer"
