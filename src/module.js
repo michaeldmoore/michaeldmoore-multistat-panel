@@ -111,7 +111,13 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
     // Migrate old configurations from single value column to array of value columns
     if (this.panel.Values.length === 0) {
-      this.panel.Values = [{Name: this.panel.ValueColName, LowBarColor: this.panel.LowBarColor, HighBarColor: this.panel.HighBarColor}];
+      this.panel.Values = [
+        {
+          Name: this.panel.ValueColName,
+          LowBarColor: this.panel.LowBarColor,
+          HighBarColor: this.panel.HighBarColor,
+        },
+      ];
       delete this.panel.ValueColName;
       delete this.panel.LowBarColor;
       delete this.panel.HighBarColor;
@@ -247,19 +253,10 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
   onReorderValues(index, up) {
     const Values = this.ctrl.panel.Values;
     if (up) {
-      if (index)
-      Values[index] = Values.splice(
-          index - 1,
-          1,
-          Values[index]
-        )[0];
+      if (index) Values[index] = Values.splice(index - 1, 1, Values[index])[0];
     } else {
       if (index + 1 < Values.length)
-      Values[index] = Values.splice(
-          index + 1,
-          1,
-          Values[index]
-        )[0];
+        Values[index] = Values.splice(index + 1, 1, Values[index])[0];
     }
 
     this.render();
@@ -340,8 +337,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
       var sortCol = 0;
       var groupCol = -1;
       var recolorCol = -1;
-//      var valueCols = [];
-//      this.panel.Values.forEach(ValueCol => {valueCols.push(-1);});
+      //      var valueCols = [];
+      //      this.panel.Values.forEach(ValueCol => {valueCols.push(-1);});
 
       cols.forEach((colName, i) => {
         if (colName == this.panel.DateTimeColName) dateTimeCol = i;
@@ -353,7 +350,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
         this.panel.Values.forEach((Value, j) => {
           if (colName == Value.Name) {
             Value.Col = i;
-//            valueCols[j] = i;
+            //            valueCols[j] = i;
           }
         });
       });
@@ -588,35 +585,35 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
       var LabelColor = this.panel.LabelColor;
       var ValuePosition = this.panel.ValuePosition;
 
-      var Values = this.panel.Values.filter(value => value.Col >= 0); // ignore unmatched value columns
+      var Values = this.panel.Values.filter((value) => value.Col >= 0); // ignore unmatched value columns
 
       var panelID = "michaeldmoore-multistat-panel-" + id;
       var tooltipDivID = "michaeldmoore-multistat-panel-tooltip-" + id;
 
-      var minValue = Values.length && d3.min(this.rows, function (d) {
-        let min = d[Values[0].Col];
-        for (var i = 1; i < Values.length; i++) {
-          let col = Values[i].Col;
-          let val = Number(d[col]);
-          if (min > val)
-            min = val;
-        }
-        return min * ScaleFactor;
-//        return Number(d[Values[0].Col]) * ScaleFactor;
-      });
+      var minValue =
+        Values.length &&
+        d3.min(this.rows, function (d) {
+          let min = d[Values[0].Col];
+          for (var i = 1; i < Values.length; i++) {
+            let col = Values[i].Col;
+            let val = Number(d[col]);
+            if (min > val) min = val;
+          }
+          return min * ScaleFactor;
+        });
       if ($.isNumeric(minLineValue) == false) minLineValue = minValue;
 
-      var maxValue = Values.length && d3.max(this.rows, function (d) {
-        let max = d[Values[0].Col];
-        for (var i = 1; i < Values.length; i++) {
-          let col = Values[i].Col;
-          let val = Number(d[col]);
-          if (max < val)
-            max = val;
-        }
-        return max * ScaleFactor;
-//        return Number(d[Values[0].Col]) * ScaleFactor;
-      });
+      var maxValue =
+        Values.length &&
+        d3.max(this.rows, function (d) {
+          let max = d[Values[0].Col];
+          for (var i = 1; i < Values.length; i++) {
+            let col = Values[i].Col;
+            let val = Number(d[col]);
+            if (max < val) max = val;
+          }
+          return max * ScaleFactor;
+        });
       if ($.isNumeric(maxLineValue) == false) maxLineValue = maxValue;
 
       if ($.isNumeric(baseLineValue) == false) baseLineValue = 0;
@@ -726,7 +723,10 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
           const tooltipDiv = d3.selectAll("#" + tooltipDivID);
           tooltipDiv
-            .classed("michaeldmoore-multistat-panel-"+tooltipType+"-tooltip", true)
+            .classed(
+              "michaeldmoore-multistat-panel-" + tooltipType + "-tooltip",
+              true
+            )
             .html(getTooltipContent(d))
             .on("mouseover", function () {
               if (!isInTooltip) {
@@ -782,7 +782,10 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
             .on("end", function () {
               d3.select(this)
                 .html("")
-                .classed("michaeldmoore-multistat-panel-"+tooltipType+"-tooltip", false);
+                .classed(
+                  "michaeldmoore-multistat-panel-" + tooltipType + "-tooltip",
+                  false
+                );
             });
         }
       };
@@ -837,8 +840,10 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
         if (recolorLowLimitBar && value < lowLimitValue)
           return LowLimitBarColor;
 
-        // All else fails, let's use the standard colors for this bar...  
-        return value > baseLineValue ? valueDef.HighBarColor : valueDef.LowBarColor;
+        // All else fails, let's use the standard colors for this bar...
+        return value > baseLineValue
+          ? valueDef.HighBarColor
+          : valueDef.LowBarColor;
       };
 
       if (horizontal) {
@@ -944,7 +949,17 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
             panel.Values.forEach((valueDef, index) => {
               let valueCol = valueDef.Col;
-              if (valueCol >= 0){
+              if (valueCol >= 0) {
+                let gap =
+                  panel.Values.length > 1
+                    ? (labelScale.bandwidth() * multiBarPadding) /
+                      (panel.Values.length - 1) /
+                      100
+                    : 0;
+                let height =
+                  (labelScale.bandwidth() - gap * (panel.Values.length - 1)) /
+                  panel.Values.length;
+
                 g1.append("text")
                   .text(function (d) {
                     return (Number(d[valueCol]) * ScaleFactor).toFixed(
@@ -953,7 +968,11 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
                   })
                   .attr("x", left + w)
                   .attr("y", function (d, i) {
-                    return labelScale(d[labelCol]) + (index + 0.5) * labelScale.bandwidth() / panel.Values.length;
+                    return (
+                      labelScale(d[labelCol]) +
+                      height / 2 +
+                      (height + gap) * index
+                    );
                   })
                   .attr("font-family", "sans-serif")
                   .attr("font-size", panel.ValueFontSize)
@@ -1065,14 +1084,23 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
           if (panel.ShowBars) {
             panel.Values.forEach((valueDef, index) => {
               let valueCol = valueDef.Col;
-              let gap = panel.Values.length > 1 ? labelScale.bandwidth() * multiBarPadding / (panel.Values.length - 1) / 100 : 0;
-              let height = (labelScale.bandwidth() - gap * (panel.Values.length - 1)) / panel.Values.length;
-              if (valueCol >= 0){
+              if (valueCol >= 0) {
+                let gap =
+                  panel.Values.length > 1
+                    ? (labelScale.bandwidth() * multiBarPadding) /
+                      (panel.Values.length - 1) /
+                      100
+                    : 0;
+                let height =
+                  (labelScale.bandwidth() - gap * (panel.Values.length - 1)) /
+                  panel.Values.length;
                 g1.append("rect")
                   .attr("class", "michaeldmoore-multistat-panel-bar")
                   .attr("width", function (d) {
                     var val = scaleAndClipValue(d[valueCol]);
-                    return Math.abs(valueScale(val) - valueScale(baseLineValue));
+                    return Math.abs(
+                      valueScale(val) - valueScale(baseLineValue)
+                    );
                   })
                   .attr("height", height)
                   .attr("x", function (d) {
@@ -1099,9 +1127,9 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
                       d[valueCol] * ScaleFactor < lowLimitValue
                     );
                   });
-                }
-              });
-            }
+              }
+            });
+          }
 
           if (panel.ShowLines) {
             if (panel.LineWidth) {
@@ -1168,42 +1196,57 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
           }
 
           if (panel.ShowValues && panel.ValuePosition != "top") {
-
             panel.Values.forEach((valueDef, index) => {
               let valueCol = valueDef.Col;
-              if (valueCol >= 0){
+              if (valueCol >= 0) {
+                let gap =
+                  panel.Values.length > 1
+                    ? (labelScale.bandwidth() * multiBarPadding) /
+                      (panel.Values.length - 1) /
+                      100
+                    : 0;
+                let height =
+                  (labelScale.bandwidth() - gap * (panel.Values.length - 1)) /
+                  panel.Values.length;
+
                 g1.append("text")
-                .text(function (d) {
-                  return (Number(d[valueCol]) * ScaleFactor).toFixed(
-                    ValueDecimals
-                  );
-                })
-                .attr("x", function (d) {
-                  if (panel.ValuePosition == "bar base")
-                    return valueScale(baseLineValue);
-                  else {
-                    var val = scaleAndClipValue(d[valueCol]);
-                    return valueScale(val) + (val > baseLineValue);
-                  }
-                })
-                .attr("y", function (d, i) {
-                  return labelScale(d[labelCol]) + (index + 0.5) * labelScale.bandwidth() / panel.Values.length;
-                })
-                .attr("font-family", "sans-serif")
-                .attr("font-size", panel.ValueFontSize)
-                .attr("fill", panel.ValueColor)
-                .attr("text-anchor", function (d) {
-                  if (panel.ValuePosition == "bar base")
-                    return d[panel.Values[0].Col] * ScaleFactor > baseLineValue
-                      ? "start"
-                      : "end";
-                  else
-                    return d[panel.Values[0].Col] * ScaleFactor > baseLineValue
-                      ? "end"
-                      : "start";
-                })
-                .attr("dominant-baseline", "central");
-                }
+                  .text(function (d) {
+                    return (Number(d[valueCol]) * ScaleFactor).toFixed(
+                      ValueDecimals
+                    );
+                  })
+                  .attr("x", function (d) {
+                    if (panel.ValuePosition == "bar base")
+                      return valueScale(baseLineValue);
+                    else {
+                      var val = scaleAndClipValue(d[valueCol]);
+                      return valueScale(val) + (val > baseLineValue);
+                    }
+                  })
+                  .attr("y", function (d, i) {
+                    return (
+                      labelScale(d[labelCol]) +
+                      height / 2 +
+                      (height + gap) * index
+                    );
+                  })
+                  .attr("font-family", "sans-serif")
+                  .attr("font-size", panel.ValueFontSize)
+                  .attr("fill", panel.ValueColor)
+                  .attr("text-anchor", function (d) {
+                    if (panel.ValuePosition == "bar base")
+                      return d[panel.Values[0].Col] * ScaleFactor >
+                        baseLineValue
+                        ? "start"
+                        : "end";
+                    else
+                      return d[panel.Values[0].Col] * ScaleFactor >
+                        baseLineValue
+                        ? "end"
+                        : "start";
+                  })
+                  .attr("dominant-baseline", "central");
+              }
             });
           }
 
@@ -1264,10 +1307,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
               )
               .attr("class", "michaeldmoore-multistat-panel-valueaxis")
               .call(d3.axisBottom(valueScale));
-            
-            ggLowSide
-              .selectAll(".tick text")
-              .attr("fill", panel.LowAxisColor);
+
+            ggLowSide.selectAll(".tick text").attr("fill", panel.LowAxisColor);
 
             ggLowSide
               .selectAll(".tick line")
@@ -1450,7 +1491,17 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
             panel.Values.forEach((valueDef, index) => {
               let valueCol = valueDef.Col;
-              if (valueCol >= 0){
+              if (valueCol >= 0) {
+                let gap =
+                  panel.Values.length > 1
+                    ? (labelScale.bandwidth() * multiBarPadding) /
+                      (panel.Values.length - 1) /
+                      100
+                    : 0;
+                let width =
+                  (labelScale.bandwidth() - gap * (panel.Values.length - 1)) /
+                  panel.Values.length;
+
                 g2.append("text")
                   .text(function (d) {
                     return (Number(d[valueCol]) * ScaleFactor).toFixed(
@@ -1458,7 +1509,11 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
                     );
                   })
                   .attr("x", function (d, i) {
-                    return labelScale(d[labelCol]) + (index + 0.5) * labelScale.bandwidth() / panel.Values.length;
+                    return (
+                      labelScale(d[labelCol]) +
+                      width / 2 +
+                      (width + gap) * index
+                    );
                   })
                   .attr("y", hh)
                   .attr("font-family", "sans-serif")
@@ -1472,7 +1527,6 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
                   });
               }
             });
-
 
             hh += maxValueHeight;
             dh -= maxValueHeight;
@@ -1570,40 +1624,50 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
           if (panel.ShowBars) {
             panel.Values.forEach((valueDef, index) => {
               let valueCol = valueDef.Col;
-              let gap = panel.Values.length > 1 ? labelScale.bandwidth() * multiBarPadding / (panel.Values.length - 1) / 100 : 0;
-              let width = (labelScale.bandwidth() - gap * (panel.Values.length - 1)) / panel.Values.length;
-              if (valueCol >= 0){
+              if (valueCol >= 0) {
+                let gap =
+                  panel.Values.length > 1
+                    ? (labelScale.bandwidth() * multiBarPadding) /
+                      (panel.Values.length - 1) /
+                      100
+                    : 0;
+                let width =
+                  (labelScale.bandwidth() - gap * (panel.Values.length - 1)) /
+                  panel.Values.length;
+
                 g2.append("rect")
-                .attr("class", "michaeldmoore-multistat-panel-bar")
-                .attr("height", function (d) {
-                  var val = scaleAndClipValue(d[valueCol]);
-                  return Math.abs(valueScale(baseLineValue) - valueScale(val));
-                })
-                .attr("width", width)
-                .attr("y", function (d) {
-                  var val = scaleAndClipValue(d[valueCol]);
-                  return d3.min([valueScale(val), valueScale(baseLineValue)]);
-                })
-                .attr("x", function (d, i) {
-                  return labelScale(d[labelCol]) + (width + gap) * index;
-                })
-                .attr("fill", function (d) {
-                  return getBarColor(d, valueDef);
-                })
-                .classed("highflash", function (d) {
-                  return (
-                    recolorHighLimitBar &&
-                    flashHighLimitBar &&
-                    d[valueCol] * ScaleFactor > highLimitValue
-                  );
-                })
-                .classed("lowflash", function (d) {
-                  return (
-                    recolorLowLimitBar &&
-                    flashLowLimitBar &&
-                    d[valueCol] * ScaleFactor < lowLimitValue
-                  );
-                });
+                  .attr("class", "michaeldmoore-multistat-panel-bar")
+                  .attr("height", function (d) {
+                    var val = scaleAndClipValue(d[valueCol]);
+                    return Math.abs(
+                      valueScale(baseLineValue) - valueScale(val)
+                    );
+                  })
+                  .attr("width", width)
+                  .attr("y", function (d) {
+                    var val = scaleAndClipValue(d[valueCol]);
+                    return d3.min([valueScale(val), valueScale(baseLineValue)]);
+                  })
+                  .attr("x", function (d, i) {
+                    return labelScale(d[labelCol]) + (width + gap) * index;
+                  })
+                  .attr("fill", function (d) {
+                    return getBarColor(d, valueDef);
+                  })
+                  .classed("highflash", function (d) {
+                    return (
+                      recolorHighLimitBar &&
+                      flashHighLimitBar &&
+                      d[valueCol] * ScaleFactor > highLimitValue
+                    );
+                  })
+                  .classed("lowflash", function (d) {
+                    return (
+                      recolorLowLimitBar &&
+                      flashLowLimitBar &&
+                      d[valueCol] * ScaleFactor < lowLimitValue
+                    );
+                  });
               }
             });
           }
@@ -1673,41 +1737,54 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
           }
 
           if (panel.ShowValues && panel.ValuePosition != "top") {
-
             panel.Values.forEach((valueDef, index) => {
               let valueCol = valueDef.Col;
-              if (valueCol >= 0){
+              if (valueCol >= 0) {
+                let gap =
+                  panel.Values.length > 1
+                    ? (labelScale.bandwidth() * multiBarPadding) /
+                      (panel.Values.length - 1) /
+                      100
+                    : 0;
+                let width =
+                  (labelScale.bandwidth() - gap * (panel.Values.length - 1)) /
+                  panel.Values.length;
+
                 g2.append("text")
-                .text(function (d) {
-                  return (Number(d[valueCol]) * ScaleFactor).toFixed(
-                    ValueDecimals
-                  );
-                })
-                .attr("x", function (d, i) {
-                  return labelScale(d[labelCol]) + (index + 0.5) * labelScale.bandwidth() / panel.Values.length;
-                })
-                .attr("y", function (d) {
-                  if (ValuePosition == "bar base")
-                    return valueScale(baseLineValue);
-                  else {
-                    var val = scaleAndClipValue(d[valueCol]);
-                    return valueScale(val);
-                  }
-                })
-                .attr("font-family", "sans-serif")
-                .attr("font-size", panel.ValueFontSize)
-                .attr("fill", panel.ValueColor)
-                .attr("text-anchor", "middle")
-                .attr("dominant-baseline", function (d) {
-                  if (ValuePosition == "bar base")
-                    return d[valueCol] * ScaleFactor > baseLineValue
-                      ? "text-after-edge"
-                      : "text-before-edge";
-                  else
-                    return d[valueCol] * ScaleFactor > baseLineValue
-                      ? "text-before-edge"
-                      : "text-after-edge";
-                });
+                  .text(function (d) {
+                    return (Number(d[valueCol]) * ScaleFactor).toFixed(
+                      ValueDecimals
+                    );
+                  })
+                  .attr("x", function (d, i) {
+                    return (
+                      labelScale(d[labelCol]) +
+                      width / 2 +
+                      (width + gap) * index
+                    );
+                  })
+                  .attr("y", function (d) {
+                    if (ValuePosition == "bar base")
+                      return valueScale(baseLineValue);
+                    else {
+                      var val = scaleAndClipValue(d[valueCol]);
+                      return valueScale(val);
+                    }
+                  })
+                  .attr("font-family", "sans-serif")
+                  .attr("font-size", panel.ValueFontSize)
+                  .attr("fill", panel.ValueColor)
+                  .attr("text-anchor", "middle")
+                  .attr("dominant-baseline", function (d) {
+                    if (ValuePosition == "bar base")
+                      return d[valueCol] * ScaleFactor > baseLineValue
+                        ? "text-after-edge"
+                        : "text-before-edge";
+                    else
+                      return d[valueCol] * ScaleFactor > baseLineValue
+                        ? "text-before-edge"
+                        : "text-after-edge";
+                  });
               }
             });
           }
@@ -1904,11 +1981,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
       pulseHigh(this.svg);
       pulseLow(this.svg);
-      //} else {
-      //  this.displayStatusMessage("No data");
     }
-
-    // console.log((new XMLSerializer()).serializeToString(this.svg.node()));
 
     this.ctrl.renderingCompleted();
   }

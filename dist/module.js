@@ -172,7 +172,11 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
 
           // Migrate old configurations from single value column to array of value columns
           if (_this.panel.Values.length === 0) {
-            _this.panel.Values = [{ Name: _this.panel.ValueColName, LowBarColor: _this.panel.LowBarColor, HighBarColor: _this.panel.HighBarColor }];
+            _this.panel.Values = [{
+              Name: _this.panel.ValueColName,
+              LowBarColor: _this.panel.LowBarColor,
+              HighBarColor: _this.panel.HighBarColor
+            }];
             delete _this.panel.ValueColName;
             delete _this.panel.LowBarColor;
             delete _this.panel.HighBarColor;
@@ -532,7 +536,6 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                   if (min > val) min = val;
                 }
                 return min * ScaleFactor;
-                //        return Number(d[Values[0].Col]) * ScaleFactor;
               });
               if ($.isNumeric(minLineValue) == false) minLineValue = minValue;
 
@@ -544,7 +547,6 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                   if (max < val) max = val;
                 }
                 return max * ScaleFactor;
-                //        return Number(d[Values[0].Col]) * ScaleFactor;
               });
               if ($.isNumeric(maxLineValue) == false) maxLineValue = maxValue;
 
@@ -723,7 +725,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                 if (recolorHighLimitBar && value > highLimitValue) return HighLimitBarColor;
                 if (recolorLowLimitBar && value < lowLimitValue) return LowLimitBarColor;
 
-                // All else fails, let's use the standard colors for this bar...  
+                // All else fails, let's use the standard colors for this bar...
                 return value > baseLineValue ? valueDef.HighBarColor : valueDef.LowBarColor;
               };
 
@@ -783,10 +785,13 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                     panel.Values.forEach(function (valueDef, index) {
                       var valueCol = valueDef.Col;
                       if (valueCol >= 0) {
+                        var gap = panel.Values.length > 1 ? labelScale.bandwidth() * multiBarPadding / (panel.Values.length - 1) / 100 : 0;
+                        var height = (labelScale.bandwidth() - gap * (panel.Values.length - 1)) / panel.Values.length;
+
                         g1.append("text").text(function (d) {
                           return (Number(d[valueCol]) * ScaleFactor).toFixed(ValueDecimals);
                         }).attr("x", left + w).attr("y", function (d, i) {
-                          return labelScale(d[labelCol]) + (index + 0.5) * labelScale.bandwidth() / panel.Values.length;
+                          return labelScale(d[labelCol]) + height / 2 + (height + gap) * index;
                         }).attr("font-family", "sans-serif").attr("font-size", panel.ValueFontSize).attr("fill", panel.ValueColor).attr("text-anchor", "end").attr("dominant-baseline", "central").each(function (d, i) {
                           var thisWidth = this.getComputedTextLength();
                           maxValueWidth = d3.max([maxValueWidth, thisWidth]);
@@ -854,9 +859,9 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                   if (panel.ShowBars) {
                     panel.Values.forEach(function (valueDef, index) {
                       var valueCol = valueDef.Col;
-                      var gap = panel.Values.length > 1 ? labelScale.bandwidth() * multiBarPadding / (panel.Values.length - 1) / 100 : 0;
-                      var height = (labelScale.bandwidth() - gap * (panel.Values.length - 1)) / panel.Values.length;
                       if (valueCol >= 0) {
+                        var gap = panel.Values.length > 1 ? labelScale.bandwidth() * multiBarPadding / (panel.Values.length - 1) / 100 : 0;
+                        var height = (labelScale.bandwidth() - gap * (panel.Values.length - 1)) / panel.Values.length;
                         g1.append("rect").attr("class", "michaeldmoore-multistat-panel-bar").attr("width", function (d) {
                           var val = scaleAndClipValue(d[valueCol]);
                           return Math.abs(valueScale(val) - valueScale(baseLineValue));
@@ -925,10 +930,12 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                   }
 
                   if (panel.ShowValues && panel.ValuePosition != "top") {
-
                     panel.Values.forEach(function (valueDef, index) {
                       var valueCol = valueDef.Col;
                       if (valueCol >= 0) {
+                        var gap = panel.Values.length > 1 ? labelScale.bandwidth() * multiBarPadding / (panel.Values.length - 1) / 100 : 0;
+                        var height = (labelScale.bandwidth() - gap * (panel.Values.length - 1)) / panel.Values.length;
+
                         g1.append("text").text(function (d) {
                           return (Number(d[valueCol]) * ScaleFactor).toFixed(ValueDecimals);
                         }).attr("x", function (d) {
@@ -937,7 +944,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                             return valueScale(val) + (val > baseLineValue);
                           }
                         }).attr("y", function (d, i) {
-                          return labelScale(d[labelCol]) + (index + 0.5) * labelScale.bandwidth() / panel.Values.length;
+                          return labelScale(d[labelCol]) + height / 2 + (height + gap) * index;
                         }).attr("font-family", "sans-serif").attr("font-size", panel.ValueFontSize).attr("fill", panel.ValueColor).attr("text-anchor", function (d) {
                           if (panel.ValuePosition == "bar base") return d[panel.Values[0].Col] * ScaleFactor > baseLineValue ? "start" : "end";else return d[panel.Values[0].Col] * ScaleFactor > baseLineValue ? "end" : "start";
                         }).attr("dominant-baseline", "central");
@@ -1070,10 +1077,13 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                     panel.Values.forEach(function (valueDef, index) {
                       var valueCol = valueDef.Col;
                       if (valueCol >= 0) {
+                        var gap = panel.Values.length > 1 ? labelScale.bandwidth() * multiBarPadding / (panel.Values.length - 1) / 100 : 0;
+                        var width = (labelScale.bandwidth() - gap * (panel.Values.length - 1)) / panel.Values.length;
+
                         g2.append("text").text(function (d) {
                           return (Number(d[valueCol]) * ScaleFactor).toFixed(ValueDecimals);
                         }).attr("x", function (d, i) {
-                          return labelScale(d[labelCol]) + (index + 0.5) * labelScale.bandwidth() / panel.Values.length;
+                          return labelScale(d[labelCol]) + width / 2 + (width + gap) * index;
                         }).attr("y", hh).attr("font-family", "sans-serif").attr("font-size", panel.ValueFontSize).attr("fill", panel.ValueColor).attr("text-anchor", "middle").attr("dominant-baseline", "text-before-edge").each(function (d, i) {
                           var thisHeight = this.getBBox().height;
                           maxValueHeight = d3.max([maxValueHeight, thisHeight]);
@@ -1138,9 +1148,10 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                   if (panel.ShowBars) {
                     panel.Values.forEach(function (valueDef, index) {
                       var valueCol = valueDef.Col;
-                      var gap = panel.Values.length > 1 ? labelScale.bandwidth() * multiBarPadding / (panel.Values.length - 1) / 100 : 0;
-                      var width = (labelScale.bandwidth() - gap * (panel.Values.length - 1)) / panel.Values.length;
                       if (valueCol >= 0) {
+                        var gap = panel.Values.length > 1 ? labelScale.bandwidth() * multiBarPadding / (panel.Values.length - 1) / 100 : 0;
+                        var width = (labelScale.bandwidth() - gap * (panel.Values.length - 1)) / panel.Values.length;
+
                         g2.append("rect").attr("class", "michaeldmoore-multistat-panel-bar").attr("height", function (d) {
                           var val = scaleAndClipValue(d[valueCol]);
                           return Math.abs(valueScale(baseLineValue) - valueScale(val));
@@ -1209,14 +1220,16 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                   }
 
                   if (panel.ShowValues && panel.ValuePosition != "top") {
-
                     panel.Values.forEach(function (valueDef, index) {
                       var valueCol = valueDef.Col;
                       if (valueCol >= 0) {
+                        var gap = panel.Values.length > 1 ? labelScale.bandwidth() * multiBarPadding / (panel.Values.length - 1) / 100 : 0;
+                        var width = (labelScale.bandwidth() - gap * (panel.Values.length - 1)) / panel.Values.length;
+
                         g2.append("text").text(function (d) {
                           return (Number(d[valueCol]) * ScaleFactor).toFixed(ValueDecimals);
                         }).attr("x", function (d, i) {
-                          return labelScale(d[labelCol]) + (index + 0.5) * labelScale.bandwidth() / panel.Values.length;
+                          return labelScale(d[labelCol]) + width / 2 + (width + gap) * index;
                         }).attr("y", function (d) {
                           if (ValuePosition == "bar base") return valueScale(baseLineValue);else {
                             var val = scaleAndClipValue(d[valueCol]);
@@ -1316,11 +1329,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
 
               pulseHigh(this.svg);
               pulseLow(this.svg);
-              //} else {
-              //  this.displayStatusMessage("No data");
             }
-
-            // console.log((new XMLSerializer()).serializeToString(this.svg.node()));
 
             this.ctrl.renderingCompleted();
           }
