@@ -109,6 +109,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
             GroupLabelFontSize: "200%",
             GroupGap: 5,
             LabelMargin: null,
+            Legend: false,
             Links: [],
             LowAxisColor: "#ffffff",
             LowAxisWidth: 1,
@@ -335,8 +336,6 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
               var sortCol = 0;
               var groupCol = -1;
               var recolorCol = -1;
-              //      var valueCols = [];
-              //      this.panel.Values.forEach(ValueCol => {valueCols.push(-1);});
 
               cols.forEach(function (colName, i) {
                 if (colName == _this2.panel.DateTimeColName) dateTimeCol = i;
@@ -345,10 +344,9 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                 if (colName == _this2.panel.GroupColName) groupCol = i;
                 if (colName == _this2.panel.RecolorColName) recolorCol = i;
 
-                _this2.panel.Values.forEach(function (Value, j) {
+                _this2.panel.Values.forEach(function (Value) {
                   if (colName == Value.Name) {
                     Value.Col = i;
-                    //            valueCols[j] = i;
                   }
                 });
               });
@@ -469,21 +467,59 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
               } else {
                 this.groupedRows = null;
               }
+              /*
+                    this.elem.html(
+                      "<svg class='" +
+                        this.className +
+                        "'  style='height:100%; width:100%'></svg>"
+              //          + "<ul class='michaeldmoore-multistat-panel-legend'/>"
+                    );
+              */
+              var $container = this.elem.find("#michaeldmoore-multistat-panel-svg");
+              var $legend = this.elem.find("#michaeldmoore-multistat-panel-legend");
 
-              this.elem.html("<svg class='" + this.className + "'  style='height:100%; width:100%'></svg>");
-              var $container = this.elem.find("." + this.className);
+              $legend.empty();
+              if (this.panel.Legend) {
+                this.panel.Values.filter(function (value) {
+                  return value.Col >= 0;
+                }).forEach(function (value, i) {
+                  ///////////////////////////////////////////////////////////////////////////////
+                  // Be careful with this - the toggling/selection logic is quite complicated. //
+                  ///////////////////////////////////////////////////////////////////////////////
+                  $legend.append("<li>" + value.Name + "</li>").children().last().css("background-color", value.HighBarColor).click(function () {
+                    var grey = 'michaeldmoore-multistat-panel-legend-grey';
+
+                    if (window.event.ctrlKey) {
+                      // toggle this item only
+                      this.classList.toggle(grey);
+                    } else {
+                      var numGrey = $legend.find('.' + grey).length;
+                      if (this.classList.contains(grey) || numGrey != Values.length - 1) {
+                        // deselect everything
+                        $legend.find('li').addClass(grey);
+
+                        // and select this one;
+                        this.classList.remove(grey);
+                      } else {
+                        $legend.find('li').removeClass(grey);
+                      }
+                    }
+                  });
+                });
+              }
 
               var h = $container.height();
               var w = $container.width() - 15;
-              this.buildDateHtml(dateTimeCol);
 
-              var horizontal = this.panel.Horizontal;
+              this.buildDateHtml(dateTimeCol);
 
               var labelMargin = $.isNumeric(this.panel.LabelMargin) && this.panel.LabelMargin >= 0 ? this.panel.LabelMargin : null;
               var lowSideMargin = this.panel.LowSideMargin >= 0 ? this.panel.LowSideMargin : 0;
               var highSideMargin = this.panel.HighSideMargin >= 0 ? this.panel.HighSideMargin : 0;
 
-              this.svg = d3.select("." + this.className).append("svg");
+              //      this.svg = d3.select("." + this.className).append("svg");
+              $container.empty();
+              this.svg = d3.select("#michaeldmoore-multistat-panel-svg");
               this.svg.selectAll("rect.michaeldmoore-multistat-panel-bar.highflash").interrupt();
               this.svg.selectAll("rect.michaeldmoore-multistat-panel-bar.lowflash").interrupt();
 
@@ -629,7 +665,6 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
               var $panelContent;
               var panelContent;
               var tooltipShow = function tooltipShow(d) {
-                //        if ((tooltipType && Array.isArray(d)) || Links.length) {
                 if ($("#" + tooltipDivID).length == 0) {
                   $panel = $("." + panelID);
                   $panelContent = $panel.parent().parent().parent().parent();
@@ -665,7 +700,6 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                 if (Top < 0) Top = 0;else if (Top > panelHeight + minTop - tooltipHeight) Top = panelHeight + minTop - tooltipHeight;
 
                 tooltipDiv.transition().duration(200).style("opacity", 1.0).style("left", Left + "px").style("top", Top + "px");
-                //        }
               };
 
               var tooltipHide = function tooltipHide(cancel) {
@@ -733,7 +767,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                 return value > baseLineValue ? valueDef.HighBarColor : valueDef.LowBarColor;
               };
 
-              if (horizontal) {
+              if (this.panel.Horizontal) {
                 var plotGroupHorizontal = function plotGroupHorizontal(panel, svg, data, numRows, groupName, groupNameOffset, left, w, hh, dh) {
                   // Draw border rectangle
                   /*svg.append("rect")

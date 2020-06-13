@@ -173,3 +173,18 @@ pre a {
   display: contents;
   text-decoration: underline;
 }
+
+#michaeldmoore-multistat-panel-svg {
+  flex-grow: 1; 
+}
+
+#michaeldmoore-multistat-panel-legend li {
+  display: inline;
+  padding-right: 50px;
+  border: 1px solid yellow;
+}
+
+.michaeldmoore-multistat-panel-legend-grey {
+  color:darkgray !important;
+  background-color: lightgray !important;
+}
