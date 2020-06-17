@@ -8,6 +8,17 @@ import _ from "lodash";
 import moment from "moment";
 import "./css/multistat-panel.css!";
 import d3 from "./external/d3.min";
+import appEvents from "app/core/app_events";
+import { AppEvents } from "@grafana/data";
+import {
+  DataQuery,
+  DataQueryResponseData,
+  PanelPlugin,
+  PanelEvents,
+  DataLink,
+  DataTransformerConfig,
+  ScopedVars,
+} from "@grafana/data";
 
 class MultistatPanelCtrl extends MetricsPanelCtrl {
   /** @ngInject */
@@ -130,13 +141,23 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
       this.updateNamedValue(this.panel, v.name.split("_"), v.current.value);
     });
 
-    this.events.on("render", this.onRender.bind(this));
-    this.events.on("data-received", this.onDataReceived.bind(this));
-    this.events.on("data-error", this.onDataError.bind(this));
-    this.events.on("init-edit-mode", this.onInitEditMode.bind(this));
-    this.events.on("data-snapshot-load", this.onDataSnapshotLoad.bind(this));
+    this.events.on(
+      PanelEvents.dataReceived,
+      this.onDataReceived.bind(this),
+      $scope
+    );
+    this.events.on(PanelEvents.dataError, this.onDataError.bind(this), $scope);
 
-    //    this.className = this.panelID;
+    this.events.on(PanelEvents.render, this.onRender.bind(this));
+    this.events.on(
+      PanelEvents.dataSnapshotLoad,
+      this.onDataSnapshotLoad.bind(this)
+    );
+    this.events.on(
+      PanelEvents.editModeInitialized,
+      this.onInitEditMode.bind(this)
+    );
+
     this.className = "michaeldmoore-multistat-panel-" + this.panel.id;
   }
 
@@ -518,52 +539,64 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
       } else {
         this.groupedRows = null;
       }
-/*
-      this.elem.html(
-        "<svg class='" +
-          this.className +
-          "'  style='height:100%; width:100%'></svg>"
-//          + "<ul class='michaeldmoore-multistat-panel-legend'/>"
-      );
-*/
-      var $container = this.elem.find("#michaeldmoore-multistat-panel-svg");
-      var $legend = this.elem.find("#michaeldmoore-multistat-panel-legend");
 
-      $legend.empty();
+      this.elem.html(
+        "<div class='" +
+          this.className +
+          "' style='display: flex; flex-direction: column; height:100%; width:100%'>" +
+          "</div>"
+      );
+
+      var $container = this.elem.find("div");
+
+      this.svg = d3
+        .select("." + this.className)
+        .append("svg")
+        .attr("height", "100%");
+
       if (this.panel.Legend) {
-        this.panel.Values.filter(value => value.Col >= 0).forEach((value, i) => {
+        var $legend = $container
+          .append("<ul class='michaeldmoore-multistat-panel-legend'></ul>")
+          .find("ul");
+
+        const legendValues = this.panel.Values.filter(
+          (value) => value.Col >= 0
+        );
+        legendValues.forEach((value, i) => {
           ///////////////////////////////////////////////////////////////////////////////
           // Be careful with this - the toggling/selection logic is quite complicated. //
           ///////////////////////////////////////////////////////////////////////////////
-          $legend.append("<li>" + value.Name + "</li>")
+          let deselectedClassName = value.deselected
+            ? " class='michaeldmoore-multistat-panel-legend-deselected'"
+            : "";
+          $legend
+            .append("<li" + deselectedClassName + ">" + value.Name + "</li>")
             .children()
             .last()
             .css("background-color", value.HighBarColor)
-            .click(function(){
-              let grey = 'michaeldmoore-multistat-panel-legend-grey';
-
+            .click(function () {
               if (window.event.ctrlKey) {
                 // toggle this item only
-                this.classList.toggle(grey);
-              }
-              else {
-                let numGrey = $legend.find('.'+grey).length;
-                if (this.classList.contains(grey) || numGrey !=  Values.length - 1){
+                value.deselected = !value.deselected;
+              } else {
+                if (value.deselected || SelectedValues.length != 1) {
                   // deselect everything
-                  $legend.find('li').addClass(grey);
-
-                  // and select this one;
-                  this.classList.remove(grey);
-                }
-                else {
-                  $legend.find('li').removeClass(grey);
+                  legendValues.forEach((v) => (v.deselected = true));
+                  // and re-select this one;
+                  value.deselected = false;
+                } else {
+                  legendValues.forEach((v) => (v.deselected = false));
                 }
               }
+              // force a re-render
+              CTRL.$scope.$apply(() => {
+                CTRL.render();
+              });
             });
         });
       }
 
-      var h = $container.height();
+      var h = $container.find("svg").height();
       var w = $container.width() - 15;
 
       this.buildDateHtml(dateTimeCol);
@@ -577,12 +610,10 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
       var highSideMargin =
         this.panel.HighSideMargin >= 0 ? this.panel.HighSideMargin : 0;
 
-//      this.svg = d3.select("." + this.className).append("svg");
-      $container.empty();
-      this.svg = d3.select("#michaeldmoore-multistat-panel-svg");
       this.svg
         .selectAll("rect.michaeldmoore-multistat-panel-bar.highflash")
         .interrupt();
+
       this.svg
         .selectAll("rect.michaeldmoore-multistat-panel-bar.lowflash")
         .interrupt();
@@ -623,17 +654,20 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
       var LabelColor = this.panel.LabelColor;
       var ValuePosition = this.panel.ValuePosition;
 
-      var Values = this.panel.Values.filter((value) => value.Col >= 0); // ignore unmatched value columns
+      var SelectedValues = this.panel.Values.filter(
+        (value) => value.Col >= 0 && !value.deselected
+      ); // ignore unmatched value or deselected columns
 
-      var panelID = "michaeldmoore-multistat-panel-" + id;
+      //      var panelID = "michaeldmoore-multistat-panel-" + id;
+      var panelID = "michaeldmoore-multistat-panel";
       var tooltipDivID = "michaeldmoore-multistat-panel-tooltip-" + id;
 
       var minValue =
-        Values.length &&
+        SelectedValues.length &&
         d3.min(this.rows, function (d) {
-          let min = d[Values[0].Col];
-          for (var i = 1; i < Values.length; i++) {
-            let col = Values[i].Col;
+          let min = d[SelectedValues[0].Col];
+          for (var i = 1; i < SelectedValues.length; i++) {
+            let col = SelectedValues[i].Col;
             let val = Number(d[col]);
             if (min > val) min = val;
           }
@@ -642,11 +676,11 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
       if ($.isNumeric(minLineValue) == false) minLineValue = minValue;
 
       var maxValue =
-        Values.length &&
+        SelectedValues.length &&
         d3.max(this.rows, function (d) {
-          let max = d[Values[0].Col];
-          for (var i = 1; i < Values.length; i++) {
-            let col = Values[i].Col;
+          let max = d[SelectedValues[0].Col];
+          for (var i = 1; i < SelectedValues.length; i++) {
+            let col = SelectedValues[i].Col;
             let val = Number(d[col]);
             if (max < val) max = val;
           }
@@ -702,13 +736,16 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
       var getTooltipContent = function (d) {
         let html = "";
         if (tooltipType) {
-          html += "<table style='font-size:" + (tooltipFontSize.replace("%", "")/100) + "em'>";
+          html +=
+            "<table style='font-size:" +
+            tooltipFontSize.replace("%", "") / 100 +
+            "em'>";
           if (labelCol != -1)
             html +=
               "<thead><tr class='michaeldmoore-multistat-panel-tooltip-title'><th colspan='2' align='center'>" +
               d[labelCol] +
               "</th></tr></thead>";
-          if (Array.isArray(d)){
+          if (Array.isArray(d)) {
             html += "<tbody>";
             for (var i = 0; i < d.length; i++) {
               if (i != labelCol) {
@@ -750,60 +787,60 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
       var $panelContent;
       var panelContent;
       var tooltipShow = function (d) {
-          if ($("#" + tooltipDivID).length == 0) {
-            $panel = $("." + panelID);
-            $panelContent = $panel.parent().parent().parent().parent();
-            panelContent = d3.selectAll($panelContent);
-            panelContent
-              .append("div")
-              .attr("id", tooltipDivID)
-              .style("opacity", 0);
-          }
+        if ($("#" + tooltipDivID).length == 0) {
+          $panel = $("." + panelID);
+          $panelContent = $panel.parent().parent().parent().parent();
+          panelContent = d3.selectAll($panelContent);
+          panelContent
+            .append("div")
+            .attr("id", tooltipDivID)
+            .style("opacity", 0);
+        }
 
-          const tooltipDiv = d3.selectAll("#" + tooltipDivID);
-          tooltipDiv
-            .classed(
-              "michaeldmoore-multistat-panel-" + tooltipType + "-tooltip",
-              true
-            )
-            .html(getTooltipContent(d))
-            .on("mouseover", function () {
-              if (!isInTooltip) {
-                isInTooltip = true;
-                tooltipHide(true);
-              }
-            })
-            .on("mouseleave", function () {
-              isInTooltip = false;
-              tooltipHide(false);
-            });
+        const tooltipDiv = d3.selectAll("#" + tooltipDivID);
+        tooltipDiv
+          .classed(
+            "michaeldmoore-multistat-panel-" + tooltipType + "-tooltip",
+            true
+          )
+          .html(getTooltipContent(d))
+          .on("mouseover", function () {
+            if (!isInTooltip) {
+              isInTooltip = true;
+              tooltipHide(true);
+            }
+          })
+          .on("mouseleave", function () {
+            isInTooltip = false;
+            tooltipHide(false);
+          });
 
-          const $tooltipDiv = $("#" + tooltipDivID);
-          const tooltipWidth = $tooltipDiv.width();
-          const tooltipHeight = $tooltipDiv.height();
-          const minTop = 28;
+        const $tooltipDiv = $("#" + tooltipDivID);
+        const tooltipWidth = $tooltipDiv.width();
+        const tooltipHeight = $tooltipDiv.height();
+        const minTop = 28;
 
-          const mouseCoordinates = d3.mouse(panelContent.node());
-          let Left = mouseCoordinates[0] - tooltipWidth / 2;
-          let Top = mouseCoordinates[1] + minTop - tooltipHeight / 2;
+        const mouseCoordinates = d3.mouse(panelContent.node());
+        let Left = mouseCoordinates[0] - tooltipWidth / 2;
+        let Top = mouseCoordinates[1] + minTop - tooltipHeight / 2;
 
-          let panelWidth = $panel.width();
-          let panelHeight = $panel.height();
+        let panelWidth = $panel.width();
+        let panelHeight = $panel.height();
 
-          if (Left < 0) Left = 0;
-          else if (Left > panelWidth - tooltipWidth)
-            Left = panelWidth - tooltipWidth;
+        if (Left < 0) Left = 0;
+        else if (Left > panelWidth - tooltipWidth)
+          Left = panelWidth - tooltipWidth;
 
-          if (Top < 0) Top = 0;
-          else if (Top > panelHeight + minTop - tooltipHeight)
-            Top = panelHeight + minTop - tooltipHeight;
+        if (Top < 0) Top = 0;
+        else if (Top > panelHeight + minTop - tooltipHeight)
+          Top = panelHeight + minTop - tooltipHeight;
 
-          tooltipDiv
-            .transition()
-            .duration(200)
-            .style("opacity", 1.0)
-            .style("left", Left + "px")
-            .style("top", Top + "px");
+        tooltipDiv
+          .transition()
+          .duration(200)
+          .style("opacity", 1.0)
+          .style("left", Left + "px")
+          .style("top", Top + "px");
       };
 
       var tooltipHide = function (cancel) {
@@ -984,19 +1021,18 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
           if (panel.ShowValues && panel.ValuePosition == "top") {
             var maxValueWidth = 0;
-
-            panel.Values.forEach((valueDef, index) => {
+            SelectedValues.forEach((valueDef, index) => {
               let valueCol = valueDef.Col;
               if (valueCol >= 0) {
                 let gap =
-                  panel.Values.length > 1
+                  SelectedValues.length > 1
                     ? (labelScale.bandwidth() * multiBarPadding) /
-                      (panel.Values.length - 1) /
+                      (SelectedValues.length - 1) /
                       100
                     : 0;
                 let height =
-                  (labelScale.bandwidth() - gap * (panel.Values.length - 1)) /
-                  panel.Values.length;
+                  (labelScale.bandwidth() - gap * (SelectedValues.length - 1)) /
+                  SelectedValues.length;
 
                 g1.append("text")
                   .text(function (d) {
@@ -1037,7 +1073,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
               .attr("font-family", "sans-serif")
               .attr("font-size", panel.LabelFontSize)
               .attr("fill", function (d, i) {
-                let value = d[panel.Values[0].Col] * ScaleFactor;
+                let value = d[SelectedValues[0].Col] * ScaleFactor;
                 return value > maxLineValue || value < minLineValue
                   ? panel.OutOfRangeLabelColor
                   : panel.LabelColor;
@@ -1120,18 +1156,19 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
             );
 
           if (panel.ShowBars) {
-            panel.Values.forEach((valueDef, index) => {
+            SelectedValues.forEach((valueDef, index) => {
               let valueCol = valueDef.Col;
               if (valueCol >= 0) {
                 let gap =
-                  panel.Values.length > 1
+                  SelectedValues.length > 1
                     ? (labelScale.bandwidth() * multiBarPadding) /
-                      (panel.Values.length - 1) /
+                      (SelectedValues.length - 1) /
                       100
                     : 0;
                 let height =
-                  (labelScale.bandwidth() - gap * (panel.Values.length - 1)) /
-                  panel.Values.length;
+                  (labelScale.bandwidth() - gap * (SelectedValues.length - 1)) /
+                  SelectedValues.length;
+
                 g1.append("rect")
                   .attr("class", "michaeldmoore-multistat-panel-bar")
                   .attr("width", function (d) {
@@ -1176,7 +1213,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
               for (var i = 0; i < data.length; i++) {
                 var d = data[i];
                 var y = hh + highSideMargin + (i + 0.5) * bw;
-                var x = valueScale(d[this.panel.Values[0].Col] * ScaleFactor);
+                var x = valueScale(d[this.SelectedValues[0].Col] * ScaleFactor);
                 points.push({
                   x,
                   y,
@@ -1228,24 +1265,26 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
                   );
                 })
                 .attr("cx", function (d) {
-                  return valueScale(d[this.panel.Values[0].Col] * ScaleFactor);
+                  return valueScale(
+                    d[this.SelectedValues[0].Col] * ScaleFactor
+                  );
                 });
             }
           }
 
           if (panel.ShowValues && panel.ValuePosition != "top") {
-            panel.Values.forEach((valueDef, index) => {
+            SelectedValues.forEach((valueDef, index) => {
               let valueCol = valueDef.Col;
               if (valueCol >= 0) {
                 let gap =
-                  panel.Values.length > 1
+                  SelectedValues.length > 1
                     ? (labelScale.bandwidth() * multiBarPadding) /
-                      (panel.Values.length - 1) /
+                      (SelectedValues.length - 1) /
                       100
                     : 0;
                 let height =
-                  (labelScale.bandwidth() - gap * (panel.Values.length - 1)) /
-                  panel.Values.length;
+                  (labelScale.bandwidth() - gap * (SelectedValues.length - 1)) /
+                  SelectedValues.length;
 
                 g1.append("text")
                   .text(function (d) {
@@ -1273,12 +1312,12 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
                   .attr("fill", panel.ValueColor)
                   .attr("text-anchor", function (d) {
                     if (panel.ValuePosition == "bar base")
-                      return d[panel.Values[0].Col] * ScaleFactor >
+                      return d[SelectedValues[0].Col] * ScaleFactor >
                         baseLineValue
                         ? "start"
                         : "end";
                     else
-                      return d[panel.Values[0].Col] * ScaleFactor >
+                      return d[SelectedValues[0].Col] * ScaleFactor >
                         baseLineValue
                         ? "end"
                         : "start";
@@ -1527,18 +1566,18 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
           if (panel.ShowValues && panel.ValuePosition == "top") {
             var maxValueHeight = 0;
 
-            panel.Values.forEach((valueDef, index) => {
+            SelectedValues.forEach((valueDef, index) => {
               let valueCol = valueDef.Col;
               if (valueCol >= 0) {
                 let gap =
-                  panel.Values.length > 1
+                  SelectedValues.length > 1
                     ? (labelScale.bandwidth() * multiBarPadding) /
-                      (panel.Values.length - 1) /
+                      (SelectedValues.length - 1) /
                       100
                     : 0;
                 let width =
-                  (labelScale.bandwidth() - gap * (panel.Values.length - 1)) /
-                  panel.Values.length;
+                  (labelScale.bandwidth() - gap * (SelectedValues.length - 1)) /
+                  SelectedValues.length;
 
                 g2.append("text")
                   .text(function (d) {
@@ -1580,8 +1619,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
               .attr("font-family", "sans-serif")
               .attr("font-size", panel.LabelFontSize)
               .attr("fill", function (d, i) {
-                return d[panel.Values[0].Col] * ScaleFactor > maxLineValue ||
-                  d[panel.Values[0].Col] * ScaleFactor < minLineValue
+                return d[SelectedValues[0].Col] * ScaleFactor > maxLineValue ||
+                  d[SelectedValues[0].Col] * ScaleFactor < minLineValue
                   ? panel.OutOfRangeLabelColor
                   : LabelColor;
               })
@@ -1660,18 +1699,18 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
             );
 
           if (panel.ShowBars) {
-            panel.Values.forEach((valueDef, index) => {
+            SelectedValues.forEach((valueDef, index) => {
               let valueCol = valueDef.Col;
               if (valueCol >= 0) {
                 let gap =
-                  panel.Values.length > 1
+                  SelectedValues.length > 1
                     ? (labelScale.bandwidth() * multiBarPadding) /
-                      (panel.Values.length - 1) /
+                      (SelectedValues.length - 1) /
                       100
                     : 0;
                 let width =
-                  (labelScale.bandwidth() - gap * (panel.Values.length - 1)) /
-                  panel.Values.length;
+                  (labelScale.bandwidth() - gap * (SelectedValues.length - 1)) /
+                  SelectedValues.length;
 
                 g2.append("rect")
                   .attr("class", "michaeldmoore-multistat-panel-bar")
@@ -1717,7 +1756,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
               for (var i = 0; i < data.length; i++) {
                 var d = data[i];
                 var x = left + lowSideMargin + (i + 0.5) * bw;
-                var y = valueScale(d[this.panel.Values[0].Col] * ScaleFactor);
+                var y = valueScale(d[this.SelectedValues[0].Col] * ScaleFactor);
                 points.push({
                   x,
                   y,
@@ -1769,24 +1808,26 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
                   );
                 })
                 .attr("cy", function (d) {
-                  return valueScale(d[this.panel.Values[0].Col] * ScaleFactor);
+                  return valueScale(
+                    d[this.SelectedValues[0].Col] * ScaleFactor
+                  );
                 });
             }
           }
 
           if (panel.ShowValues && panel.ValuePosition != "top") {
-            panel.Values.forEach((valueDef, index) => {
+            SelectedValues.forEach((valueDef, index) => {
               let valueCol = valueDef.Col;
               if (valueCol >= 0) {
                 let gap =
-                  panel.Values.length > 1
+                  SelectedValues.length > 1
                     ? (labelScale.bandwidth() * multiBarPadding) /
-                      (panel.Values.length - 1) /
+                      (SelectedValues.length - 1) /
                       100
                     : 0;
                 let width =
-                  (labelScale.bandwidth() - gap * (panel.Values.length - 1)) /
-                  panel.Values.length;
+                  (labelScale.bandwidth() - gap * (SelectedValues.length - 1)) /
+                  SelectedValues.length;
 
                 g2.append("text")
                   .text(function (d) {
@@ -1842,7 +1883,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
             .attr("fill", "rgba(0,0,0,0)")
             .attr("stroke", OutlineColor)
             .on("mouseover", function (d) {
-              if ((tooltipType && Array.isArray(d)) || Links.length) 
+              if ((tooltipType && Array.isArray(d)) || Links.length)
                 tooltipShow(d);
             })
             .on("mouseleave", function () {
@@ -2038,8 +2079,12 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
     // for backward compatability (grafana 6.6.0 and earlier)
     var panelContentElem = elem.find(".panel-content");
     if (panelContentElem.length) this.elem = panelContentElem;
+
+    CTRL = ctrl;
   }
 }
+
+var CTRL;
 
 MultistatPanelCtrl.templateUrl = "module.html";
 

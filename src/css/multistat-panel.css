@@ -174,17 +174,17 @@ pre a {
   text-decoration: underline;
 }
 
-#michaeldmoore-multistat-panel-svg {
-  flex-grow: 1; 
+.michaeldmoore-multistat-panel-legend {
+  flex-grow: 1;
 }
 
-#michaeldmoore-multistat-panel-legend li {
+.michaeldmoore-multistat-panel-legend li {
   display: inline;
   padding-right: 50px;
   border: 1px solid yellow;
 }
 
-.michaeldmoore-multistat-panel-legend-grey {
+.michaeldmoore-multistat-panel-legend-deselected {
   color:darkgray !important;
   background-color: lightgray !important;
 }

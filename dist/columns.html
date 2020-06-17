@@ -124,6 +124,15 @@
           ng-change="ctrl.render()"
         ></spectrum-picker>
       </span>
+
+      <gf-form-switch
+        class="gf-form"
+        label-class="michaeldmoore-multistat-panel-w7"
+        label="Deselect"
+        checked="value.deselected"
+        on-change="ctrl.render();"
+      ></gf-form-switch>
+
       <span class="gf-form-label" ng-if="ctrl.panel.Values.length > 1">
         <i
           class="fa fa-trash pointer"
@@ -167,7 +176,7 @@
           type="number"
           class="gf-form-input width-3"
           data-placement="right"
-          bs-tooltip="Number of hours offset for UTC display"
+          bs-tooltip="'Number of hours offset for UTC display'"
           ng-model="ctrl.panel.TZOffsetHours"
           ng-change="ctrl.render()"
           ng-model-onblur

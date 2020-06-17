@@ -1,9 +1,9 @@
 "use strict";
 
-System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment", "./css/multistat-panel.css!", "./external/d3.min"], function (_export, _context) {
+System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment", "./css/multistat-panel.css!", "./external/d3.min", "app/core/app_events", "@grafana/data"], function (_export, _context) {
   "use strict";
 
-  var MetricsPanelCtrl, $, _, moment, d3, _createClass, MultistatPanelCtrl;
+  var MetricsPanelCtrl, $, _, moment, d3, appEvents, AppEvents, DataQuery, DataQueryResponseData, PanelPlugin, PanelEvents, DataLink, DataTransformerConfig, ScopedVars, _createClass, MultistatPanelCtrl, CTRL;
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -46,6 +46,17 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
       moment = _moment.default;
     }, function (_cssMultistatPanelCss) {}, function (_externalD3Min) {
       d3 = _externalD3Min.default;
+    }, function (_appCoreApp_events) {
+      appEvents = _appCoreApp_events.default;
+    }, function (_grafanaData) {
+      AppEvents = _grafanaData.AppEvents;
+      DataQuery = _grafanaData.DataQuery;
+      DataQueryResponseData = _grafanaData.DataQueryResponseData;
+      PanelPlugin = _grafanaData.PanelPlugin;
+      PanelEvents = _grafanaData.PanelEvents;
+      DataLink = _grafanaData.DataLink;
+      DataTransformerConfig = _grafanaData.DataTransformerConfig;
+      ScopedVars = _grafanaData.ScopedVars;
     }],
     execute: function () {
       _createClass = function () {
@@ -189,13 +200,13 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
             _this.updateNamedValue(_this.panel, v.name.split("_"), v.current.value);
           });
 
-          _this.events.on("render", _this.onRender.bind(_this));
-          _this.events.on("data-received", _this.onDataReceived.bind(_this));
-          _this.events.on("data-error", _this.onDataError.bind(_this));
-          _this.events.on("init-edit-mode", _this.onInitEditMode.bind(_this));
-          _this.events.on("data-snapshot-load", _this.onDataSnapshotLoad.bind(_this));
+          _this.events.on(PanelEvents.dataReceived, _this.onDataReceived.bind(_this), $scope);
+          _this.events.on(PanelEvents.dataError, _this.onDataError.bind(_this), $scope);
 
-          //    this.className = this.panelID;
+          _this.events.on(PanelEvents.render, _this.onRender.bind(_this));
+          _this.events.on(PanelEvents.dataSnapshotLoad, _this.onDataSnapshotLoad.bind(_this));
+          _this.events.on(PanelEvents.editModeInitialized, _this.onInitEditMode.bind(_this));
+
           _this.className = "michaeldmoore-multistat-panel-" + _this.panel.id;
           return _this;
         }
@@ -467,48 +478,51 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
               } else {
                 this.groupedRows = null;
               }
-              /*
-                    this.elem.html(
-                      "<svg class='" +
-                        this.className +
-                        "'  style='height:100%; width:100%'></svg>"
-              //          + "<ul class='michaeldmoore-multistat-panel-legend'/>"
-                    );
-              */
-              var $container = this.elem.find("#michaeldmoore-multistat-panel-svg");
-              var $legend = this.elem.find("#michaeldmoore-multistat-panel-legend");
 
-              $legend.empty();
+              this.elem.html("<div class='" + this.className + "' style='display: flex; flex-direction: column; height:100%; width:100%'>" + "</div>");
+
+              var $container = this.elem.find("div");
+
+              this.svg = d3.select("." + this.className).append("svg").attr("height", "100%");
+
               if (this.panel.Legend) {
-                this.panel.Values.filter(function (value) {
+                var $legend = $container.append("<ul class='michaeldmoore-multistat-panel-legend'></ul>").find("ul");
+
+                var legendValues = this.panel.Values.filter(function (value) {
                   return value.Col >= 0;
-                }).forEach(function (value, i) {
+                });
+                legendValues.forEach(function (value, i) {
                   ///////////////////////////////////////////////////////////////////////////////
                   // Be careful with this - the toggling/selection logic is quite complicated. //
                   ///////////////////////////////////////////////////////////////////////////////
-                  $legend.append("<li>" + value.Name + "</li>").children().last().css("background-color", value.HighBarColor).click(function () {
-                    var grey = 'michaeldmoore-multistat-panel-legend-grey';
-
+                  var deselectedClassName = value.deselected ? " class='michaeldmoore-multistat-panel-legend-deselected'" : "";
+                  $legend.append("<li" + deselectedClassName + ">" + value.Name + "</li>").children().last().css("background-color", value.HighBarColor).click(function () {
                     if (window.event.ctrlKey) {
                       // toggle this item only
-                      this.classList.toggle(grey);
+                      value.deselected = !value.deselected;
                     } else {
-                      var numGrey = $legend.find('.' + grey).length;
-                      if (this.classList.contains(grey) || numGrey != Values.length - 1) {
+                      if (value.deselected || SelectedValues.length != 1) {
                         // deselect everything
-                        $legend.find('li').addClass(grey);
-
-                        // and select this one;
-                        this.classList.remove(grey);
+                        legendValues.forEach(function (v) {
+                          return v.deselected = true;
+                        });
+                        // and re-select this one;
+                        value.deselected = false;
                       } else {
-                        $legend.find('li').removeClass(grey);
+                        legendValues.forEach(function (v) {
+                          return v.deselected = false;
+                        });
                       }
                     }
+                    // force a re-render
+                    CTRL.$scope.$apply(function () {
+                      CTRL.render();
+                    });
                   });
                 });
               }
 
-              var h = $container.height();
+              var h = $container.find("svg").height();
               var w = $container.width() - 15;
 
               this.buildDateHtml(dateTimeCol);
@@ -517,10 +531,8 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
               var lowSideMargin = this.panel.LowSideMargin >= 0 ? this.panel.LowSideMargin : 0;
               var highSideMargin = this.panel.HighSideMargin >= 0 ? this.panel.HighSideMargin : 0;
 
-              //      this.svg = d3.select("." + this.className).append("svg");
-              $container.empty();
-              this.svg = d3.select("#michaeldmoore-multistat-panel-svg");
               this.svg.selectAll("rect.michaeldmoore-multistat-panel-bar.highflash").interrupt();
+
               this.svg.selectAll("rect.michaeldmoore-multistat-panel-bar.lowflash").interrupt();
 
               var id = this.panel.id;
@@ -559,17 +571,18 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
               var LabelColor = this.panel.LabelColor;
               var ValuePosition = this.panel.ValuePosition;
 
-              var Values = this.panel.Values.filter(function (value) {
-                return value.Col >= 0;
-              }); // ignore unmatched value columns
+              var SelectedValues = this.panel.Values.filter(function (value) {
+                return value.Col >= 0 && !value.deselected;
+              }); // ignore unmatched value or deselected columns
 
-              var panelID = "michaeldmoore-multistat-panel-" + id;
+              //      var panelID = "michaeldmoore-multistat-panel-" + id;
+              var panelID = "michaeldmoore-multistat-panel";
               var tooltipDivID = "michaeldmoore-multistat-panel-tooltip-" + id;
 
-              var minValue = Values.length && d3.min(this.rows, function (d) {
-                var min = d[Values[0].Col];
-                for (var i = 1; i < Values.length; i++) {
-                  var col = Values[i].Col;
+              var minValue = SelectedValues.length && d3.min(this.rows, function (d) {
+                var min = d[SelectedValues[0].Col];
+                for (var i = 1; i < SelectedValues.length; i++) {
+                  var col = SelectedValues[i].Col;
                   var val = Number(d[col]);
                   if (min > val) min = val;
                 }
@@ -577,10 +590,10 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
               });
               if ($.isNumeric(minLineValue) == false) minLineValue = minValue;
 
-              var maxValue = Values.length && d3.max(this.rows, function (d) {
-                var max = d[Values[0].Col];
-                for (var i = 1; i < Values.length; i++) {
-                  var col = Values[i].Col;
+              var maxValue = SelectedValues.length && d3.max(this.rows, function (d) {
+                var max = d[SelectedValues[0].Col];
+                for (var i = 1; i < SelectedValues.length; i++) {
+                  var col = SelectedValues[i].Col;
                   var val = Number(d[col]);
                   if (max < val) max = val;
                 }
@@ -819,12 +832,11 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
 
                   if (panel.ShowValues && panel.ValuePosition == "top") {
                     var maxValueWidth = 0;
-
-                    panel.Values.forEach(function (valueDef, index) {
+                    SelectedValues.forEach(function (valueDef, index) {
                       var valueCol = valueDef.Col;
                       if (valueCol >= 0) {
-                        var gap = panel.Values.length > 1 ? labelScale.bandwidth() * multiBarPadding / (panel.Values.length - 1) / 100 : 0;
-                        var height = (labelScale.bandwidth() - gap * (panel.Values.length - 1)) / panel.Values.length;
+                        var gap = SelectedValues.length > 1 ? labelScale.bandwidth() * multiBarPadding / (SelectedValues.length - 1) / 100 : 0;
+                        var height = (labelScale.bandwidth() - gap * (SelectedValues.length - 1)) / SelectedValues.length;
 
                         g1.append("text").text(function (d) {
                           return (Number(d[valueCol]) * ScaleFactor).toFixed(ValueDecimals);
@@ -846,7 +858,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                     g1.append("text").text(function (d) {
                       return d[labelCol];
                     }).attr("font-family", "sans-serif").attr("font-size", panel.LabelFontSize).attr("fill", function (d, i) {
-                      var value = d[panel.Values[0].Col] * ScaleFactor;
+                      var value = d[SelectedValues[0].Col] * ScaleFactor;
                       return value > maxLineValue || value < minLineValue ? panel.OutOfRangeLabelColor : panel.LabelColor;
                     }).attr("text-anchor", "middle").attr("dominant-baseline", "central").attr("transform", function (d, i) {
                       var bbox = this.getBBox();
@@ -895,11 +907,12 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                   if (panel.ShowLowLimitLine) vLine(svg, lowLimitValue, panel.LowLimitLineColor, panel.LowLimitLineWidth);
 
                   if (panel.ShowBars) {
-                    panel.Values.forEach(function (valueDef, index) {
+                    SelectedValues.forEach(function (valueDef, index) {
                       var valueCol = valueDef.Col;
                       if (valueCol >= 0) {
-                        var gap = panel.Values.length > 1 ? labelScale.bandwidth() * multiBarPadding / (panel.Values.length - 1) / 100 : 0;
-                        var height = (labelScale.bandwidth() - gap * (panel.Values.length - 1)) / panel.Values.length;
+                        var gap = SelectedValues.length > 1 ? labelScale.bandwidth() * multiBarPadding / (SelectedValues.length - 1) / 100 : 0;
+                        var height = (labelScale.bandwidth() - gap * (SelectedValues.length - 1)) / SelectedValues.length;
+
                         g1.append("rect").attr("class", "michaeldmoore-multistat-panel-bar").attr("width", function (d) {
                           var val = scaleAndClipValue(d[valueCol]);
                           return Math.abs(valueScale(val) - valueScale(baseLineValue));
@@ -926,7 +939,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                       for (var i = 0; i < data.length; i++) {
                         var d = data[i];
                         var y = hh + highSideMargin + (i + 0.5) * bw;
-                        var x = valueScale(d[this.panel.Values[0].Col] * ScaleFactor);
+                        var x = valueScale(d[this.SelectedValues[0].Col] * ScaleFactor);
                         points.push({
                           x: x,
                           y: y
@@ -962,17 +975,17 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                       g1.append("circle").attr("r", panel.DotSize / 2.0).attr("fill", panel.DotColor).attr("cy", function (d) {
                         return labelScale(d[labelCol]) + bw * (1.0 - barPadding / 100.0) / 2.0;
                       }).attr("cx", function (d) {
-                        return valueScale(d[this.panel.Values[0].Col] * ScaleFactor);
+                        return valueScale(d[this.SelectedValues[0].Col] * ScaleFactor);
                       });
                     }
                   }
 
                   if (panel.ShowValues && panel.ValuePosition != "top") {
-                    panel.Values.forEach(function (valueDef, index) {
+                    SelectedValues.forEach(function (valueDef, index) {
                       var valueCol = valueDef.Col;
                       if (valueCol >= 0) {
-                        var gap = panel.Values.length > 1 ? labelScale.bandwidth() * multiBarPadding / (panel.Values.length - 1) / 100 : 0;
-                        var height = (labelScale.bandwidth() - gap * (panel.Values.length - 1)) / panel.Values.length;
+                        var gap = SelectedValues.length > 1 ? labelScale.bandwidth() * multiBarPadding / (SelectedValues.length - 1) / 100 : 0;
+                        var height = (labelScale.bandwidth() - gap * (SelectedValues.length - 1)) / SelectedValues.length;
 
                         g1.append("text").text(function (d) {
                           return (Number(d[valueCol]) * ScaleFactor).toFixed(ValueDecimals);
@@ -984,7 +997,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                         }).attr("y", function (d, i) {
                           return labelScale(d[labelCol]) + height / 2 + (height + gap) * index;
                         }).attr("font-family", "sans-serif").attr("font-size", panel.ValueFontSize).attr("fill", panel.ValueColor).attr("text-anchor", function (d) {
-                          if (panel.ValuePosition == "bar base") return d[panel.Values[0].Col] * ScaleFactor > baseLineValue ? "start" : "end";else return d[panel.Values[0].Col] * ScaleFactor > baseLineValue ? "end" : "start";
+                          if (panel.ValuePosition == "bar base") return d[SelectedValues[0].Col] * ScaleFactor > baseLineValue ? "start" : "end";else return d[SelectedValues[0].Col] * ScaleFactor > baseLineValue ? "end" : "start";
                         }).attr("dominant-baseline", "central");
                       }
                     });
@@ -1112,11 +1125,11 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                   if (panel.ShowValues && panel.ValuePosition == "top") {
                     var maxValueHeight = 0;
 
-                    panel.Values.forEach(function (valueDef, index) {
+                    SelectedValues.forEach(function (valueDef, index) {
                       var valueCol = valueDef.Col;
                       if (valueCol >= 0) {
-                        var gap = panel.Values.length > 1 ? labelScale.bandwidth() * multiBarPadding / (panel.Values.length - 1) / 100 : 0;
-                        var width = (labelScale.bandwidth() - gap * (panel.Values.length - 1)) / panel.Values.length;
+                        var gap = SelectedValues.length > 1 ? labelScale.bandwidth() * multiBarPadding / (SelectedValues.length - 1) / 100 : 0;
+                        var width = (labelScale.bandwidth() - gap * (SelectedValues.length - 1)) / SelectedValues.length;
 
                         g2.append("text").text(function (d) {
                           return (Number(d[valueCol]) * ScaleFactor).toFixed(ValueDecimals);
@@ -1139,7 +1152,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                     g2.append("text").text(function (d) {
                       return d[labelCol];
                     }).attr("font-family", "sans-serif").attr("font-size", panel.LabelFontSize).attr("fill", function (d, i) {
-                      return d[panel.Values[0].Col] * ScaleFactor > maxLineValue || d[panel.Values[0].Col] * ScaleFactor < minLineValue ? panel.OutOfRangeLabelColor : LabelColor;
+                      return d[SelectedValues[0].Col] * ScaleFactor > maxLineValue || d[SelectedValues[0].Col] * ScaleFactor < minLineValue ? panel.OutOfRangeLabelColor : LabelColor;
                     }).attr("text-anchor", "middle").attr("dominant-baseline", "central").attr("transform", function (d, i) {
                       var bbox = this.getBBox();
                       var s = Math.sin(labelAngle * Math.PI / 180);
@@ -1184,11 +1197,11 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                   if (panel.ShowLowLimitLine) hLine(svg, lowLimitValue, panel.LowLimitLineColor, panel.LowLimitLineWidth);
 
                   if (panel.ShowBars) {
-                    panel.Values.forEach(function (valueDef, index) {
+                    SelectedValues.forEach(function (valueDef, index) {
                       var valueCol = valueDef.Col;
                       if (valueCol >= 0) {
-                        var gap = panel.Values.length > 1 ? labelScale.bandwidth() * multiBarPadding / (panel.Values.length - 1) / 100 : 0;
-                        var width = (labelScale.bandwidth() - gap * (panel.Values.length - 1)) / panel.Values.length;
+                        var gap = SelectedValues.length > 1 ? labelScale.bandwidth() * multiBarPadding / (SelectedValues.length - 1) / 100 : 0;
+                        var width = (labelScale.bandwidth() - gap * (SelectedValues.length - 1)) / SelectedValues.length;
 
                         g2.append("rect").attr("class", "michaeldmoore-multistat-panel-bar").attr("height", function (d) {
                           var val = scaleAndClipValue(d[valueCol]);
@@ -1216,7 +1229,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                       for (var i = 0; i < data.length; i++) {
                         var d = data[i];
                         var x = left + lowSideMargin + (i + 0.5) * bw;
-                        var y = valueScale(d[this.panel.Values[0].Col] * ScaleFactor);
+                        var y = valueScale(d[this.SelectedValues[0].Col] * ScaleFactor);
                         points.push({
                           x: x,
                           y: y
@@ -1252,17 +1265,17 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                       g2.append("circle").attr("r", panel.DotSize / 2.0).attr("fill", panel.DotColor).attr("cx", function (d) {
                         return labelScale(d[labelCol]) + bw * (1.0 - barPadding / 100.0) / 2.0;
                       }).attr("cy", function (d) {
-                        return valueScale(d[this.panel.Values[0].Col] * ScaleFactor);
+                        return valueScale(d[this.SelectedValues[0].Col] * ScaleFactor);
                       });
                     }
                   }
 
                   if (panel.ShowValues && panel.ValuePosition != "top") {
-                    panel.Values.forEach(function (valueDef, index) {
+                    SelectedValues.forEach(function (valueDef, index) {
                       var valueCol = valueDef.Col;
                       if (valueCol >= 0) {
-                        var gap = panel.Values.length > 1 ? labelScale.bandwidth() * multiBarPadding / (panel.Values.length - 1) / 100 : 0;
-                        var width = (labelScale.bandwidth() - gap * (panel.Values.length - 1)) / panel.Values.length;
+                        var gap = SelectedValues.length > 1 ? labelScale.bandwidth() * multiBarPadding / (SelectedValues.length - 1) / 100 : 0;
+                        var width = (labelScale.bandwidth() - gap * (SelectedValues.length - 1)) / SelectedValues.length;
 
                         g2.append("text").text(function (d) {
                           return (Number(d[valueCol]) * ScaleFactor).toFixed(ValueDecimals);
@@ -1387,6 +1400,8 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
             // for backward compatability (grafana 6.6.0 and earlier)
             var panelContentElem = elem.find(".panel-content");
             if (panelContentElem.length) this.elem = panelContentElem;
+
+            CTRL = ctrl;
           }
         }]);
 
