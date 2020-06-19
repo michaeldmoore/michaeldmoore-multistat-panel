@@ -1,9 +1,9 @@
 "use strict";
 
-System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment", "./css/multistat-panel.css!", "./external/d3.min", "app/core/app_events", "@grafana/data"], function (_export, _context) {
+System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment", "./css/multistat-panel.css!", "d3", "@grafana/data"], function (_export, _context) {
   "use strict";
 
-  var MetricsPanelCtrl, $, _, moment, d3, appEvents, AppEvents, DataQuery, DataQueryResponseData, PanelPlugin, PanelEvents, DataLink, DataTransformerConfig, ScopedVars, _createClass, MultistatPanelCtrl, CTRL;
+  var MetricsPanelCtrl, $, _, moment, d3, PanelEvents, _createClass, MultistatPanelCtrl, CTRL;
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -44,19 +44,10 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
       _ = _lodash.default;
     }, function (_moment) {
       moment = _moment.default;
-    }, function (_cssMultistatPanelCss) {}, function (_externalD3Min) {
-      d3 = _externalD3Min.default;
-    }, function (_appCoreApp_events) {
-      appEvents = _appCoreApp_events.default;
+    }, function (_cssMultistatPanelCss) {}, function (_d) {
+      d3 = _d;
     }, function (_grafanaData) {
-      AppEvents = _grafanaData.AppEvents;
-      DataQuery = _grafanaData.DataQuery;
-      DataQueryResponseData = _grafanaData.DataQueryResponseData;
-      PanelPlugin = _grafanaData.PanelPlugin;
       PanelEvents = _grafanaData.PanelEvents;
-      DataLink = _grafanaData.DataLink;
-      DataTransformerConfig = _grafanaData.DataTransformerConfig;
-      ScopedVars = _grafanaData.ScopedVars;
     }],
     execute: function () {
       _createClass = function () {
@@ -362,6 +353,10 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                 });
               });
 
+              var SelectedValues = this.panel.Values.filter(function (value) {
+                return value.Col >= 0 && value.Selected;
+              });
+
               var groupedLabelFunc = function groupedLabelFunc(obj) {
                 if (groupCol != -1) return obj[groupCol] + ":" + obj[labelCol];else return obj[labelCol];
               };
@@ -381,7 +376,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                 }
               } else this.matchingRows = this.data.rows;
 
-              if (this.panel.Aggregate != "all" && labelCol != -1) {
+              if (this.panel.Aggregate != "all" && labelCol != -1 && SelectedValues.length > 0) {
                 var oo = [];
                 this.rows = [];
                 switch (this.panel.Aggregate) {
@@ -406,8 +401,10 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                   case "mean":
                     this.rows = d3.nest().key(groupedLabelFunc).rollup(function (d) {
                       var dd = Object.values(Object.assign({}, d[d.length - 1]));
-                      dd[this.panel.Values[0].Col] = d3.mean(d, function (d) {
-                        return d[this.panel.Values[0].Col];
+                      SelectedValues.forEach(function (value) {
+                        dd[value.Col] = d3.mean(d, function (d) {
+                          return d[value.Col];
+                        });
                       });
                       return dd;
                     }).entries(this.matchingRows).forEach(function (x) {
@@ -419,8 +416,10 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                   case "max":
                     this.rows = d3.nest().key(groupedLabelFunc).rollup(function (d) {
                       var dd = Object.values(Object.assign({}, d[d.length - 1]));
-                      dd[this.panel.Values[0].Col] = d3.max(d, function (d) {
-                        return d[this.panel.Values[0].Col];
+                      SelectedValues.forEach(function (value) {
+                        dd[value.Col] = d3.max(d, function (d) {
+                          return d[value.Col];
+                        });
                       });
                       return dd;
                     }).entries(this.matchingRows).forEach(function (x) {
@@ -432,8 +431,10 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                   case "min":
                     this.rows = d3.nest().key(groupedLabelFunc).rollup(function (d) {
                       var dd = Object.values(Object.assign({}, d[d.length - 1]));
-                      dd[this.panel.Values[0].Col] = d3.min(d, function (d) {
-                        return d[this.panel.Values[0].Col];
+                      SelectedValues.forEach(function (value) {
+                        dd[value.Col] = d3.min(d, function (d) {
+                          return d[value.Col];
+                        });
                       });
                       return dd;
                     }).entries(this.matchingRows).forEach(function (x) {
@@ -486,7 +487,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
               this.svg = d3.select("." + this.className).append("svg").attr("height", "100%");
 
               if (this.panel.Legend) {
-                var $legend = $container.append("<ul class='michaeldmoore-multistat-panel-legend'></ul>").find("ul");
+                var $legend = $container.append("<div><p></p><ul class='michaeldmoore-multistat-panel-legend'></ul></div>").find("ul");
 
                 var legendValues = this.panel.Values.filter(function (value) {
                   return value.Col >= 0;
@@ -495,22 +496,22 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                   ///////////////////////////////////////////////////////////////////////////////
                   // Be careful with this - the toggling/selection logic is quite complicated. //
                   ///////////////////////////////////////////////////////////////////////////////
-                  var deselectedClassName = value.deselected ? " class='michaeldmoore-multistat-panel-legend-deselected'" : "";
+                  var deselectedClassName = value.Selected ? "" : " class='michaeldmoore-multistat-panel-legend-deselected'";
                   $legend.append("<li" + deselectedClassName + ">" + value.Name + "</li>").children().last().css("background-color", value.HighBarColor).click(function () {
                     if (window.event.ctrlKey) {
                       // toggle this item only
-                      value.deselected = !value.deselected;
+                      value.Selected = !value.Selected;
                     } else {
-                      if (value.deselected || SelectedValues.length != 1) {
+                      if (!value.Selected || SelectedValues.length != 1) {
                         // deselect everything
                         legendValues.forEach(function (v) {
-                          return v.deselected = true;
+                          return v.Selected = false;
                         });
                         // and re-select this one;
-                        value.deselected = false;
+                        value.Selected = true;
                       } else {
                         legendValues.forEach(function (v) {
-                          return v.deselected = false;
+                          return v.Selected = true;
                         });
                       }
                     }
@@ -568,14 +569,9 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
               var GroupCols = this.panel.GroupCols;
               var GroupGap = this.panel.GroupGap;
               var ScaleFactor = Number(this.panel.ScaleFactor);
-              var LabelColor = this.panel.LabelColor;
               var ValuePosition = this.panel.ValuePosition;
 
-              var SelectedValues = this.panel.Values.filter(function (value) {
-                return value.Col >= 0 && !value.deselected;
-              }); // ignore unmatched value or deselected columns
-
-              //      var panelID = "michaeldmoore-multistat-panel-" + id;
+              //var panelID = "michaeldmoore-multistat-panel-" + id;
               var panelID = "michaeldmoore-multistat-panel";
               var tooltipDivID = "michaeldmoore-multistat-panel-tooltip-" + id;
 
@@ -680,6 +676,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
               var tooltipShow = function tooltipShow(d) {
                 if ($("#" + tooltipDivID).length == 0) {
                   $panel = $("." + panelID);
+                  //          $panelContent = this.elem.closest(".panel-content");
                   $panelContent = $panel.parent().parent().parent().parent();
                   panelContent = d3.selectAll($panelContent);
                   panelContent.append("div").attr("id", tooltipDivID).style("opacity", 0);
@@ -858,8 +855,18 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                     g1.append("text").text(function (d) {
                       return d[labelCol];
                     }).attr("font-family", "sans-serif").attr("font-size", panel.LabelFontSize).attr("fill", function (d, i) {
-                      var value = d[SelectedValues[0].Col] * ScaleFactor;
-                      return value > maxLineValue || value < minLineValue ? panel.OutOfRangeLabelColor : panel.LabelColor;
+                      if (SelectedValues.length) {
+                        var minvalue = d[SelectedValues[0].Col] * ScaleFactor;
+                        var maxvalue = minvalue;
+                        SelectedValues.forEach(function (v) {
+                          var value = d[v.Col] * ScaleFactor;
+                          if (minvalue > value) minvalue = value;
+                          if (maxvalue < value) maxvalue = value;
+                        });
+
+                        if (maxvalue > maxLineValue || minvalue < minLineValue) return panel.OutOfRangeLabelColor;
+                      }
+                      return panel.LabelColor;
                     }).attr("text-anchor", "middle").attr("dominant-baseline", "central").attr("transform", function (d, i) {
                       var bbox = this.getBBox();
                       var s = Math.sin(labelAngle * Math.PI / 180);
@@ -933,19 +940,9 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                   }
 
                   if (panel.ShowLines) {
-                    if (panel.LineWidth) {
-                      var points = [];
-                      var bw = labelScale.step();
-                      for (var i = 0; i < data.length; i++) {
-                        var d = data[i];
-                        var y = hh + highSideMargin + (i + 0.5) * bw;
-                        var x = valueScale(d[this.SelectedValues[0].Col] * ScaleFactor);
-                        points.push({
-                          x: x,
-                          y: y
-                        });
-                      }
+                    var bw = labelScale.step();
 
+                    if (panel.LineWidth) {
                       var curveFunc = d3.curveLinear;
                       switch (panel.CurveType) {
                         case "Linear":
@@ -968,14 +965,32 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                         return d.y;
                       });
 
-                      var lineGraph = svg.append("path").attr("d", lineFunction(points)).attr("stroke", panel.LineColor).attr("stroke-width", panel.LineWidth).attr("fill", "none");
-                    }
+                      SelectedValues.forEach(function (value, index) {
+                        var gap = SelectedValues.length > 1 ? labelScale.bandwidth() * multiBarPadding / (SelectedValues.length - 1) / 100 : 0;
+                        var width = (labelScale.bandwidth() - gap * (SelectedValues.length - 1)) / SelectedValues.length;
 
-                    if (panel.DotSize) {
-                      g1.append("circle").attr("r", panel.DotSize / 2.0).attr("fill", panel.DotColor).attr("cy", function (d) {
-                        return labelScale(d[labelCol]) + bw * (1.0 - barPadding / 100.0) / 2.0;
-                      }).attr("cx", function (d) {
-                        return valueScale(d[this.SelectedValues[0].Col] * ScaleFactor);
+                        if (panel.LineWidth) {
+                          var points = [];
+                          for (var i = 0; i < data.length; i++) {
+                            var d = data[i];
+                            var y = labelScale(d[labelCol]) + width / 2 + (width + gap) * index;
+                            var x = valueScale(d[value.Col] * ScaleFactor);
+                            points.push({
+                              x: x,
+                              y: y
+                            });
+                          }
+
+                          svg.append("path").attr("d", lineFunction(points)).attr("stroke", panel.LineColor).attr("stroke-width", panel.LineWidth).attr("fill", "none");
+                        }
+
+                        if (panel.DotSize) {
+                          g1.append("circle").attr("r", panel.DotSize / 2.0).attr("fill", panel.DotColor).attr("cy", function (d) {
+                            return labelScale(d[labelCol]) + width / 2 + (width + gap) * index;
+                          }).attr("cx", function (d) {
+                            return valueScale(d[value.Col] * ScaleFactor);
+                          });
+                        }
                       });
                     }
                   }
@@ -991,13 +1006,16 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                           return (Number(d[valueCol]) * ScaleFactor).toFixed(ValueDecimals);
                         }).attr("x", function (d) {
                           if (panel.ValuePosition == "bar base") return valueScale(baseLineValue);else {
+                            // "bar end"
                             var val = scaleAndClipValue(d[valueCol]);
                             return valueScale(val) + (val > baseLineValue);
                           }
                         }).attr("y", function (d, i) {
                           return labelScale(d[labelCol]) + height / 2 + (height + gap) * index;
                         }).attr("font-family", "sans-serif").attr("font-size", panel.ValueFontSize).attr("fill", panel.ValueColor).attr("text-anchor", function (d) {
-                          if (panel.ValuePosition == "bar base") return d[SelectedValues[0].Col] * ScaleFactor > baseLineValue ? "start" : "end";else return d[SelectedValues[0].Col] * ScaleFactor > baseLineValue ? "end" : "start";
+                          if (panel.ValuePosition == "bar base") return d[valueCol] * ScaleFactor > baseLineValue ? "start" : "end";
+                          // "bar end"
+                          else return d[valueCol] * ScaleFactor > baseLineValue ? "end" : "start";
                         }).attr("dominant-baseline", "central");
                       }
                     });
@@ -1152,7 +1170,14 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                     g2.append("text").text(function (d) {
                       return d[labelCol];
                     }).attr("font-family", "sans-serif").attr("font-size", panel.LabelFontSize).attr("fill", function (d, i) {
-                      return d[SelectedValues[0].Col] * ScaleFactor > maxLineValue || d[SelectedValues[0].Col] * ScaleFactor < minLineValue ? panel.OutOfRangeLabelColor : LabelColor;
+                      if (SelectedValues.length) {
+                        // This should check ALL the SelectedValues, bot just [0]///////////////////////////////////////////////
+                        var minvalue = d[SelectedValues[0].Col] * ScaleFactor;
+                        var maxvalue = minvalue;
+
+                        if (maxvalue > maxLineValue || minvalue < minLineValue) return panel.OutOfRangeLabelColor;
+                      }
+                      return panel.LabelColor;
                     }).attr("text-anchor", "middle").attr("dominant-baseline", "central").attr("transform", function (d, i) {
                       var bbox = this.getBBox();
                       var s = Math.sin(labelAngle * Math.PI / 180);
@@ -1223,19 +1248,9 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                   }
 
                   if (panel.ShowLines) {
-                    if (panel.LineWidth) {
-                      var points = [];
-                      var bw = labelScale.step();
-                      for (var i = 0; i < data.length; i++) {
-                        var d = data[i];
-                        var x = left + lowSideMargin + (i + 0.5) * bw;
-                        var y = valueScale(d[this.SelectedValues[0].Col] * ScaleFactor);
-                        points.push({
-                          x: x,
-                          y: y
-                        });
-                      }
+                    var bw = labelScale.step();
 
+                    if (panel.LineWidth) {
                       var curveFunc = d3.curveLinear;
                       switch (panel.CurveType) {
                         case "Linear":
@@ -1258,14 +1273,32 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                         return d.y;
                       });
 
-                      var lineGraph = svg.append("path").attr("d", lineFunction(points)).attr("stroke", panel.LineColor).attr("stroke-width", panel.LineWidth).attr("fill", "none");
-                    }
+                      SelectedValues.forEach(function (value, index) {
+                        var gap = SelectedValues.length > 1 ? labelScale.bandwidth() * multiBarPadding / (SelectedValues.length - 1) / 100 : 0;
+                        var width = (labelScale.bandwidth() - gap * (SelectedValues.length - 1)) / SelectedValues.length;
 
-                    if (panel.DotSize) {
-                      g2.append("circle").attr("r", panel.DotSize / 2.0).attr("fill", panel.DotColor).attr("cx", function (d) {
-                        return labelScale(d[labelCol]) + bw * (1.0 - barPadding / 100.0) / 2.0;
-                      }).attr("cy", function (d) {
-                        return valueScale(d[this.SelectedValues[0].Col] * ScaleFactor);
+                        if (panel.LineWidth) {
+                          var points = [];
+                          for (var i = 0; i < data.length; i++) {
+                            var d = data[i];
+                            var x = labelScale(d[labelCol]) + width / 2 + (width + gap) * index;
+                            var y = valueScale(d[value.Col] * ScaleFactor);
+                            points.push({
+                              x: x,
+                              y: y
+                            });
+                          }
+
+                          svg.append("path").attr("d", lineFunction(points)).attr("stroke", panel.LineColor).attr("stroke-width", panel.LineWidth).attr("fill", "none");
+                        }
+
+                        if (panel.DotSize) {
+                          g2.append("circle").attr("r", panel.DotSize / 2.0).attr("fill", panel.DotColor).attr("cx", function (d) {
+                            return labelScale(d[labelCol]) + width / 2 + (width + gap) * index;
+                          }).attr("cy", function (d) {
+                            return valueScale(d[value.Col] * ScaleFactor);
+                          });
+                        }
                       });
                     }
                   }
@@ -1383,6 +1416,24 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
               pulseHigh(this.svg);
               pulseLow(this.svg);
             }
+
+            /*
+            var drag = d3.drag()
+              .on("drag", function () {
+                d3.select(this).attr("cx", d3.event.x).attr("cy", d3.event.y);
+              });
+              if (!this.panel.Legend) {
+              this.svg
+                .append("rect")
+                .attr("x", 10)
+                .attr("y", 20)
+                .attr("width", 100)
+                .attr("height", 200)
+                .attr("fill", "red")
+                .attr("stroke", "yellow")
+                .call(this.drag);
+            }
+            */
 
             this.ctrl.renderingCompleted();
           }

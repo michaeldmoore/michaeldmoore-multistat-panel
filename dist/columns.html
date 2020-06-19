@@ -66,7 +66,7 @@
         <span class="gf-form-label">
           <i
             class="fa fa-plus"
-            ng-click="ctrl.panel.Values.push({Name:'', HighBarColor:'rgb(120, 128, 0)', LowBarColor:'teal'}); ctrl.render();"
+            ng-click="ctrl.panel.Values.push({Name:'', HighBarColor:'rgb(120, 128, 0)', LowBarColor:'teal', Selected: true}); ctrl.render();"
           ></i>
         </span>
         <span class="michaeldmoore-multistat-panel-w2"></span>
@@ -127,9 +127,9 @@
 
       <gf-form-switch
         class="gf-form"
-        label-class="michaeldmoore-multistat-panel-w7"
-        label="Deselect"
-        checked="value.deselected"
+        label-class="michaeldmoore-multistat-panel-w4"
+        label="Select"
+        checked="value.Selected"
         on-change="ctrl.render();"
       ></gf-form-switch>
 

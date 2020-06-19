@@ -7,18 +7,8 @@ import "jquery.flot";
 import _ from "lodash";
 import moment from "moment";
 import "./css/multistat-panel.css!";
-import d3 from "./external/d3.min";
-import appEvents from "app/core/app_events";
-import { AppEvents } from "@grafana/data";
-import {
-  DataQuery,
-  DataQueryResponseData,
-  PanelPlugin,
-  PanelEvents,
-  DataLink,
-  DataTransformerConfig,
-  ScopedVars,
-} from "@grafana/data";
+import * as d3 from "d3";
+import { PanelEvents } from "@grafana/data";
 
 class MultistatPanelCtrl extends MetricsPanelCtrl {
   /** @ngInject */
@@ -375,6 +365,10 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
         });
       });
 
+      var SelectedValues = this.panel.Values.filter(
+        (value) => value.Col >= 0 && value.Selected
+      );
+
       const groupedLabelFunc = function (obj) {
         if (groupCol != -1) return obj[groupCol] + ":" + obj[labelCol];
         else return obj[labelCol];
@@ -401,7 +395,11 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
         }
       } else this.matchingRows = this.data.rows;
 
-      if (this.panel.Aggregate != "all" && labelCol != -1) {
+      if (
+        this.panel.Aggregate != "all" &&
+        labelCol != -1 &&
+        SelectedValues.length > 0
+      ) {
         var oo = [];
         this.rows = [];
         switch (this.panel.Aggregate) {
@@ -439,8 +437,10 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
               .key(groupedLabelFunc)
               .rollup(function (d) {
                 var dd = Object.values(Object.assign({}, d[d.length - 1]));
-                dd[this.panel.Values[0].Col] = d3.mean(d, function (d) {
-                  return d[this.panel.Values[0].Col];
+                SelectedValues.forEach((value) => {
+                  dd[value.Col] = d3.mean(d, function (d) {
+                    return d[value.Col];
+                  });
                 });
                 return dd;
               })
@@ -457,8 +457,10 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
               .key(groupedLabelFunc)
               .rollup(function (d) {
                 var dd = Object.values(Object.assign({}, d[d.length - 1]));
-                dd[this.panel.Values[0].Col] = d3.max(d, function (d) {
-                  return d[this.panel.Values[0].Col];
+                SelectedValues.forEach((value) => {
+                  dd[value.Col] = d3.max(d, function (d) {
+                    return d[value.Col];
+                  });
                 });
                 return dd;
               })
@@ -475,8 +477,10 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
               .key(groupedLabelFunc)
               .rollup(function (d) {
                 var dd = Object.values(Object.assign({}, d[d.length - 1]));
-                dd[this.panel.Values[0].Col] = d3.min(d, function (d) {
-                  return d[this.panel.Values[0].Col];
+                SelectedValues.forEach((value) => {
+                  dd[value.Col] = d3.min(d, function (d) {
+                    return d[value.Col];
+                  });
                 });
                 return dd;
               })
@@ -556,7 +560,9 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
       if (this.panel.Legend) {
         var $legend = $container
-          .append("<ul class='michaeldmoore-multistat-panel-legend'></ul>")
+          .append(
+            "<div><p></p><ul class='michaeldmoore-multistat-panel-legend'></ul></div>"
+          )
           .find("ul");
 
         const legendValues = this.panel.Values.filter(
@@ -566,9 +572,9 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
           ///////////////////////////////////////////////////////////////////////////////
           // Be careful with this - the toggling/selection logic is quite complicated. //
           ///////////////////////////////////////////////////////////////////////////////
-          let deselectedClassName = value.deselected
-            ? " class='michaeldmoore-multistat-panel-legend-deselected'"
-            : "";
+          let deselectedClassName = value.Selected
+            ? ""
+            : " class='michaeldmoore-multistat-panel-legend-deselected'";
           $legend
             .append("<li" + deselectedClassName + ">" + value.Name + "</li>")
             .children()
@@ -577,15 +583,15 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
             .click(function () {
               if (window.event.ctrlKey) {
                 // toggle this item only
-                value.deselected = !value.deselected;
+                value.Selected = !value.Selected;
               } else {
-                if (value.deselected || SelectedValues.length != 1) {
+                if (!value.Selected || SelectedValues.length != 1) {
                   // deselect everything
-                  legendValues.forEach((v) => (v.deselected = true));
+                  legendValues.forEach((v) => (v.Selected = false));
                   // and re-select this one;
-                  value.deselected = false;
+                  value.Selected = true;
                 } else {
-                  legendValues.forEach((v) => (v.deselected = false));
+                  legendValues.forEach((v) => (v.Selected = true));
                 }
               }
               // force a re-render
@@ -651,14 +657,9 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
       var GroupCols = this.panel.GroupCols;
       var GroupGap = this.panel.GroupGap;
       var ScaleFactor = Number(this.panel.ScaleFactor);
-      var LabelColor = this.panel.LabelColor;
       var ValuePosition = this.panel.ValuePosition;
 
-      var SelectedValues = this.panel.Values.filter(
-        (value) => value.Col >= 0 && !value.deselected
-      ); // ignore unmatched value or deselected columns
-
-      //      var panelID = "michaeldmoore-multistat-panel-" + id;
+      //var panelID = "michaeldmoore-multistat-panel-" + id;
       var panelID = "michaeldmoore-multistat-panel";
       var tooltipDivID = "michaeldmoore-multistat-panel-tooltip-" + id;
 
@@ -789,6 +790,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
       var tooltipShow = function (d) {
         if ($("#" + tooltipDivID).length == 0) {
           $panel = $("." + panelID);
+          //          $panelContent = this.elem.closest(".panel-content");
           $panelContent = $panel.parent().parent().parent().parent();
           panelContent = d3.selectAll($panelContent);
           panelContent
@@ -1073,10 +1075,19 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
               .attr("font-family", "sans-serif")
               .attr("font-size", panel.LabelFontSize)
               .attr("fill", function (d, i) {
-                let value = d[SelectedValues[0].Col] * ScaleFactor;
-                return value > maxLineValue || value < minLineValue
-                  ? panel.OutOfRangeLabelColor
-                  : panel.LabelColor;
+                if (SelectedValues.length) {
+                  let minvalue = d[SelectedValues[0].Col] * ScaleFactor;
+                  let maxvalue = minvalue;
+                  SelectedValues.forEach((v) => {
+                    let value = d[v.Col] * ScaleFactor;
+                    if (minvalue > value) minvalue = value;
+                    if (maxvalue < value) maxvalue = value;
+                  });
+
+                  if (maxvalue > maxLineValue || minvalue < minLineValue)
+                    return panel.OutOfRangeLabelColor;
+                }
+                return panel.LabelColor;
               })
               .attr("text-anchor", "middle")
               .attr("dominant-baseline", "central")
@@ -1207,19 +1218,9 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
           }
 
           if (panel.ShowLines) {
-            if (panel.LineWidth) {
-              var points = [];
-              var bw = labelScale.step();
-              for (var i = 0; i < data.length; i++) {
-                var d = data[i];
-                var y = hh + highSideMargin + (i + 0.5) * bw;
-                var x = valueScale(d[this.SelectedValues[0].Col] * ScaleFactor);
-                points.push({
-                  x,
-                  y,
-                });
-              }
+            var bw = labelScale.step();
 
+            if (panel.LineWidth) {
               var curveFunc = d3.curveLinear;
               switch (panel.CurveType) {
                 case "Linear":
@@ -1246,29 +1247,56 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
                   return d.y;
                 });
 
-              var lineGraph = svg
-                .append("path")
-                .attr("d", lineFunction(points))
-                .attr("stroke", panel.LineColor)
-                .attr("stroke-width", panel.LineWidth)
-                .attr("fill", "none");
-            }
+              SelectedValues.forEach((value, index) => {
+                let gap =
+                  SelectedValues.length > 1
+                    ? (labelScale.bandwidth() * multiBarPadding) /
+                      (SelectedValues.length - 1) /
+                      100
+                    : 0;
+                let width =
+                  (labelScale.bandwidth() - gap * (SelectedValues.length - 1)) /
+                  SelectedValues.length;
 
-            if (panel.DotSize) {
-              g1.append("circle")
-                .attr("r", panel.DotSize / 2.0)
-                .attr("fill", panel.DotColor)
-                .attr("cy", function (d) {
-                  return (
-                    labelScale(d[labelCol]) +
-                    (bw * (1.0 - barPadding / 100.0)) / 2.0
-                  );
-                })
-                .attr("cx", function (d) {
-                  return valueScale(
-                    d[this.SelectedValues[0].Col] * ScaleFactor
-                  );
-                });
+                if (panel.LineWidth) {
+                  var points = [];
+                  for (var i = 0; i < data.length; i++) {
+                    var d = data[i];
+                    var y =
+                      labelScale(d[labelCol]) +
+                      width / 2 +
+                      (width + gap) * index;
+                    var x = valueScale(d[value.Col] * ScaleFactor);
+                    points.push({
+                      x,
+                      y,
+                    });
+                  }
+
+                  svg
+                    .append("path")
+                    .attr("d", lineFunction(points))
+                    .attr("stroke", panel.LineColor)
+                    .attr("stroke-width", panel.LineWidth)
+                    .attr("fill", "none");
+                }
+
+                if (panel.DotSize) {
+                  g1.append("circle")
+                    .attr("r", panel.DotSize / 2.0)
+                    .attr("fill", panel.DotColor)
+                    .attr("cy", function (d) {
+                      return (
+                        labelScale(d[labelCol]) +
+                        width / 2 +
+                        (width + gap) * index
+                      );
+                    })
+                    .attr("cx", function (d) {
+                      return valueScale(d[value.Col] * ScaleFactor);
+                    });
+                }
+              });
             }
           }
 
@@ -1296,6 +1324,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
                     if (panel.ValuePosition == "bar base")
                       return valueScale(baseLineValue);
                     else {
+                      // "bar end"
                       var val = scaleAndClipValue(d[valueCol]);
                       return valueScale(val) + (val > baseLineValue);
                     }
@@ -1312,13 +1341,12 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
                   .attr("fill", panel.ValueColor)
                   .attr("text-anchor", function (d) {
                     if (panel.ValuePosition == "bar base")
-                      return d[SelectedValues[0].Col] * ScaleFactor >
-                        baseLineValue
+                      return d[valueCol] * ScaleFactor > baseLineValue
                         ? "start"
                         : "end";
+                    // "bar end"
                     else
-                      return d[SelectedValues[0].Col] * ScaleFactor >
-                        baseLineValue
+                      return d[valueCol] * ScaleFactor > baseLineValue
                         ? "end"
                         : "start";
                   })
@@ -1619,10 +1647,15 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
               .attr("font-family", "sans-serif")
               .attr("font-size", panel.LabelFontSize)
               .attr("fill", function (d, i) {
-                return d[SelectedValues[0].Col] * ScaleFactor > maxLineValue ||
-                  d[SelectedValues[0].Col] * ScaleFactor < minLineValue
-                  ? panel.OutOfRangeLabelColor
-                  : LabelColor;
+                if (SelectedValues.length) {
+                  // This should check ALL the SelectedValues, bot just [0]///////////////////////////////////////////////
+                  let minvalue = d[SelectedValues[0].Col] * ScaleFactor;
+                  let maxvalue = minvalue;
+
+                  if (maxvalue > maxLineValue || minvalue < minLineValue)
+                    return panel.OutOfRangeLabelColor;
+                }
+                return panel.LabelColor;
               })
               .attr("text-anchor", "middle")
               .attr("dominant-baseline", "central")
@@ -1750,19 +1783,9 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
           }
 
           if (panel.ShowLines) {
-            if (panel.LineWidth) {
-              var points = [];
-              var bw = labelScale.step();
-              for (var i = 0; i < data.length; i++) {
-                var d = data[i];
-                var x = left + lowSideMargin + (i + 0.5) * bw;
-                var y = valueScale(d[this.SelectedValues[0].Col] * ScaleFactor);
-                points.push({
-                  x,
-                  y,
-                });
-              }
+            var bw = labelScale.step();
 
+            if (panel.LineWidth) {
               var curveFunc = d3.curveLinear;
               switch (panel.CurveType) {
                 case "Linear":
@@ -1789,29 +1812,56 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
                   return d.y;
                 });
 
-              var lineGraph = svg
-                .append("path")
-                .attr("d", lineFunction(points))
-                .attr("stroke", panel.LineColor)
-                .attr("stroke-width", panel.LineWidth)
-                .attr("fill", "none");
-            }
+              SelectedValues.forEach((value, index) => {
+                let gap =
+                  SelectedValues.length > 1
+                    ? (labelScale.bandwidth() * multiBarPadding) /
+                      (SelectedValues.length - 1) /
+                      100
+                    : 0;
+                let width =
+                  (labelScale.bandwidth() - gap * (SelectedValues.length - 1)) /
+                  SelectedValues.length;
 
-            if (panel.DotSize) {
-              g2.append("circle")
-                .attr("r", panel.DotSize / 2.0)
-                .attr("fill", panel.DotColor)
-                .attr("cx", function (d) {
-                  return (
-                    labelScale(d[labelCol]) +
-                    (bw * (1.0 - barPadding / 100.0)) / 2.0
-                  );
-                })
-                .attr("cy", function (d) {
-                  return valueScale(
-                    d[this.SelectedValues[0].Col] * ScaleFactor
-                  );
-                });
+                if (panel.LineWidth) {
+                  var points = [];
+                  for (var i = 0; i < data.length; i++) {
+                    var d = data[i];
+                    var x =
+                      labelScale(d[labelCol]) +
+                      width / 2 +
+                      (width + gap) * index;
+                    var y = valueScale(d[value.Col] * ScaleFactor);
+                    points.push({
+                      x,
+                      y,
+                    });
+                  }
+
+                  svg
+                    .append("path")
+                    .attr("d", lineFunction(points))
+                    .attr("stroke", panel.LineColor)
+                    .attr("stroke-width", panel.LineWidth)
+                    .attr("fill", "none");
+                }
+
+                if (panel.DotSize) {
+                  g2.append("circle")
+                    .attr("r", panel.DotSize / 2.0)
+                    .attr("fill", panel.DotColor)
+                    .attr("cx", function (d) {
+                      return (
+                        labelScale(d[labelCol]) +
+                        width / 2 +
+                        (width + gap) * index
+                      );
+                    })
+                    .attr("cy", function (d) {
+                      return valueScale(d[value.Col] * ScaleFactor);
+                    });
+                }
+              });
             }
           }
 
@@ -2064,6 +2114,25 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
       pulseHigh(this.svg);
       pulseLow(this.svg);
     }
+
+    /*
+    var drag = d3.drag()
+      .on("drag", function () {
+        d3.select(this).attr("cx", d3.event.x).attr("cy", d3.event.y);
+      });
+
+    if (!this.panel.Legend) {
+      this.svg
+        .append("rect")
+        .attr("x", 10)
+        .attr("y", 20)
+        .attr("width", 100)
+        .attr("height", 200)
+        .attr("fill", "red")
+        .attr("stroke", "yellow")
+        .call(this.drag);
+    }
+*/
 
     this.ctrl.renderingCompleted();
   }
