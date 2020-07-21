@@ -8,11 +8,25 @@ import _ from "lodash";
 import moment from "moment";
 import "./css/multistat-panel.css!";
 import d3 from "./external/d3.min";
+import { getTemplateSrv } from '@grafana/runtime';
+import appEvents from "app/core/app_events";
+import { AppEvents } from "@grafana/data";
+import {
+//  DataQuery,
+//  DataQueryResponseData,
+//  PanelPlugin,
+  PanelEvents,
+//  DataLink,
+//  DataTransformerConfig,
+//  ScopedVars,
+} from "@grafana/data";
+
+const templateSrv = getTemplateSrv();
 
 class MultistatPanelCtrl extends MetricsPanelCtrl {
   /** @ngInject */
-  constructor($scope, $injector, variableSrv) {
-    super($scope, $injector, variableSrv);
+  constructor($scope, $injector/*, variableSrv*/) {
+    super($scope, $injector/*, variableSrv*/);
 
     var panelDefaults = {
       timeFrom: null,
@@ -107,17 +121,36 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
     _.defaults(this.panel, panelDefaults);
 
-    variableSrv.variables.forEach((v) => {
+    templateSrv.getVariables().forEach((v) => {
       console.log("dashboard variable[" + v.name + "]=" + v.current.value);
       this.updateNamedValue(this.panel, v.name.split("_"), v.current.value);
     });
 
-    this.events.on("render", this.onRender.bind(this));
-    this.events.on("data-received", this.onDataReceived.bind(this));
-    this.events.on("data-error", this.onDataError.bind(this));
-    this.events.on("init-edit-mode", this.onInitEditMode.bind(this));
-    this.events.on("data-snapshot-load", this.onDataSnapshotLoad.bind(this));
+    this.events.on(
+      PanelEvents.dataReceived,
+      this.onDataReceived.bind(this),
+      $scope
+    );
+  
+    this.events.on(PanelEvents.dataError, this.onDataError.bind(this), $scope);
 
+    this.events.on(PanelEvents.render, this.onRender.bind(this));
+  
+    this.events.on(
+      PanelEvents.dataSnapshotLoad,
+      this.onDataSnapshotLoad.bind(this)
+    );
+  
+    this.events.on(
+      PanelEvents.editModeInitialized,
+      this.onInitEditMode.bind(this)
+    );
+    
+    this.events.on(
+      PanelEvents.dataSnapshotLoad,
+      this.onDataSnapshotLoad.bind(this)
+    );
+    
     //    this.className = this.panelID;
     this.className = "michaeldmoore-multistat-panel-" + this.panel.id;
   }
@@ -156,7 +189,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
       "range",
     ];
     this.sortDirections = ["none", "ascending", "descending"];
-    this.aggregations = ["all", "last", "first", "mean", "max", "min"];
+    this.aggregations = ["all", "last", "first", "mean", "max", "min", "sum"];
     this.fontSizes = [
       "20%",
       "30%",
@@ -323,6 +356,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
         if (cols[i] == this.panel.RecolorColName) recolorCol = i;
       }
 
+      //console.log('onRender: this.data.rows\n'+JSON.stringify(this.data.rows));
+
       const groupedLabelFunc = function (obj) {
         if (groupCol != -1) return obj[groupCol] + ":" + obj[labelCol];
         else return obj[labelCol];
@@ -348,6 +383,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
           return;
         }
       } else this.matchingRows = this.data.rows;
+
+      //console.log('before aggregation('+this.panel.Aggregate+') this.matchingRows:\n'+JSON.stringify(this.matchingRows));
 
       if (this.panel.Aggregate != "all" && labelCol != -1) {
         var oo = [];
@@ -381,13 +418,13 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
             this.rows = oo;
             break;
 
-          case "mean":
+          case "sum":
             this.rows = d3
               .nest()
               .key(groupedLabelFunc)
               .rollup(function (d) {
                 var dd = Object.values(Object.assign({}, d[d.length - 1]));
-                dd[valueCol] = d3.mean(d, function (d) {
+                dd[valueCol] = d3.sum(d, function (d) {
                   return d[valueCol];
                 });
                 return dd;
@@ -399,7 +436,25 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
             this.rows = Array.from(oo);
             break;
 
-          case "max":
+            case "mean":
+              this.rows = d3
+                .nest()
+                .key(groupedLabelFunc)
+                .rollup(function (d) {
+                  var dd = Object.values(Object.assign({}, d[d.length - 1]));
+                  dd[valueCol] = d3.mean(d, function (d) {
+                    return d[valueCol];
+                  });
+                  return dd;
+                })
+                .entries(this.matchingRows)
+                .forEach(function (x) {
+                  oo.push(x.value);
+                });
+              this.rows = Array.from(oo);
+              break;
+  
+            case "max":
             this.rows = d3
               .nest()
               .key(groupedLabelFunc)
@@ -438,6 +493,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
       } else {
         this.rows = this.matchingRows;
       }
+
+      //console.log('after aggregation('+this.panel.Aggregate+') this.rows:\n'+JSON.stringify(this.rows));
 
       var groupNameOffset = this.panel.ShowGroupLabels
         ? Number(this.panel.GroupLabelFontSize.replace("%", "")) * 0.15

@@ -1,9 +1,9 @@
 "use strict";
 
-System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment", "./css/multistat-panel.css!", "./external/d3.min"], function (_export, _context) {
+System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment", "./css/multistat-panel.css!", "./external/d3.min", "@grafana/runtime", "app/core/app_events", "@grafana/data"], function (_export, _context) {
   "use strict";
 
-  var MetricsPanelCtrl, $, _, moment, d3, _createClass, MultistatPanelCtrl;
+  var MetricsPanelCtrl, $, _, moment, d3, getTemplateSrv, appEvents, AppEvents, PanelEvents, _createClass, templateSrv, MultistatPanelCtrl;
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -46,6 +46,13 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
       moment = _moment.default;
     }, function (_cssMultistatPanelCss) {}, function (_externalD3Min) {
       d3 = _externalD3Min.default;
+    }, function (_grafanaRuntime) {
+      getTemplateSrv = _grafanaRuntime.getTemplateSrv;
+    }, function (_appCoreApp_events) {
+      appEvents = _appCoreApp_events.default;
+    }, function (_grafanaData) {
+      AppEvents = _grafanaData.AppEvents;
+      PanelEvents = _grafanaData.PanelEvents;
     }],
     execute: function () {
       _createClass = function () {
@@ -66,14 +73,16 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
         };
       }();
 
+      templateSrv = getTemplateSrv();
+
       _export("PanelCtrl", MultistatPanelCtrl = function (_MetricsPanelCtrl) {
         _inherits(MultistatPanelCtrl, _MetricsPanelCtrl);
 
         /** @ngInject */
-        function MultistatPanelCtrl($scope, $injector, variableSrv) {
+        function MultistatPanelCtrl($scope, $injector /*, variableSrv*/) {
           _classCallCheck(this, MultistatPanelCtrl);
 
-          var _this = _possibleConstructorReturn(this, (MultistatPanelCtrl.__proto__ || Object.getPrototypeOf(MultistatPanelCtrl)).call(this, $scope, $injector, variableSrv));
+          var _this = _possibleConstructorReturn(this, (MultistatPanelCtrl.__proto__ || Object.getPrototypeOf(MultistatPanelCtrl)).call(this, $scope, $injector /*, variableSrv*/));
 
           var panelDefaults = {
             timeFrom: null,
@@ -168,16 +177,22 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
 
           _.defaults(_this.panel, panelDefaults);
 
-          variableSrv.variables.forEach(function (v) {
+          templateSrv.getVariables().forEach(function (v) {
             console.log("dashboard variable[" + v.name + "]=" + v.current.value);
             _this.updateNamedValue(_this.panel, v.name.split("_"), v.current.value);
           });
 
-          _this.events.on("render", _this.onRender.bind(_this));
-          _this.events.on("data-received", _this.onDataReceived.bind(_this));
-          _this.events.on("data-error", _this.onDataError.bind(_this));
-          _this.events.on("init-edit-mode", _this.onInitEditMode.bind(_this));
-          _this.events.on("data-snapshot-load", _this.onDataSnapshotLoad.bind(_this));
+          _this.events.on(PanelEvents.dataReceived, _this.onDataReceived.bind(_this), $scope);
+
+          _this.events.on(PanelEvents.dataError, _this.onDataError.bind(_this), $scope);
+
+          _this.events.on(PanelEvents.render, _this.onRender.bind(_this));
+
+          _this.events.on(PanelEvents.dataSnapshotLoad, _this.onDataSnapshotLoad.bind(_this));
+
+          _this.events.on(PanelEvents.editModeInitialized, _this.onInitEditMode.bind(_this));
+
+          _this.events.on(PanelEvents.dataSnapshotLoad, _this.onDataSnapshotLoad.bind(_this));
 
           //    this.className = this.panelID;
           _this.className = "michaeldmoore-multistat-panel-" + _this.panel.id;
@@ -209,7 +224,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
           value: function onInitEditMode() {
             this.metricNames = ["min", "max", "avg", "current", "total", "name", "first", "delta", "diff", "range"];
             this.sortDirections = ["none", "ascending", "descending"];
-            this.aggregations = ["all", "last", "first", "mean", "max", "min"];
+            this.aggregations = ["all", "last", "first", "mean", "max", "min", "sum"];
             this.fontSizes = ["20%", "30%", "50%", "70%", "80%", "100%", "110%", "120%", "150%", "170%", "200%", "250%", "300%", "350%", "400%"];
             this.valuePositions = ["bar base", "bar end", "top"];
             this.curveTypes = ["Linear", "Monotone", "Cardinal", "Catmull-Rom"];
@@ -320,6 +335,8 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                 if (cols[i] == this.panel.RecolorColName) recolorCol = i;
               }
 
+              //console.log('onRender: this.data.rows\n'+JSON.stringify(this.data.rows));
+
               var groupedLabelFunc = function groupedLabelFunc(obj) {
                 if (groupCol != -1) return obj[groupCol] + ":" + obj[labelCol];else return obj[labelCol];
               };
@@ -338,6 +355,8 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                   return;
                 }
               } else this.matchingRows = this.data.rows;
+
+              //console.log('before aggregation('+this.panel.Aggregate+') this.matchingRows:\n'+JSON.stringify(this.matchingRows));
 
               if (this.panel.Aggregate != "all" && labelCol != -1) {
                 var oo = [];
@@ -359,6 +378,19 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                       oo.push(x.value);
                     });
                     this.rows = oo;
+                    break;
+
+                  case "sum":
+                    this.rows = d3.nest().key(groupedLabelFunc).rollup(function (d) {
+                      var dd = Object.values(Object.assign({}, d[d.length - 1]));
+                      dd[valueCol] = d3.sum(d, function (d) {
+                        return d[valueCol];
+                      });
+                      return dd;
+                    }).entries(this.matchingRows).forEach(function (x) {
+                      oo.push(x.value);
+                    });
+                    this.rows = Array.from(oo);
                     break;
 
                   case "mean":
@@ -403,6 +435,8 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
               } else {
                 this.rows = this.matchingRows;
               }
+
+              //console.log('after aggregation('+this.panel.Aggregate+') this.rows:\n'+JSON.stringify(this.rows));
 
               var groupNameOffset = this.panel.ShowGroupLabels ? Number(this.panel.GroupLabelFontSize.replace("%", "")) * 0.15 : 0;
 

@@ -9,8 +9,8 @@
       "url": "https://github.com/michaeldmoore"
     },
     "keywords": ["multistat", "singlestat", "panel"],
-    "version": "1.4.0",
-    "updated": "2020-05-04",
+    "version": "1.4.1",
+    "updated": "2020-07-21",
     "logos": {
       "small": "img/michaeldmoore-multistat-panel.svg",
       "large": "img/michaeldmoore-multistat-panel.svg"
@@ -33,7 +33,7 @@
     ]
   },
   "dependencies": {
-    "grafanaVersion": "5.x.x",
+    "grafanaVersion": "7.x.x",
     "plugins": []
   }
 }

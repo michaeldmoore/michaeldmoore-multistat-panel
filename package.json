@@ -1,6 +1,6 @@
 {
   "name": "michaeldmoore-multistat-panel",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Multistat panel for Grafana",
   "main": "README.md",
   "scripts": {
@@ -46,6 +46,8 @@
     "load-grunt-tasks": "^5.1.0"
   },
   "dependencies": {
+    "@grafana/data": "^7.1.0",
+    "@grafana/runtime": "^7.1.0",
     "lodash": "^4.17.19"
   }
 }
