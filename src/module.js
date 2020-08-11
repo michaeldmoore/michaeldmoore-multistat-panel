@@ -7,13 +7,17 @@ import "jquery.flot";
 import _ from "lodash";
 import moment from "moment";
 import "./css/multistat-panel.css!";
+//import d3 from "./external/d3.min";
 import * as d3 from "d3";
+import { getTemplateSrv } from '@grafana/runtime';
 import { PanelEvents } from "@grafana/data";
+
+const templateSrv = getTemplateSrv();
 
 class MultistatPanelCtrl extends MetricsPanelCtrl {
   /** @ngInject */
-  constructor($scope, $injector, variableSrv) {
-    super($scope, $injector, variableSrv);
+  constructor($scope, $injector) {
+    super($scope, $injector);
 
     var panelDefaults = {
       timeFrom: null,
@@ -87,7 +91,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
       TZOffsetHours: 0,
       ToolTipType: "",
       ToolTipFontSize: "100%",
-      ValueColName: "temperature",
+      ValueColName: "",
       Values: [],
       ValueDecimals: 2,
       ValueColor: "#ffffff",
@@ -126,7 +130,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
       delete this.panel.HighBarColor;
     }
 
-    variableSrv.variables.forEach((v) => {
+    templateSrv.getVariables().forEach((v) => {
       console.log("dashboard variable[" + v.name + "]=" + v.current.value);
       this.updateNamedValue(this.panel, v.name.split("_"), v.current.value);
     });
@@ -136,16 +140,24 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
       this.onDataReceived.bind(this),
       $scope
     );
+
     this.events.on(PanelEvents.dataError, this.onDataError.bind(this), $scope);
 
     this.events.on(PanelEvents.render, this.onRender.bind(this));
+
     this.events.on(
       PanelEvents.dataSnapshotLoad,
       this.onDataSnapshotLoad.bind(this)
     );
+
     this.events.on(
       PanelEvents.editModeInitialized,
       this.onInitEditMode.bind(this)
+    );
+    
+    this.events.on(
+      PanelEvents.dataSnapshotLoad,
+      this.onDataSnapshotLoad.bind(this)
     );
 
     this.className = "michaeldmoore-multistat-panel-" + this.panel.id;
@@ -431,7 +443,27 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
             this.rows = oo;
             break;
 
-          case "mean":
+          case "sum":
+            this.rows = d3
+              .nest()
+              .key(groupedLabelFunc)
+              .rollup(function (d) {
+                var dd = Object.values(Object.assign({}, d[d.length - 1]));
+                SelectedValues.forEach((value) => {
+                  dd[value.Col] = d3.sum(d, function (d) {
+                    return d[value.Col];
+                  });
+                });
+                return dd;
+              })
+              .entries(this.matchingRows)
+              .forEach(function (x) {
+                oo.push(x.value);
+              });
+            this.rows = Array.from(oo);
+            break;
+
+            case "mean":
             this.rows = d3
               .nest()
               .key(groupedLabelFunc)
@@ -659,8 +691,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
       var ScaleFactor = Number(this.panel.ScaleFactor);
       var ValuePosition = this.panel.ValuePosition;
 
-      //var panelID = "michaeldmoore-multistat-panel-" + id;
-      var panelID = "michaeldmoore-multistat-panel";
+      var panelID = "michaeldmoore-multistat-panel-" + id;
       var tooltipDivID = "michaeldmoore-multistat-panel-tooltip-" + id;
 
       var minValue =

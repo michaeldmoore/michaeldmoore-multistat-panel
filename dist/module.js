@@ -1,9 +1,9 @@
 "use strict";
 
-System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment", "./css/multistat-panel.css!", "d3", "@grafana/data"], function (_export, _context) {
+System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment", "./css/multistat-panel.css!", "d3", "@grafana/runtime", "@grafana/data"], function (_export, _context) {
   "use strict";
 
-  var MetricsPanelCtrl, $, _, moment, d3, PanelEvents, _createClass, MultistatPanelCtrl, CTRL;
+  var MetricsPanelCtrl, $, _, moment, d3, getTemplateSrv, PanelEvents, _createClass, templateSrv, MultistatPanelCtrl, CTRL;
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -46,6 +46,8 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
       moment = _moment.default;
     }, function (_cssMultistatPanelCss) {}, function (_d) {
       d3 = _d;
+    }, function (_grafanaRuntime) {
+      getTemplateSrv = _grafanaRuntime.getTemplateSrv;
     }, function (_grafanaData) {
       PanelEvents = _grafanaData.PanelEvents;
     }],
@@ -68,14 +70,16 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
         };
       }();
 
+      templateSrv = getTemplateSrv();
+
       _export("PanelCtrl", MultistatPanelCtrl = function (_MetricsPanelCtrl) {
         _inherits(MultistatPanelCtrl, _MetricsPanelCtrl);
 
         /** @ngInject */
-        function MultistatPanelCtrl($scope, $injector, variableSrv) {
+        function MultistatPanelCtrl($scope, $injector) {
           _classCallCheck(this, MultistatPanelCtrl);
 
-          var _this = _possibleConstructorReturn(this, (MultistatPanelCtrl.__proto__ || Object.getPrototypeOf(MultistatPanelCtrl)).call(this, $scope, $injector, variableSrv));
+          var _this = _possibleConstructorReturn(this, (MultistatPanelCtrl.__proto__ || Object.getPrototypeOf(MultistatPanelCtrl)).call(this, $scope, $injector));
 
           var panelDefaults = {
             timeFrom: null,
@@ -149,7 +153,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
             TZOffsetHours: 0,
             ToolTipType: "",
             ToolTipFontSize: "100%",
-            ValueColName: "temperature",
+            ValueColName: "",
             Values: [],
             ValueDecimals: 2,
             ValueColor: "#ffffff",
@@ -186,17 +190,22 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
             delete _this.panel.HighBarColor;
           }
 
-          variableSrv.variables.forEach(function (v) {
+          templateSrv.getVariables().forEach(function (v) {
             console.log("dashboard variable[" + v.name + "]=" + v.current.value);
             _this.updateNamedValue(_this.panel, v.name.split("_"), v.current.value);
           });
 
           _this.events.on(PanelEvents.dataReceived, _this.onDataReceived.bind(_this), $scope);
+
           _this.events.on(PanelEvents.dataError, _this.onDataError.bind(_this), $scope);
 
           _this.events.on(PanelEvents.render, _this.onRender.bind(_this));
+
           _this.events.on(PanelEvents.dataSnapshotLoad, _this.onDataSnapshotLoad.bind(_this));
+
           _this.events.on(PanelEvents.editModeInitialized, _this.onInitEditMode.bind(_this));
+
+          _this.events.on(PanelEvents.dataSnapshotLoad, _this.onDataSnapshotLoad.bind(_this));
 
           _this.className = "michaeldmoore-multistat-panel-" + _this.panel.id;
           return _this;
@@ -398,6 +407,21 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                     this.rows = oo;
                     break;
 
+                  case "sum":
+                    this.rows = d3.nest().key(groupedLabelFunc).rollup(function (d) {
+                      var dd = Object.values(Object.assign({}, d[d.length - 1]));
+                      SelectedValues.forEach(function (value) {
+                        dd[value.Col] = d3.sum(d, function (d) {
+                          return d[value.Col];
+                        });
+                      });
+                      return dd;
+                    }).entries(this.matchingRows).forEach(function (x) {
+                      oo.push(x.value);
+                    });
+                    this.rows = Array.from(oo);
+                    break;
+
                   case "mean":
                     this.rows = d3.nest().key(groupedLabelFunc).rollup(function (d) {
                       var dd = Object.values(Object.assign({}, d[d.length - 1]));
@@ -571,8 +595,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
               var ScaleFactor = Number(this.panel.ScaleFactor);
               var ValuePosition = this.panel.ValuePosition;
 
-              //var panelID = "michaeldmoore-multistat-panel-" + id;
-              var panelID = "michaeldmoore-multistat-panel";
+              var panelID = "michaeldmoore-multistat-panel-" + id;
               var tooltipDivID = "michaeldmoore-multistat-panel-tooltip-" + id;
 
               var minValue = SelectedValues.length && d3.min(this.rows, function (d) {
