@@ -9,8 +9,8 @@
       "url": "https://github.com/michaeldmoore"
     },
     "keywords": ["multistat", "singlestat", "panel"],
-    "version": "1.4.1",
-    "updated": "2020-07-21",
+    "version": "1.5.0",
+    "updated": "2020-08-11",
     "logos": {
       "small": "img/michaeldmoore-multistat-panel.svg",
       "large": "img/michaeldmoore-multistat-panel.svg"

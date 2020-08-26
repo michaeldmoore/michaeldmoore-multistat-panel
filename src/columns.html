@@ -4,38 +4,31 @@
       <div class="gf-form-inline">
         <label class="gf-form-label width-6">Label col</label>
         <div class="gf-form-select-wrapper">
-          <select
-            class="gf-form-input michaeldmoore-multistat-panel-w12"
-            ng-model="ctrl.panel.LabelColName"
-            ng-options="f for f in ctrl.cols"
-            ng-change="ctrl.render()"
-          ></select>
+          <select class="gf-form-input michaeldmoore-multistat-panel-w12" ng-model="ctrl.panel.LabelColName"
+            ng-options="f for f in ctrl.cols" ng-change="ctrl.render()"></select>
         </div>
       </div>
     </div>
     <div class="gf-form">
       <label class="gf-form-label width-6">Label Filter</label>
-      <input
-        type="string"
-        class="gf-form-input width-28"
-        data-placement="right"
+      <input type="string" class="gf-form-input width-27" data-placement="right"
         bs-tooltip="'RegEX pattern for filtering labels by name - leave blank for no filtering\ne.g. use partial string matches seperated by pipe (|) chars.'"
-        ng-model="ctrl.panel.LabelNameFilter"
-        ng-change="ctrl.render()"
-        ng-model-onchange
-      />
+        ng-model="ctrl.panel.LabelNameFilter" ng-change="ctrl.render()" ng-model-onchange />
     </div>
     <div class="gf-form">
       <div class="gf-form-inline">
-        <label class="gf-form-label width-6">Value col</label>
+        <label class="gf-form-label width-6">Scale Factor</label>
+        <input type="number" class="gf-form-input width-7" data-placement="right" ng-model="ctrl.panel.ScaleFactor"
+          ng-change="ctrl.render()" ng-model-onblur />
+        <label class="gf-form-label width-4">Decimals</label>
+        <input type="number" class="gf-form-input width-4" data-placement="right" ng-model="ctrl.panel.ValueDecimals"
+          ng-change="ctrl.render()" ng-model-onblur />
+        <label class="gf-form-label width-6">Aggregation</label>
         <div class="gf-form-select-wrapper">
-          <select
-            class="gf-form-input michaeldmoore-multistat-panel-w12"
-            ng-model="ctrl.panel.ValueColName"
-            ng-options="f for f in ctrl.cols"
-            ng-change="ctrl.render()"
-          ></select>
+          <select class="gf-form-input michaeldmoore-multistat-panel-w6" ng-model="ctrl.panel.Aggregate"
+            ng-options="f for f in ctrl.aggregations" ng-change="ctrl.render()"></select>
         </div>
+<<<<<<< HEAD
         <label class="gf-form-label width-6">Scale Factor</label>
         <input
           type="number"
@@ -46,43 +39,64 @@
           ng-change="ctrl.render()"
           ng-model-onblur
         />
+=======
+>>>>>>> Extra-Columns
       </div>
     </div>
+
     <div class="gf-form">
       <div class="gf-form-inline">
-        <span class="width-8" />
-        <label class="gf-form-label width-7">Decimals</label>
-        <input
-          type="number"
-          class="gf-form-input width-4"
-          data-placement="right"
-          bs-tooltip="'Number of decimal places for value in tool tip'"
-          ng-model="ctrl.panel.ValueDecimals"
-          ng-change="ctrl.render()"
-          ng-model-onblur
-        />
-        <label class="gf-form-label width-6">Aggregation</label>
-        <div class="gf-form-select-wrapper">
-          <select
-            class="gf-form-input michaeldmoore-multistat-panel-w6"
-            ng-model="ctrl.panel.Aggregate"
-            ng-options="f for f in ctrl.aggregations"
-            ng-change="ctrl.render()"
-          ></select>
+        <label class="gf-form-label width-6">Value cols</label>
+        <span class="michaeldmoore-multistat-panel-w2"></span>
+        <span class="gf-form-label">
+          <i class="fa fa-plus"
+            ng-click="ctrl.panel.Values.push({Name:'', HighBarColor:'rgb(120, 128, 0)', LowBarColor:'teal', Selected: true}); ctrl.render();"></i>
+        </span>
+        <span class="michaeldmoore-multistat-panel-w2"></span>
+        <div class="gf-form-inline" ng-if="ctrl.panel.Values.length > 1">
+          <label class="gf-form-label michaeldmoore-multistat-panel-w8">multi-Bar Pad %</label>
+          <input type="number" class="gf-form-input width-3" placeholder="auto" data-placement="right"
+            bs-tooltip="'Inter-multi-bar gap, as percentage of bar width'" ng-model="ctrl.panel.MultiBarPadding"
+            ng-change="ctrl.render()" ng-model-onblur />
         </div>
       </div>
     </div>
-    <div class="gf-form">
+
+    <div class="gf-form" ng-repeat="value in ctrl.panel.Values">
+      <span class="gf-form-label">
+        <i class="fa fa-arrow-up pointer" ng-click="ctrl.onReorderValues($index,1)"></i>
+      </span>
+      <span class="gf-form-label">
+        <i class="fa fa-arrow-down pointer" ng-click="ctrl.onReorderValues($index,0)"></i>
+      </span>
+
+      <div class="gf-form-select-wrapper">
+        <select class="gf-form-input michaeldmoore-multistat-panel-w12" ng-model="value.Name"
+          ng-options="f for f in ctrl.cols" ng-change="ctrl.render()"></select>
+      </div>
+      <label class="gf-form-label width-4">+ Color</label>
+      <span class="gf-form-label">
+        <spectrum-picker ng-model="value.HighBarColor" ng-change="ctrl.render()"></spectrum-picker>
+      </span>
+      <label class="gf-form-label width-4">- Color</label>
+      <span class="gf-form-label">
+        <spectrum-picker ng-model="value.LowBarColor" ng-change="ctrl.render()"></spectrum-picker>
+      </span>
+
+      <gf-form-switch class="gf-form" label-class="michaeldmoore-multistat-panel-w4" label="Select"
+        checked="value.Selected" on-change="ctrl.render();"></gf-form-switch>
+
+      <span class="gf-form-label" ng-if="ctrl.panel.Values.length > 1">
+        <i class="fa fa-trash pointer" ng-click="ctrl.panel.Values.splice($index,1); ctrl.render();"></i>
+      </span>
+    </div>
+
+    <div class="gf-form-button-row">
       <div class="gf-form-inline">
         <label class="gf-form-label width-6">Group col</label>
         <div class="gf-form-select-wrapper">
-          <select
-            class="gf-form-input michaeldmoore-multistat-panel-w12"
-            ng-model="ctrl.panel.GroupColName"
-            ng-options="f for f in ctrl.cols0"
-            ng-change="ctrl.render()"
-            bs-tooltip="'Choose grouping field (or leave blank for no grouping)'"
-          ></select>
+          <select class="gf-form-input michaeldmoore-multistat-panel-w12" ng-model="ctrl.panel.GroupColName"
+            ng-options="f for f in ctrl.cols0" ng-change="ctrl.render()"></select>
         </div>
       </div>
     </div>
@@ -90,53 +104,30 @@
       <div class="gf-form-inline">
         <label class="gf-form-label width-6">DateTime col</label>
         <div class="gf-form-select-wrapper">
-          <select
-            class="gf-form-input michaeldmoore-multistat-panel-w12"
-            ng-model="ctrl.panel.DateTimeColName"
-            ng-options="f for f in ctrl.cols0"
-            ng-change="ctrl.render()"
-          ></select>
+          <select class="gf-form-input michaeldmoore-multistat-panel-w12" ng-model="ctrl.panel.DateTimeColName"
+            ng-options="f for f in ctrl.cols0" ng-change="ctrl.render()"></select>
         </div>
       </div>
-      <div class="gf-form" ng-if="ctrl.panel.DateTimeColName != ''">
+      <div class="gf-form" ng-if="ctrl.cols.includes(ctrl.panel.DateTimeColName)">
         <label class="gf-form-label width-6">TZ Offset Hrs</label>
-        <input
-          type="number"
-          class="gf-form-input width-3"
-          data-placement="right"
-          bs-tooltip="'Number of hours offset for UTC display'"
-          ng-model="ctrl.panel.TZOffsetHours"
-          ng-change="ctrl.render()"
-          ng-model-onblur
-        />
+        <input type="number" class="gf-form-input width-3" data-placement="right"
+          bs-tooltip="'Number of hours offset for UTC display'" ng-model="ctrl.panel.TZOffsetHours"
+          ng-change="ctrl.render()" ng-model-onblur />
+        <gf-form-switch class="gf-form" label-class="width-7" label="Show as-of Date" checked="ctrl.panel.ShowDate"
+          on-change="ctrl.render()"></gf-form-switch>
       </div>
     </div>
-    <div class="gf-form" ng-if="ctrl.panel.DateTimeColName != ''">
+    <div class="gf-form" ng-if="ctrl.cols.includes(ctrl.panel.DateTimeColName)">
       <div class="gf-form-inline">
-        <span class="width-8" />
-        <gf-form-switch
-          class="gf-form"
-          label-class="width-7"
-          label="Show as-of Date"
-          checked="ctrl.panel.ShowDate"
-          on-change="ctrl.render()"
-        ></gf-form-switch>
+        <span class="width-6" />
         <div class="gf-form" ng-if="ctrl.panel.ShowDate">
-          <label class="gf-form-label width-4">Format</label>
-          <input
-            type="string"
-            class="gf-form-input width-11"
-            data-placement="right"
-            bs-tooltip="'Date formatting string - e.g. MMMM Do YYYY, h:mm:ss a'"
-            ng-model="ctrl.panel.DateFormat"
-            ng-change="ctrl.render()"
-            ng-model-onblur
-          />
-          <label
-            class="gf-form-label query-keyword"
-            ng-click="ctrl.showTZDateFormat = !ctrl.showTZDateFormat"
-          >
-            Show Help
+          <label class="gf-form-label width-7">'As of' Format</label>
+          <input type="string" class="gf-form-input width-18" data-placement="right"
+            bs-tooltip="'Date formatting string - e.g. MMMM Do YYYY, h:mm:ss a'" ng-model="ctrl.panel.DateFormat"
+            ng-change="ctrl.render()" ng-model-onblur />
+          <label class="gf-form-label query-keyword" ng-click="ctrl.showTZDateFormat = !ctrl.showTZDateFormat">
+            <i class="fa fa-question-circle"></i>
+            &nbsp;
             <i class="fa fa-caret-down" ng-show="ctrl.showTZDateFormat"></i>
             <i class="fa fa-caret-right" ng-hide="ctrl.showTZDateFormat"></i>
           </label>
@@ -144,10 +135,7 @@
       </div>
     </div>
     <div class="gf-form" ng-show="ctrl.showTZDateFormat">
-      <pre
-        class="gf-form-pre alert alert-info"
-        ng-if="ctrl.panel.ShowDate"
-      >As-Of Date display:
+      <pre class="gf-form-pre alert alert-info" ng-if="ctrl.panel.ShowDate">As-Of Date display:
 This option controls if, and how the latest query time is displayed in the top right hand side of the panel.
 Depending on the data source and query, each row in Multistat may be updated at different times.
 This display can be useful in showing the latest timestamp of all the data displayed in the panel - as a snapshot date/time.
@@ -161,104 +149,61 @@ Setting the format string to the reserved keyword "ELAPSED" displays the time as
       <div class="gf-form-inline">
         <label class="gf-form-label width-6">Sort col</label>
         <div class="gf-form-select-wrapper">
-          <select
-            class="gf-form-input michaeldmoore-multistat-panel-w12"
-            ng-model="ctrl.panel.SortColName"
-            ng-options="f for f in ctrl.cols0"
-            ng-change="ctrl.render()"
-          ></select>
+          <select class="gf-form-input michaeldmoore-multistat-panel-w12" ng-model="ctrl.panel.SortColName"
+            ng-options="f for f in ctrl.cols0" ng-change="ctrl.render()"></select>
         </div>
-        <div
-          class="gf-form-select-wrapper"
-          ng-if="ctrl.panel.SortColName != ''"
-        >
-          <select
-            class="gf-form-input width-8"
-            ng-model="ctrl.panel.SortDirection"
-            ng-options="f for f in ctrl.sortDirections"
-            ng-change="ctrl.render()"
-          ></select>
+        <div class="gf-form-select-wrapper" ng-if="ctrl.cols.includes(ctrl.panel.SortColName)">
+          <select class="gf-form-input width-8" ng-model="ctrl.panel.SortDirection"
+            ng-options="f for f in ctrl.sortDirections" ng-change="ctrl.render()"></select>
         </div>
       </div>
     </div>
     <div class="gf-form">
       <div class="gf-form-inline">
-        <label class="gf-form-label width-6"
-          >Recolor col
-          <tip
-            >Define rules based on this column of the data to override the
-            normal value/threshold color of individual bars.</tip
-          >
+        <label class="gf-form-label width-6">Recolor col
+          <tip>Define rules based on this column of the data to override the
+            normal value/threshold color of individual bars.</tip>
         </label>
         <div class="gf-form-select-wrapper">
-          <select
-            class="gf-form-input michaeldmoore-multistat-panel-w12"
-            ng-model="ctrl.panel.RecolorColName"
-            ng-options="f for f in ctrl.cols0"
-            ng-change="ctrl.render()"
-          ></select>
+          <select class="gf-form-input michaeldmoore-multistat-panel-w12" ng-model="ctrl.panel.RecolorColName"
+            ng-options="f for f in ctrl.cols0" ng-change="ctrl.render()"></select>
         </div>
       </div>
     </div>
 
-    <div
-      class="gf-form"
-      ng-if="ctrl.panel.RecolorColName != ''"
-      ng-repeat="rule in ctrl.panel.RecolorRules"
-    >
+    <div class="gf-form" ng-if="ctrl.cols.includes(ctrl.panel.RecolorColName)"
+      ng-repeat="rule in ctrl.panel.RecolorRules">
       <div class="gf-form">
         <span class="gf-form-label">
-          <i
-            class="fa fa-trash pointer"
-            ng-click="ctrl.panel.RecolorRules.splice($index,1); ctrl.render();"
-          ></i>
+          <i class="fa fa-trash pointer" ng-click="ctrl.panel.RecolorRules.splice($index,1); ctrl.render();"></i>
         </span>
         <span class="michaeldmoore-multistat-panel-w2"></span>
         <span class="gf-form-label">
-          <i
-            class="fa fa-arrow-up pointer"
-            ng-click="ctrl.onReorderRecolorRules($index,1)"
-          ></i>
+          <i class="fa fa-arrow-up pointer" ng-click="ctrl.onReorderRecolorRules($index,1)"></i>
         </span>
         <span class="gf-form-label">
-          <i
-            class="fa fa-arrow-down pointer"
-            ng-click="ctrl.onReorderRecolorRules($index,0)"
-          ></i>
+          <i class="fa fa-arrow-down pointer" ng-click="ctrl.onReorderRecolorRules($index,0)"></i>
         </span>
 
         <label class="gf-form-label width-5">Rule {{$index + 1}}</label>
 
-        <input
-          type="string"
-          class="gf-form-input michaeldmoore-multistat-panel-w18"
-          ng-model="rule.pattern"
-          ng-change="ctrl.render()"
-        />
+        <input type="string" class="gf-form-input michaeldmoore-multistat-panel-w18" ng-model="rule.pattern"
+          ng-change="ctrl.render()" />
 
         <div class="gf-form-select-wrapper">
-          <select
-            class="gf-form-input michaeldmoore-multistat-panel-w7"
-            ng-model="rule.matchType"
-            ng-options="m for m in ctrl.matchTypes"
-            ng-change="ctrl.render()"
-          ></select>
+          <select class="gf-form-input michaeldmoore-multistat-panel-w7" ng-model="rule.matchType"
+            ng-options="m for m in ctrl.matchTypes" ng-change="ctrl.render()"></select>
         </div>
 
         <span class="gf-form-label">
-          <spectrum-picker
-            ng-model="rule.color"
-            ng-change="ctrl.render()"
-          ></spectrum-picker>
+          <spectrum-picker ng-model="rule.color" ng-change="ctrl.render()"></spectrum-picker>
         </span>
       </div>
     </div>
 
-    <div class="gf-form-button-row" ng-if="ctrl.panel.RecolorColName != ''">
-      <button
-        class="btn btn-inverse"
-        ng-click="ctrl.panel.RecolorRules.push({pattern:'', matchType:'exact', color:'#777'})"
-      >
+    <div class="gf-form-button-row" ng-if="ctrl.cols.includes(ctrl.panel.RecolorColName)">
+      <button class="btn btn-inverse"
+        ng-click="ctrl.panel.RecolorRules.push({pattern:'', matchType:'exact', color:'#777'})">
         <i class="fa fa-plus"></i>
         &nbsp;Add a recolor rule
       </button>
