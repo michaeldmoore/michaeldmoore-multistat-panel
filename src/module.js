@@ -154,7 +154,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
       PanelEvents.editModeInitialized,
       this.onInitEditMode.bind(this)
     );
-    
+
     this.events.on(
       PanelEvents.dataSnapshotLoad,
       this.onDataSnapshotLoad.bind(this)
@@ -349,8 +349,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
   displayStatusMessage(msg) {
     this.elem.html(
       "<div class='michaeldmoore-multistat-panel-statusmessage'>" +
-        msg +
-        "</div>"
+      msg +
+      "</div>"
     );
   }
 
@@ -398,10 +398,10 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
         if (this.matchingRows.length == 0) {
           this.displayStatusMessage(
             "No data.  Regex filter '" +
-              this.panel.LabelNameFilter +
-              "' eliminated all " +
-              this.data.rows.length +
-              " rows from current query"
+            this.panel.LabelNameFilter +
+            "' eliminated all " +
+            this.data.rows.length +
+            " rows from current query"
           );
           return;
         }
@@ -463,7 +463,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
             this.rows = Array.from(oo);
             break;
 
-            case "mean":
+          case "mean":
             this.rows = d3
               .nest()
               .key(groupedLabelFunc)
@@ -552,10 +552,10 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
           else {
             this.displayStatusMessage(
               "No groups.  Group Regex filter '" +
-                this.panel.GroupNameFilter +
-                "' eliminated all " +
-                this.groupedRows.length +
-                " groups from current query"
+              this.panel.GroupNameFilter +
+              "' eliminated all " +
+              this.groupedRows.length +
+              " groups from current query"
             );
             return;
           }
@@ -578,9 +578,9 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
       this.elem.html(
         "<div class='" +
-          this.className +
-          "' style='display: flex; flex-direction: column; height:100%; width:100%'>" +
-          "</div>"
+        this.className +
+        "' style='display: flex; flex-direction: column; height:100%; width:100%'>" +
+        "</div>"
       );
 
       var $container = this.elem.find("div");
@@ -1060,8 +1060,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
                 let gap =
                   SelectedValues.length > 1
                     ? (labelScale.bandwidth() * multiBarPadding) /
-                      (SelectedValues.length - 1) /
-                      100
+                    (SelectedValues.length - 1) /
+                    100
                     : 0;
                 let height =
                   (labelScale.bandwidth() - gap * (SelectedValues.length - 1)) /
@@ -1204,8 +1204,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
                 let gap =
                   SelectedValues.length > 1
                     ? (labelScale.bandwidth() * multiBarPadding) /
-                      (SelectedValues.length - 1) /
-                      100
+                    (SelectedValues.length - 1) /
+                    100
                     : 0;
                 let height =
                   (labelScale.bandwidth() - gap * (SelectedValues.length - 1)) /
@@ -1282,8 +1282,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
                 let gap =
                   SelectedValues.length > 1
                     ? (labelScale.bandwidth() * multiBarPadding) /
-                      (SelectedValues.length - 1) /
-                      100
+                    (SelectedValues.length - 1) /
+                    100
                     : 0;
                 let width =
                   (labelScale.bandwidth() - gap * (SelectedValues.length - 1)) /
@@ -1338,8 +1338,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
                 let gap =
                   SelectedValues.length > 1
                     ? (labelScale.bandwidth() * multiBarPadding) /
-                      (SelectedValues.length - 1) /
-                      100
+                    (SelectedValues.length - 1) /
+                    100
                     : 0;
                 let height =
                   (labelScale.bandwidth() - gap * (SelectedValues.length - 1)) /
@@ -1631,8 +1631,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
                 let gap =
                   SelectedValues.length > 1
                     ? (labelScale.bandwidth() * multiBarPadding) /
-                      (SelectedValues.length - 1) /
-                      100
+                    (SelectedValues.length - 1) /
+                    100
                     : 0;
                 let width =
                   (labelScale.bandwidth() - gap * (SelectedValues.length - 1)) /
@@ -1769,8 +1769,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
                 let gap =
                   SelectedValues.length > 1
                     ? (labelScale.bandwidth() * multiBarPadding) /
-                      (SelectedValues.length - 1) /
-                      100
+                    (SelectedValues.length - 1) /
+                    100
                     : 0;
                 let width =
                   (labelScale.bandwidth() - gap * (SelectedValues.length - 1)) /
@@ -1847,8 +1847,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
                 let gap =
                   SelectedValues.length > 1
                     ? (labelScale.bandwidth() * multiBarPadding) /
-                      (SelectedValues.length - 1) /
-                      100
+                    (SelectedValues.length - 1) /
+                    100
                     : 0;
                 let width =
                   (labelScale.bandwidth() - gap * (SelectedValues.length - 1)) /
@@ -1903,8 +1903,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
                 let gap =
                   SelectedValues.length > 1
                     ? (labelScale.bandwidth() * multiBarPadding) /
-                      (SelectedValues.length - 1) /
-                      100
+                    (SelectedValues.length - 1) /
+                    100
                     : 0;
                 let width =
                   (labelScale.bandwidth() - gap * (SelectedValues.length - 1)) /
