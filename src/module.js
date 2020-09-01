@@ -7,10 +7,11 @@ import "jquery.flot";
 import _ from "lodash";
 import moment from "moment";
 import "./css/multistat-panel.css!";
-//import d3 from "./external/d3.min";
 import * as d3 from "d3";
 import { getTemplateSrv } from '@grafana/runtime';
 import { PanelEvents } from "@grafana/data";
+//import "@types/tinycolor2";
+//import { xxx } from "tinycolor2";
 
 const templateSrv = getTemplateSrv();
 
@@ -631,6 +632,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
             .children()
             .last()
             .css("background-color", value.HighBarColor)
+            .css("color", this.panel.ValueColor)
             .click(function () {
               if (window.event.ctrlKey) {
                 // toggle this item only

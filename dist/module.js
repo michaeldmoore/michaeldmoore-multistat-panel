@@ -535,7 +535,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                   // Be careful with this - the toggling/selection logic is quite complicated. //
                   ///////////////////////////////////////////////////////////////////////////////
                   var deselectedClassName = value.Selected ? "" : " class='michaeldmoore-multistat-panel-legend-deselected'";
-                  $legend.append("<li" + deselectedClassName + ">" + value.Name + "</li>").children().last().css("background-color", value.HighBarColor).click(function () {
+                  $legend.append("<li" + deselectedClassName + ">" + value.Name + "</li>").children().last().css("background-color", value.HighBarColor).css("color", _this2.panel.ValueColor).click(function () {
                     if (window.event.ctrlKey) {
                       // toggle this item only
                       value.Selected = !value.Selected;
