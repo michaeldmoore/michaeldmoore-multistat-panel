@@ -131,10 +131,16 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
       delete this.panel.HighBarColor;
     }
 
-    templateSrv.getVariables().forEach((v) => {
-      console.log("dashboard variable[" + v.name + "]=" + v.current.value);
-      this.updateNamedValue(this.panel, v.name.split("_"), v.current.value);
+    /*
+    console.log('Listing variables');
+    templateSrv.getVariables().forEach((v) => {      
+      console.log(JSON.stringify(v, null, 2));
+      if (v.current){
+        console.log("dashboard variable[" + v.name + "]=" + v.current.value);
+        this.updateNamedValue(this.panel, v.name.split("_"), v.current.value);
+      }
     });
+    */
 
     this.events.on(
       PanelEvents.dataReceived,

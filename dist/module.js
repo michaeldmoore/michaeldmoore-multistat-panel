@@ -190,10 +190,16 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
             delete _this.panel.HighBarColor;
           }
 
-          templateSrv.getVariables().forEach(function (v) {
-            console.log("dashboard variable[" + v.name + "]=" + v.current.value);
-            _this.updateNamedValue(_this.panel, v.name.split("_"), v.current.value);
+          /*
+          console.log('Listing variables');
+          templateSrv.getVariables().forEach((v) => {      
+            console.log(JSON.stringify(v, null, 2));
+            if (v.current){
+              console.log("dashboard variable[" + v.name + "]=" + v.current.value);
+              this.updateNamedValue(this.panel, v.name.split("_"), v.current.value);
+            }
           });
+          */
 
           _this.events.on(PanelEvents.dataReceived, _this.onDataReceived.bind(_this), $scope);
 
