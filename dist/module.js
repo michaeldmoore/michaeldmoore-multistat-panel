@@ -619,7 +619,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
               var tooltipDivID = "michaeldmoore-multistat-panel-tooltip-" + id;
 
               var minValue = SelectedValues.length && d3.min(this.rows, function (d) {
-                var min = d[SelectedValues[0].Col];
+                var min = Number(d[SelectedValues[0].Col]);
                 for (var i = 1; i < SelectedValues.length; i++) {
                   var col = SelectedValues[i].Col;
                   var val = Number(d[col]);
@@ -630,7 +630,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
               if ($.isNumeric(minLineValue) == false) minLineValue = minValue;
 
               var maxValue = SelectedValues.length && d3.max(this.rows, function (d) {
-                var max = d[SelectedValues[0].Col];
+                var max = Number(d[SelectedValues[0].Col]);
                 for (var i = 1; i < SelectedValues.length; i++) {
                   var col = SelectedValues[i].Col;
                   var val = Number(d[col]);

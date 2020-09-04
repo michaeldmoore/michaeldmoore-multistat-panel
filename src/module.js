@@ -724,7 +724,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
       var minValue =
         SelectedValues.length &&
         d3.min(this.rows, function (d) {
-          let min = d[SelectedValues[0].Col];
+          let min = Number(d[SelectedValues[0].Col]);
           for (var i = 1; i < SelectedValues.length; i++) {
             let col = SelectedValues[i].Col;
             let val = Number(d[col]);
@@ -737,7 +737,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
       var maxValue =
         SelectedValues.length &&
         d3.max(this.rows, function (d) {
-          let max = d[SelectedValues[0].Col];
+          let max = Number(d[SelectedValues[0].Col]);
           for (var i = 1; i < SelectedValues.length; i++) {
             let col = SelectedValues[i].Col;
             let val = Number(d[col]);
