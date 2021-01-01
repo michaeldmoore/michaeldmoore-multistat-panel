@@ -10,8 +10,6 @@ import "./css/multistat-panel.css!";
 import * as d3 from "d3";
 import { getTemplateSrv } from '@grafana/runtime';
 import { PanelEvents } from "@grafana/data";
-//import "@types/tinycolor2";
-//import { xxx } from "tinycolor2";
 
 const templateSrv = getTemplateSrv();
 
@@ -124,6 +122,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
           Name: this.panel.ValueColName,
           LowBarColor: this.panel.LowBarColor,
           HighBarColor: this.panel.HighBarColor,
+          Selected: true
         },
       ];
       delete this.panel.ValueColName;
@@ -131,16 +130,20 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
       delete this.panel.HighBarColor;
     }
 
-    /*
-    console.log('Listing variables');
-    templateSrv.getVariables().forEach((v) => {      
-      console.log(JSON.stringify(v, null, 2));
-      if (v.current){
-        console.log("dashboard variable[" + v.name + "]=" + v.current.value);
-        this.updateNamedValue(this.panel, v.name.split("_"), v.current.value);
-      }
-    });
-    */
+    this.dashboardVariables = [];
+    //console.log('Listing variables');
+    if (templateSrv){
+      templateSrv.getVariables().forEach((v) => {      
+        //console.log(JSON.stringify(v, null, 2));
+        if (v.current){
+          //console.log("dashboard variable[" + v.name + "]=" + v.current.value);
+          //this.updateNamedValue(this.panel, v.name.split("_"), v.current.value);   ////// WHAT WAS THIS FOR?????
+          this.dashboardVariables.push({name:v.name, value:v.current.value});
+        }
+      });
+    }
+
+    console.log('this.dashboardVariables='+JSON.stringify(this.dashboardVariables, null, 2));
 
     this.events.on(
       PanelEvents.dataReceived,
@@ -257,13 +260,13 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
   onDataReceived(data) {
     this.cols = [];
-    // console.log('onDataReceived(' + JSON.stringify(data) + ')');
-    if (data.length == 0) {
+     //console.log('onDataReceived(' + JSON.stringify(data, null, 2) + ')');
+    if (data.length == 0 || data[0].rows.length == 0) {
       this.displayStatusMessage("No data to show");
       this.data = data;
       this.rows = null;
       this.render();
-    } else if (data[0].type == "table" || data[0].columns) {
+    } else if (/*data[0].type == "table" || */data[0].columns) {
       this.data = data[0];
 
       for (let i = 0; i < this.data.columns.length; i++)
@@ -366,6 +369,12 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
       var sortCol = 0;
       var groupCol = -1;
       var recolorCol = -1;
+
+      // clone dashboard variables array
+      var dashboardVariables = [...this.dashboardVariables];
+      let range = this.timeSrv.timeRangeForUrl();
+      dashboardVariables.push({name:"from", value:range.from});
+      dashboardVariables.push({name:"to", value:range.to});
 
       cols.forEach((colName, i) => {
         if (colName == this.panel.DateTimeColName) dateTimeCol = i;
@@ -489,25 +498,25 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
             this.rows = Array.from(oo);
             break;
 
-          case "mean":
-            this.rows = d3
-              .nest()
-              .key(groupedLabelFunc)
-              .rollup(function (d) {
-                var dd = Object.values(Object.assign({}, d[d.length - 1]));
-                dd[valueCol] = d3.mean(d, function (d) {
-                  return d[valueCol];
+            case "mean":
+              this.rows = d3
+                .nest()
+                .key(groupedLabelFunc)
+                .rollup(function (d) {
+                  var dd = Object.values(Object.assign({}, d[d.length - 1]));
+                  dd[valueCol] = d3.mean(d, function (d) {
+                    return d[valueCol];
+                  });
+                  return dd;
+                })
+                .entries(this.matchingRows)
+                .forEach(function (x) {
+                  oo.push(x.value);
                 });
-                return dd;
-              })
-              .entries(this.matchingRows)
-              .forEach(function (x) {
-                oo.push(x.value);
-              });
-            this.rows = Array.from(oo);
-            break;
-
-          case "max":
+              this.rows = Array.from(oo);
+              break;
+  
+            case "max":
             this.rows = d3
               .nest()
               .key(groupedLabelFunc)
@@ -640,6 +649,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
             .css("background-color", value.HighBarColor)
             .css("color", this.panel.ValueColor)
             .click(function () {
+              //console.log('legend-click() value='+JSON.stringify(value,null,2));
               if (window.event.ctrlKey) {
                 // toggle this item only
                 value.Selected = !value.Selected;
@@ -653,6 +663,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
                   legendValues.forEach((v) => (v.Selected = true));
                 }
               }
+              //console.log('legend-click() legendValues='+JSON.stringify(legendValues,null,2));
               // force a re-render
               CTRL.$scope.$apply(() => {
                 CTRL.render();
@@ -781,20 +792,33 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
         const re = /\{[^}]+\}/g;
         let g = re.exec(s);
         while (g) {
+          //console.log('Translating token '+g);
           for (var i = 0; i < cols.length; i++) {
             if (g == "{" + cols[i] + "}") {
               s1 = s1.replace(g, d[i]);
               break;
             }
           }
+
+          // do the same thing with dashboard variables...
+          for (var j = 0; j < dashboardVariables.length; j++) {
+            let dv = dashboardVariables[j];
+            if (g == "{" + dv.name + "}"){
+              //console.log("dashboard variable[" + dv.name + "]=" + dv.value);
+              s1 = s1.replace(g, dv.value);
+              break;
+            }
+          }      
+
           g = re.exec(s);
         }
+        //console.log('Translating url '+s+' to ' + s1);
         return s1;
       };
 
       var getTooltipContent = function (d) {
         let html = "";
-        if (tooltipType) {
+        if (tooltipType && Array.isArray(d)) {
           html +=
             "<table style='font-size:" +
             tooltipFontSize.replace("%", "") / 100 +
@@ -823,21 +847,22 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
             }
             html += "</tbody></table>";
           }
+
+          if (Links.length) {
+            html += "<table><tbody>";
+            Links.forEach((l) => {
+              html +=
+                "<tr><td align='right'><i class='fa fa-link'></i></td><td><a href='" +
+                translateValues(l.url, d) +
+                (l.newtab ? "' target='_blank'" : "'") +
+                ">" +
+                translateValues(l.name, d) +
+                "</a></td></tr>";
+            });
+            html += "</tbody></table>";
+          }
         }
 
-        if (Links.length) {
-          html += "<table><tbody>";
-          Links.forEach((l) => {
-            html +=
-              "<tr><td align='right'><i class='fa fa-link'></i></td><td><a href='" +
-              translateValues(l.url, d) +
-              (l.newtab ? "' target='_blank'" : "'") +
-              ">" +
-              translateValues(l.name, d) +
-              "</a></td></tr>";
-          });
-          html += "</tbody></table>";
-        }
         return html;
       };
 
@@ -858,12 +883,15 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
         }
 
         const tooltipDiv = d3.selectAll("#" + tooltipDivID);
-        tooltipDiv
+
+        let tooltipHtml = getTooltipContent(d);
+        if (tooltipHtml.length){
+          tooltipDiv
           .classed(
             "michaeldmoore-multistat-panel-" + tooltipType + "-tooltip",
             true
           )
-          .html(getTooltipContent(d))
+          .html(tooltipHtml)
           .on("mouseover", function () {
             if (!isInTooltip) {
               isInTooltip = true;
@@ -901,6 +929,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
           .style("opacity", 1.0)
           .style("left", Left + "px")
           .style("top", Top + "px");
+        }
       };
 
       var tooltipHide = function (cancel) {
@@ -996,11 +1025,11 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
         ) {
           // Draw border rectangle
           /*svg.append("rect")
-                    .attr("width", w)
-                    .attr("height", dh)
-                    .attr("x", left)
-                    .attr("y", hh)
-                    .attr("stroke", "yellow");*/
+										.attr("width", w)
+										.attr("height", dh)
+										.attr("x", left)
+										.attr("y", hh)
+										.attr("stroke", "yellow");*/
 
           sortData(data, panel.SortDirection);
 
@@ -1024,11 +1053,11 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
           // Draw border rectangle
           /*svg.append("rect")
-                    .attr("width", w)
-                    .attr("height", dh)
-                    .attr("x", left)
-                    .attr("y", hh)
-                    .attr("stroke", "#ffffff");*/
+										.attr("width", w)
+										.attr("height", dh)
+										.attr("x", left)
+										.attr("y", hh)
+										.attr("stroke", "#ffffff");*/
 
           var labels = data.map(function (d) {
             return d[labelCol];
@@ -1566,11 +1595,11 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
         ) {
           // Draw border rectangle
           /*svg.append("rect")
-      .attr("width", w)
-      .attr("height", dh)
-      .attr("x", left)
-      .attr("y", hh)
-      .attr("stroke", "yellow");*/
+			.attr("width", w)
+			.attr("height", dh)
+			.attr("x", left)
+			.attr("y", hh)
+			.attr("stroke", "yellow");*/
 
           sortData(data, panel.SortDirection);
 
@@ -1594,11 +1623,11 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
           // Draw border rectangle
           /*svg.append("rect")
-                    .attr("width", w)
-                    .attr("height", dh)
-                    .attr("x", left)
-                    .attr("y", hh)
-                    .attr("stroke", "#ffffff");*/
+										.attr("width", w)
+										.attr("height", dh)
+										.attr("x", left)
+										.attr("y", hh)
+										.attr("stroke", "#ffffff");*/
 
           var labels = data.map(function (d) {
             return d[labelCol];

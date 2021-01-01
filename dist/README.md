@@ -1,8 +1,10 @@
 # michaeldmoore-multistat-panel
+
 *New Version (1.3.0) - Now with rules-based bar re-coloring!* [see here](README.md#Recolor-Rules)
 
-*New Version (1.4.0) - Now with restyles tooltips and clickable per-bar links!* [see here](README.md#Clickable-tooltips--links)
+*New Version (1.4.0) - Now with restyled tooltips and clickable per-bar links!* [see here](README.md#Clickable-tooltips--links)
 
+*New Version (1.6.0) - Now with support for multiple value columns per lable!* [see here](README.md#Multi-Column--Support)
 
 ## Custom multistat panel for Grafana, inspired by the built-in SingleStat panel
 
@@ -120,7 +122,7 @@ If no query is defined, or the data source is unavailable, Multistat displays a 
 
 Multistat can only display a single bar for each label.  Ideally, query results *should be written* to return a single value per label.  When this is not possible, and the query returns multiple values per label, Multistat uses an aggregation operator to select one of these (first, last, mean, min or max).  *one more - all - will eliminate the aggregator altogether,  Be careful - This can create confusing displays as multiple values appear overlying the position of such bars.  **You have been warned.**  For efficiency though, it is much better to write a query that only returns the required data.
 
-For this discussion, I created a test data set in a CSV file (demo.csv) distributed with the **CSVServer** add-on to SinpleJSON data source.  I highly recommend installing this so you can follow along and see how the various configuration options work before worrying about live real-world data sets.  The demo CSV file contains the following data:
+For this discussion, I created a test data set in a CSV file (demo.csv) distributed with the **CSVServer** add-on to SimpleJSON data source.  I highly recommend installing this so you can follow along and see how the various configuration options work before worrying about live real-world data sets.  The demo CSV file contains the following data:
 
 ```bash
 time,sensor,area,quantity
@@ -257,6 +259,7 @@ Putting it all together, the displays can make a truly unforgettable and un-igno
  ![calm-alarms](https://user-images.githubusercontent.com/3724718/30007967-6780c14a-90ce-11e7-809d-289d180ea310.gif)
 
 ## Recolor Rules
+
 (New feature added with version 1.3.0)
 
 Any column of data can be designated as a 'recolor column'.  Once set, an extensible array of recolor rules appears, each having a pattern, a match type and an override color.
@@ -277,17 +280,13 @@ The 'List' rule match type uses a comma seperated list of names.  In this case, 
 
 A final option - 'Reg ex' uses the rule pattern as a regular expression, for those brave enough to work out the syntax (!)
 
-
-
 ## Clickable tooltips & links
 
 Version 1.4.0 introduces an upgraded per-bar tooltip system, with improved styling and clickable per-bar url links
 
 ![image](https://user-images.githubusercontent.com/3724718/82230928-4e509e00-9924-11ea-909c-6b0bda7bb0d9.png)
 
-
-
-#### Bar-links
+## Bar-links
 
 New with this version, clickable URLs with bar-specific name/parameter substitutions - ideal for drill-downs or data look-ups etc.
 
@@ -299,7 +298,9 @@ Any number of bar-links can be defined, using the Bar Links section of the panel
 
 ![image](https://user-images.githubusercontent.com/3724718/82231097-9079df80-9924-11ea-85fc-1d5d8e5e003f.png)
 
+## Multi-Column support
 
+(New feature added with version 1.6.0)
 
 ## Conclusion
 

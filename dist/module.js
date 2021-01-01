@@ -5,6 +5,18 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
 
   var MetricsPanelCtrl, $, _, moment, d3, getTemplateSrv, PanelEvents, _createClass, templateSrv, MultistatPanelCtrl, CTRL;
 
+  function _toConsumableArray(arr) {
+    if (Array.isArray(arr)) {
+      for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) {
+        arr2[i] = arr[i];
+      }
+
+      return arr2;
+    } else {
+      return Array.from(arr);
+    }
+  }
+
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
       throw new TypeError("Cannot call a class as a function");
@@ -183,23 +195,28 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
             _this.panel.Values = [{
               Name: _this.panel.ValueColName,
               LowBarColor: _this.panel.LowBarColor,
-              HighBarColor: _this.panel.HighBarColor
+              HighBarColor: _this.panel.HighBarColor,
+              Selected: true
             }];
             delete _this.panel.ValueColName;
             delete _this.panel.LowBarColor;
             delete _this.panel.HighBarColor;
           }
 
-          /*
-          console.log('Listing variables');
-          templateSrv.getVariables().forEach((v) => {      
-            console.log(JSON.stringify(v, null, 2));
-            if (v.current){
-              console.log("dashboard variable[" + v.name + "]=" + v.current.value);
-              this.updateNamedValue(this.panel, v.name.split("_"), v.current.value);
-            }
-          });
-          */
+          _this.dashboardVariables = [];
+          //console.log('Listing variables');
+          if (templateSrv) {
+            templateSrv.getVariables().forEach(function (v) {
+              //console.log(JSON.stringify(v, null, 2));
+              if (v.current) {
+                //console.log("dashboard variable[" + v.name + "]=" + v.current.value);
+                //this.updateNamedValue(this.panel, v.name.split("_"), v.current.value);   ////// WHAT WAS THIS FOR?????
+                _this.dashboardVariables.push({ name: v.name, value: v.current.value });
+              }
+            });
+          }
+
+          console.log('this.dashboardVariables=' + JSON.stringify(_this.dashboardVariables, null, 2));
 
           _this.events.on(PanelEvents.dataReceived, _this.onDataReceived.bind(_this), $scope);
 
@@ -256,13 +273,13 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
           key: "onDataReceived",
           value: function onDataReceived(data) {
             this.cols = [];
-            // console.log('onDataReceived(' + JSON.stringify(data) + ')');
-            if (data.length == 0) {
+            //console.log('onDataReceived(' + JSON.stringify(data, null, 2) + ')');
+            if (data.length == 0 || data[0].rows.length == 0) {
               this.displayStatusMessage("No data to show");
               this.data = data;
               this.rows = null;
               this.render();
-            } else if (data[0].type == "table" || data[0].columns) {
+            } else if ( /*data[0].type == "table" || */data[0].columns) {
               this.data = data[0];
 
               for (var i = 0; i < this.data.columns.length; i++) {
@@ -350,6 +367,12 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
               var sortCol = 0;
               var groupCol = -1;
               var recolorCol = -1;
+
+              // clone dashboard variables array
+              var dashboardVariables = [].concat(_toConsumableArray(this.dashboardVariables));
+              var range = this.timeSrv.timeRangeForUrl();
+              dashboardVariables.push({ name: "from", value: range.from });
+              dashboardVariables.push({ name: "to", value: range.to });
 
               cols.forEach(function (colName, i) {
                 if (colName == _this2.panel.DateTimeColName) dateTimeCol = i;
@@ -542,6 +565,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                   ///////////////////////////////////////////////////////////////////////////////
                   var deselectedClassName = value.Selected ? "" : " class='michaeldmoore-multistat-panel-legend-deselected'";
                   $legend.append("<li" + deselectedClassName + ">" + value.Name + "</li>").children().last().css("background-color", value.HighBarColor).css("color", _this2.panel.ValueColor).click(function () {
+                    //console.log('legend-click() value='+JSON.stringify(value,null,2));
                     if (window.event.ctrlKey) {
                       // toggle this item only
                       value.Selected = !value.Selected;
@@ -559,6 +583,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                         });
                       }
                     }
+                    //console.log('legend-click() legendValues='+JSON.stringify(legendValues,null,2));
                     // force a re-render
                     CTRL.$scope.$apply(function () {
                       CTRL.render();
@@ -670,20 +695,33 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                 var re = /\{[^}]+\}/g;
                 var g = re.exec(s);
                 while (g) {
+                  //console.log('Translating token '+g);
                   for (var i = 0; i < cols.length; i++) {
                     if (g == "{" + cols[i] + "}") {
                       s1 = s1.replace(g, d[i]);
                       break;
                     }
                   }
+
+                  // do the same thing with dashboard variables...
+                  for (var j = 0; j < dashboardVariables.length; j++) {
+                    var dv = dashboardVariables[j];
+                    if (g == "{" + dv.name + "}") {
+                      //console.log("dashboard variable[" + dv.name + "]=" + dv.value);
+                      s1 = s1.replace(g, dv.value);
+                      break;
+                    }
+                  }
+
                   g = re.exec(s);
                 }
+                //console.log('Translating url '+s+' to ' + s1);
                 return s1;
               };
 
               var getTooltipContent = function getTooltipContent(d) {
                 var html = "";
-                if (tooltipType) {
+                if (tooltipType && Array.isArray(d)) {
                   html += "<table style='font-size:" + tooltipFontSize.replace("%", "") / 100 + "em'>";
                   if (labelCol != -1) html += "<thead><tr class='michaeldmoore-multistat-panel-tooltip-title'><th colspan='2' align='center'>" + d[labelCol] + "</th></tr></thead>";
                   if (Array.isArray(d)) {
@@ -700,15 +738,16 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                     }
                     html += "</tbody></table>";
                   }
+
+                  if (Links.length) {
+                    html += "<table><tbody>";
+                    Links.forEach(function (l) {
+                      html += "<tr><td align='right'><i class='fa fa-link'></i></td><td><a href='" + translateValues(l.url, d) + (l.newtab ? "' target='_blank'" : "'") + ">" + translateValues(l.name, d) + "</a></td></tr>";
+                    });
+                    html += "</tbody></table>";
+                  }
                 }
 
-                if (Links.length) {
-                  html += "<table><tbody>";
-                  Links.forEach(function (l) {
-                    html += "<tr><td align='right'><i class='fa fa-link'></i></td><td><a href='" + translateValues(l.url, d) + (l.newtab ? "' target='_blank'" : "'") + ">" + translateValues(l.name, d) + "</a></td></tr>";
-                  });
-                  html += "</tbody></table>";
-                }
                 return html;
               };
 
@@ -726,33 +765,37 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                 }
 
                 var tooltipDiv = d3.selectAll("#" + tooltipDivID);
-                tooltipDiv.classed("michaeldmoore-multistat-panel-" + tooltipType + "-tooltip", true).html(getTooltipContent(d)).on("mouseover", function () {
-                  if (!isInTooltip) {
-                    isInTooltip = true;
-                    tooltipHide(true);
-                  }
-                }).on("mouseleave", function () {
-                  isInTooltip = false;
-                  tooltipHide(false);
-                });
 
-                var $tooltipDiv = $("#" + tooltipDivID);
-                var tooltipWidth = $tooltipDiv.width();
-                var tooltipHeight = $tooltipDiv.height();
-                var minTop = 28;
+                var tooltipHtml = getTooltipContent(d);
+                if (tooltipHtml.length) {
+                  tooltipDiv.classed("michaeldmoore-multistat-panel-" + tooltipType + "-tooltip", true).html(tooltipHtml).on("mouseover", function () {
+                    if (!isInTooltip) {
+                      isInTooltip = true;
+                      tooltipHide(true);
+                    }
+                  }).on("mouseleave", function () {
+                    isInTooltip = false;
+                    tooltipHide(false);
+                  });
 
-                var mouseCoordinates = d3.mouse(panelContent.node());
-                var Left = mouseCoordinates[0] - tooltipWidth / 2;
-                var Top = mouseCoordinates[1] + minTop - tooltipHeight / 2;
+                  var $tooltipDiv = $("#" + tooltipDivID);
+                  var tooltipWidth = $tooltipDiv.width();
+                  var tooltipHeight = $tooltipDiv.height();
+                  var minTop = 28;
 
-                var panelWidth = $panel.width();
-                var panelHeight = $panel.height();
+                  var mouseCoordinates = d3.mouse(panelContent.node());
+                  var Left = mouseCoordinates[0] - tooltipWidth / 2;
+                  var Top = mouseCoordinates[1] + minTop - tooltipHeight / 2;
 
-                if (Left < 0) Left = 0;else if (Left > panelWidth - tooltipWidth) Left = panelWidth - tooltipWidth;
+                  var panelWidth = $panel.width();
+                  var panelHeight = $panel.height();
 
-                if (Top < 0) Top = 0;else if (Top > panelHeight + minTop - tooltipHeight) Top = panelHeight + minTop - tooltipHeight;
+                  if (Left < 0) Left = 0;else if (Left > panelWidth - tooltipWidth) Left = panelWidth - tooltipWidth;
 
-                tooltipDiv.transition().duration(200).style("opacity", 1.0).style("left", Left + "px").style("top", Top + "px");
+                  if (Top < 0) Top = 0;else if (Top > panelHeight + minTop - tooltipHeight) Top = panelHeight + minTop - tooltipHeight;
+
+                  tooltipDiv.transition().duration(200).style("opacity", 1.0).style("left", Left + "px").style("top", Top + "px");
+                }
               };
 
               var tooltipHide = function tooltipHide(cancel) {
@@ -824,11 +867,11 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                 var plotGroupHorizontal = function plotGroupHorizontal(panel, svg, data, numRows, groupName, groupNameOffset, left, w, hh, dh) {
                   // Draw border rectangle
                   /*svg.append("rect")
-                            .attr("width", w)
-                            .attr("height", dh)
-                            .attr("x", left)
-                            .attr("y", hh)
-                            .attr("stroke", "yellow");*/
+                  .attr("width", w)
+                  .attr("height", dh)
+                  .attr("x", left)
+                  .attr("y", hh)
+                  .attr("stroke", "yellow");*/
 
                   sortData(data, panel.SortDirection);
 
@@ -842,11 +885,11 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
 
                   // Draw border rectangle
                   /*svg.append("rect")
-                            .attr("width", w)
-                            .attr("height", dh)
-                            .attr("x", left)
-                            .attr("y", hh)
-                            .attr("stroke", "#ffffff");*/
+                  .attr("width", w)
+                  .attr("height", dh)
+                  .attr("x", left)
+                  .attr("y", hh)
+                  .attr("stroke", "#ffffff");*/
 
                   var labels = data.map(function (d) {
                     return d[labelCol];
@@ -1155,11 +1198,11 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
 
                   // Draw border rectangle
                   /*svg.append("rect")
-                            .attr("width", w)
-                            .attr("height", dh)
-                            .attr("x", left)
-                            .attr("y", hh)
-                            .attr("stroke", "#ffffff");*/
+                  .attr("width", w)
+                  .attr("height", dh)
+                  .attr("x", left)
+                  .attr("y", hh)
+                  .attr("stroke", "#ffffff");*/
 
                   var labels = data.map(function (d) {
                     return d[labelCol];
