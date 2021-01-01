@@ -8,7 +8,11 @@
       "name": "Michael Moore<mdmoore@gmail.com>",
       "url": "https://github.com/michaeldmoore"
     },
-    "keywords": ["multistat", "singlestat", "panel"],
+    "keywords": [
+      "multistat",
+      "singlestat",
+      "panel"
+    ],
     "version": "1.6.0",
     "updated": "2020-09-01",
     "logos": {

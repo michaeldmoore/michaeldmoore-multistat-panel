@@ -489,25 +489,25 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
             this.rows = Array.from(oo);
             break;
 
-            case "mean":
-              this.rows = d3
-                .nest()
-                .key(groupedLabelFunc)
-                .rollup(function (d) {
-                  var dd = Object.values(Object.assign({}, d[d.length - 1]));
-                  dd[valueCol] = d3.mean(d, function (d) {
-                    return d[valueCol];
-                  });
-                  return dd;
-                })
-                .entries(this.matchingRows)
-                .forEach(function (x) {
-                  oo.push(x.value);
+          case "mean":
+            this.rows = d3
+              .nest()
+              .key(groupedLabelFunc)
+              .rollup(function (d) {
+                var dd = Object.values(Object.assign({}, d[d.length - 1]));
+                dd[valueCol] = d3.mean(d, function (d) {
+                  return d[valueCol];
                 });
-              this.rows = Array.from(oo);
-              break;
-  
-            case "max":
+                return dd;
+              })
+              .entries(this.matchingRows)
+              .forEach(function (x) {
+                oo.push(x.value);
+              });
+            this.rows = Array.from(oo);
+            break;
+
+          case "max":
             this.rows = d3
               .nest()
               .key(groupedLabelFunc)
@@ -996,11 +996,11 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
         ) {
           // Draw border rectangle
           /*svg.append("rect")
-										.attr("width", w)
-										.attr("height", dh)
-										.attr("x", left)
-										.attr("y", hh)
-										.attr("stroke", "yellow");*/
+                    .attr("width", w)
+                    .attr("height", dh)
+                    .attr("x", left)
+                    .attr("y", hh)
+                    .attr("stroke", "yellow");*/
 
           sortData(data, panel.SortDirection);
 
@@ -1024,11 +1024,11 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
           // Draw border rectangle
           /*svg.append("rect")
-										.attr("width", w)
-										.attr("height", dh)
-										.attr("x", left)
-										.attr("y", hh)
-										.attr("stroke", "#ffffff");*/
+                    .attr("width", w)
+                    .attr("height", dh)
+                    .attr("x", left)
+                    .attr("y", hh)
+                    .attr("stroke", "#ffffff");*/
 
           var labels = data.map(function (d) {
             return d[labelCol];
@@ -1566,11 +1566,11 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
         ) {
           // Draw border rectangle
           /*svg.append("rect")
-			.attr("width", w)
-			.attr("height", dh)
-			.attr("x", left)
-			.attr("y", hh)
-			.attr("stroke", "yellow");*/
+      .attr("width", w)
+      .attr("height", dh)
+      .attr("x", left)
+      .attr("y", hh)
+      .attr("stroke", "yellow");*/
 
           sortData(data, panel.SortDirection);
 
@@ -1594,11 +1594,11 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
           // Draw border rectangle
           /*svg.append("rect")
-										.attr("width", w)
-										.attr("height", dh)
-										.attr("x", left)
-										.attr("y", hh)
-										.attr("stroke", "#ffffff");*/
+                    .attr("width", w)
+                    .attr("height", dh)
+                    .attr("x", left)
+                    .attr("y", hh)
+                    .attr("stroke", "#ffffff");*/
 
           var labels = data.map(function (d) {
             return d[labelCol];

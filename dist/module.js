@@ -824,11 +824,11 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                 var plotGroupHorizontal = function plotGroupHorizontal(panel, svg, data, numRows, groupName, groupNameOffset, left, w, hh, dh) {
                   // Draw border rectangle
                   /*svg.append("rect")
-                  .attr("width", w)
-                  .attr("height", dh)
-                  .attr("x", left)
-                  .attr("y", hh)
-                  .attr("stroke", "yellow");*/
+                            .attr("width", w)
+                            .attr("height", dh)
+                            .attr("x", left)
+                            .attr("y", hh)
+                            .attr("stroke", "yellow");*/
 
                   sortData(data, panel.SortDirection);
 
@@ -842,11 +842,11 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
 
                   // Draw border rectangle
                   /*svg.append("rect")
-                  .attr("width", w)
-                  .attr("height", dh)
-                  .attr("x", left)
-                  .attr("y", hh)
-                  .attr("stroke", "#ffffff");*/
+                            .attr("width", w)
+                            .attr("height", dh)
+                            .attr("x", left)
+                            .attr("y", hh)
+                            .attr("stroke", "#ffffff");*/
 
                   var labels = data.map(function (d) {
                     return d[labelCol];
@@ -1155,11 +1155,11 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
 
                   // Draw border rectangle
                   /*svg.append("rect")
-                  .attr("width", w)
-                  .attr("height", dh)
-                  .attr("x", left)
-                  .attr("y", hh)
-                  .attr("stroke", "#ffffff");*/
+                            .attr("width", w)
+                            .attr("height", dh)
+                            .attr("x", left)
+                            .attr("y", hh)
+                            .attr("stroke", "#ffffff");*/
 
                   var labels = data.map(function (d) {
                     return d[labelCol];

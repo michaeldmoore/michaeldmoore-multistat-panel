@@ -61,7 +61,7 @@ module.exports = (grunt) => {
       rebuild_all: {
         files: ['src/**/*'],
         tasks: ['default'],
-        options: {spawn: false}
+        options: { spawn: false }
       }
     }
 
