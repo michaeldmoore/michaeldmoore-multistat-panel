@@ -151,22 +151,27 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
       $scope
     );
 
-    this.events.on(PanelEvents.dataError, this.onDataError.bind(this), $scope);
+    this.events.on(
+	  PanelEvents.dataError, 
+	  this.onDataError.bind(this), 
+	  $scope
+	);
 
-    this.events.on(PanelEvents.render, this.onRender.bind(this));
+    this.events.on(
+	  PanelEvents.render, 
+	  this.onRender.bind(this)
+	);
 
     this.events.on(
       PanelEvents.dataSnapshotLoad,
       this.onDataSnapshotLoad.bind(this)
     );
-    this.events.on(
+    
+	this.events.on(
       PanelEvents.editModeInitialized,
       this.onInitEditMode.bind(this)
     );
-    this.events.on(
-      PanelEvents.dataSnapshotLoad,
-      this.onDataSnapshotLoad.bind(this)
-    );
+
     this.className = "michaeldmoore-multistat-panel-" + this.panel.id;
   }
 
@@ -280,6 +285,50 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
       this.rows = null;
       this.render();
     }
+  }
+
+  randomColor() {
+    var letters = '456789ABCDE'.split('');
+    var color = '#';
+    for (var i = 0; i < 6; i++ ) {
+      color += letters[Math.floor(Math.random() * letters.length)];
+    }
+    return color;
+  }
+
+  getContrastingColor(hexcolor) {
+    let match = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hexcolor);
+    if (match) {
+      let r = parseInt(match[1], 16);
+      let g = parseInt(match[2], 16);
+      let b = parseInt(match[3], 16);
+      
+      let brightness = (0.2126 * r + 0.7152 * g + 0.0722 * b);
+      let contrastingColor = brightness < 128 ? '#ffffff' : '#000000';
+      return contrastingColor;
+    } 
+
+  match = /^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d+)?))?\)$/i.exec(hexcolor);
+  if (match) {
+    let r = parseInt(match[1]);
+    let g = parseInt(match[2]);
+    let b = parseInt(match[3]);
+    
+    let brightness = (0.2126 * r + 0.7152 * g + 0.0722 * b);
+    let contrastingColor = brightness < 128 ? '#ffffff' : '#000000';
+    return contrastingColor;
+  } 
+
+  return this.panel.ValueColor;
+}
+
+  onValueAdd() {
+    this.ctrl.panel.Values.push({
+      Name:'', 
+      HighBarColor:this.randomColor(), 
+      LowBarColor:this.randomColor(), 
+      Selected: true});
+    this.ctrl.render();
   }
 
   onReorderValues(index, up) {
@@ -647,7 +696,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
             .children()
             .last()
             .css("background-color", value.HighBarColor)
-            .css("color", this.panel.ValueColor)
+            .css("color", this.getContrastingColor(value.HighBarColor))
             .click(function () {
               //console.log('legend-click() value='+JSON.stringify(value,null,2));
               if (window.event.ctrlKey) {

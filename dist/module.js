@@ -225,8 +225,9 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
           _this.events.on(PanelEvents.render, _this.onRender.bind(_this));
 
           _this.events.on(PanelEvents.dataSnapshotLoad, _this.onDataSnapshotLoad.bind(_this));
+
           _this.events.on(PanelEvents.editModeInitialized, _this.onInitEditMode.bind(_this));
-          _this.events.on(PanelEvents.dataSnapshotLoad, _this.onDataSnapshotLoad.bind(_this));
+
           _this.className = "michaeldmoore-multistat-panel-" + _this.panel.id;
           return _this;
         }
@@ -293,6 +294,53 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
               this.rows = null;
               this.render();
             }
+          }
+        }, {
+          key: "randomColor",
+          value: function randomColor() {
+            var letters = '456789ABCDE'.split('');
+            var color = '#';
+            for (var i = 0; i < 6; i++) {
+              color += letters[Math.floor(Math.random() * letters.length)];
+            }
+            return color;
+          }
+        }, {
+          key: "getContrastingColor",
+          value: function getContrastingColor(hexcolor) {
+            var match = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hexcolor);
+            if (match) {
+              var r = parseInt(match[1], 16);
+              var g = parseInt(match[2], 16);
+              var b = parseInt(match[3], 16);
+
+              var brightness = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+              var contrastingColor = brightness < 128 ? '#ffffff' : '#000000';
+              return contrastingColor;
+            }
+
+            match = /^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d+)?))?\)$/i.exec(hexcolor);
+            if (match) {
+              var _r = parseInt(match[1]);
+              var _g = parseInt(match[2]);
+              var _b = parseInt(match[3]);
+
+              var _brightness = 0.2126 * _r + 0.7152 * _g + 0.0722 * _b;
+              var _contrastingColor = _brightness < 128 ? '#ffffff' : '#000000';
+              return _contrastingColor;
+            }
+
+            return this.panel.ValueColor;
+          }
+        }, {
+          key: "onValueAdd",
+          value: function onValueAdd() {
+            this.ctrl.panel.Values.push({
+              Name: '',
+              HighBarColor: this.randomColor(),
+              LowBarColor: this.randomColor(),
+              Selected: true });
+            this.ctrl.render();
           }
         }, {
           key: "onReorderValues",
@@ -564,7 +612,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                   // Be careful with this - the toggling/selection logic is quite complicated. //
                   ///////////////////////////////////////////////////////////////////////////////
                   var deselectedClassName = value.Selected ? "" : " class='michaeldmoore-multistat-panel-legend-deselected'";
-                  $legend.append("<li" + deselectedClassName + ">" + value.Name + "</li>").children().last().css("background-color", value.HighBarColor).css("color", _this2.panel.ValueColor).click(function () {
+                  $legend.append("<li" + deselectedClassName + ">" + value.Name + "</li>").children().last().css("background-color", value.HighBarColor).css("color", _this2.getContrastingColor(value.HighBarColor)).click(function () {
                     //console.log('legend-click() value='+JSON.stringify(value,null,2));
                     if (window.event.ctrlKey) {
                       // toggle this item only

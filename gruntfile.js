@@ -19,7 +19,7 @@ module.exports = (grunt) => {
       },
       pluginDef: {
         expand: true,
-        src: ['README.md'],
+        src: ['CHANGELOG.md', 'README.md'],
         dest: 'dist'
       },
       img_to_dist: {

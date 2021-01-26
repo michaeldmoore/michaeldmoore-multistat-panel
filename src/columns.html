@@ -36,8 +36,7 @@
         <label class="gf-form-label width-6">Value cols</label>
         <span class="michaeldmoore-multistat-panel-w2"></span>
         <span class="gf-form-label">
-          <i class="fa fa-plus"
-            ng-click="ctrl.panel.Values.push({Name:'', HighBarColor:'rgb(120, 128, 0)', LowBarColor:'teal', Selected: true}); ctrl.render();"></i>
+          <i class="fa fa-plus" ng-click="ctrl.onValueAdd()"></i>
         </span>
         <span class="michaeldmoore-multistat-panel-w2"></span>
         <div class="gf-form-inline" ng-if="ctrl.panel.Values.length > 1">
