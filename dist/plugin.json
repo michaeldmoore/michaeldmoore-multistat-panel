@@ -13,7 +13,7 @@
       "singlestat",
       "panel"
     ],
-    "version": "1.6.1-rc1",
+    "version": "1.6.1",
     "updated": "2021-01-01",
     "logos": {
       "small": "img/michaeldmoore-multistat-panel.svg",
@@ -37,7 +37,8 @@
     ]
   },
   "dependencies": {
-    "grafanaVersion": "7.x.x",
+    "grafanaDependency": ">=7.3.0",
+    "grafanaVersion": "7.3.x",
     "plugins": []
   }
 }

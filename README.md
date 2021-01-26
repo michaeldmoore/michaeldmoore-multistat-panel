@@ -1,10 +1,12 @@
 # michaeldmoore-multistat-panel
 
-*New Version (1.3.0) - Now with rules-based bar re-coloring!* [see here](README.md#Recolor-Rules)
+*New Version (1.3.0) - Now with rules-based bar re-coloring!* 
 
-*New Version (1.4.0) - Now with restyled tooltips and clickable per-bar links!* [see here](README.md#Clickable-tooltips--links)
+*New Version (1.4.0) - Now with restyled tooltips and clickable per-bar links!* 
 
-*New Version (1.6.0) - Now with support for multiple value columns per lable!* [see here](README.md#Multi-Column--Support)
+*New Version (1.6.0) - Now with support for multiple value columns per label!*
+
+(Documentation for these changes is covered in the sections at the very end of this readme file)
 
 ## Custom multistat panel for Grafana, inspired by the built-in SingleStat panel
 
@@ -56,7 +58,7 @@ Any additional fields are retained and presented in optional tool-tip balloons. 
 
 ## Duplicate labels in table data
 
-Each distinct label in the input data results in a distinct bar in Multistat.  Ideally, table data should be created by queries that return distinct data sets - that is, sets in which each label is presented in a single row.  When data sets are processed with multiple rows for a given label, Multistat needs to know which value to use (and hence, which values to ignore).  A configurable aggregation parameter tells Multistat how to handle this.  'Last' (and 'First') select the last (or first) row in the data for any given label, throwing out all the others.    The optional date/timestamp field helps too by presorting the data table before selecting the aggregation function.  The tool-tip then shows the set of fields for the selected data row, as expected.
+Each distinct label in the input data results in a distinct bar in Multistat.  Ideally, table data should be created by queries that return distinct data sets - that is, sets in which each label is presented in a single row.  When data sets are processed with multiple rows for a given label, Multistat needs to know which value to use (and hence, which values to ignore).  A configurable aggregation parameter tells Multistat how to handle this.  'Last' (and 'First') select the last (or first) row in the data for any given label, throwing out all the others.    The optional date/timestamp field helps too by pre-sorting the data table before selecting the aggregation function.  The tool-tip then shows the set of fields for the selected data row, as expected.
 
 Setting the aggregation parameter to 'Max' or 'Min' works in a similar way, selecting the row for each label with the corresponding value - and secondly using the last or latest value in the event that there is a tie in the value.
 
@@ -152,7 +154,7 @@ time,sensor,area,quantity
 2018-12-18 00:21:07.000,ZZZ,North,0.928
 ```
 
-Note, sensor AAA in this data set has multiple values, each a few hours apart.  All the other sensors have a single row - this will allow the aggregation feature to be demonstrated later in this note. Each row nthis data set includes a date/time, a label and a value, plus a region field (that will be useful in grouping).   The field names can be anything; everything is defined in the configuration tabs. Additional fields, if any, will appear in the tool-tip pop-up display, if enabled.
+Note, sensor AAA in this data set has multiple values, each a few hours apart.  All the other sensors have a single row - this will allow the aggregation feature to be demonstrated later in this note. Each row in this data set includes a date/time, a label and a value, plus a region field (that will be useful in grouping).   The field names can be anything; everything is defined in the configuration tabs. Additional fields, if any, will appear in the tool-tip pop-up display, if enabled.
 
 As you can see, Multistat is configured using a number of option tabs.  Let's examine each of these in sequence.
 
@@ -188,7 +190,7 @@ The **Layout** tab
 The Layouts tab defines the basic settings that control how the data is arranged on the panel.
 The Horizontal checkbox switches the bar orientation from vertical to horizontal.  As the chart(s) rotate, the axis and labels rotate with them - hence the use of neutral terms for the axis as 'High' and 'Low' rather than 'Left', 'Right', 'Top' or 'Bottom'
 
-**Label Margin** sets the area reserved for the labels can be set according to the length of the labels - or left blank, leaving the panel to calculate a reasonable value based on the actual data, orientation and chosen font size etc.   **Angle** controls the rotation angle for the label text, which can help preserve screen real-estate - particularly when long labels are present.  *Note - it is quite difficult for the control to predetermine the ideal center of rotation for these labels.  Depending on the data, this can make the charts hard to understand.  More work in future releases should improve this feature.  Still, if it helps in any specific case, feel free to use it.*
+**Label Margin** sets the area reserved for the labels can be set according to the length of the labels - or left blank, leaving the panel to calculate a reasonable value based on the actual data, orientation and chosen font size etc.   **Angle** controls the rotation angle for the label text, which can help preserve screen real-estate - particularly when long labels are present.  *Note - it is quite difficult for the control to predetermine the ideal centre of rotation for these labels.  Depending on the data, this can make the charts hard to understand.  More work in future releases should improve this feature.  Still, if it helps in any specific case, feel free to use it.*
 
 **Low Side Margin** and **High Side Margin** set the width of the two axis.  Set to 0 to hide one or both of them.
 
@@ -230,7 +232,7 @@ The **Options** Tab
 The **Out Of Range** label color override is an advanced feature for cases where a specific axis Max and/or Min setting is in place (see the **Lines-And-Limits** tab below) and a bar is outside one of these limits.  This color overrides the standard label color for labels where this occurs. *(This is useful, for example where a non-working sensor, for example, generates a wildly out of range value)*
 **Label Margin**, **Angle**, **Low Side Margin** and **High Side Margin** - these too are duplicates of controls on the Layout tab, again, for convenience.
 
-**Tooltips** enables the mouse over info balloons, listing all the fields corresponding to the identified bar.  **Date Format** allows the setting formatting characters for the field identified as the datatime field (if any)
+**Tooltips** enables the mouse over info balloons, listing all the fields corresponding to the identified bar.  **Date Format** allows the setting formatting characters for the field identified as the datetime field (if any)
 
 The **Lines and Limits** tab
 ![image](https://user-images.githubusercontent.com/3724718/51770407-4758a900-20ab-11e9-87b4-f7c69a679d6a.png)
@@ -275,7 +277,7 @@ If none of the rules match the given recolor value, the bar colors are not overr
 
 In this case, the second rule 'room' with a subset match type sets all the bars containing the word 'room' blue.
 
-The 'List' rule match type uses a comma seperated list of names.  In this case, the 'bed room' match applies over the more general 'room' rule as it appears higher up in the list of recoloring rules
+The 'List' rule match type uses a comma separated list of names.  In this case, the 'bed room' match applies over the more general 'room' rule as it appears higher up in the list of recoloring rules
 ![image](https://user-images.githubusercontent.com/3724718/79685532-723f9780-8231-11ea-82ac-034cd6d67452.png)
 
 A final option - 'Reg ex' uses the rule pattern as a regular expression, for those brave enough to work out the syntax (!)
