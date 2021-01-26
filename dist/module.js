@@ -47,6 +47,10 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
     if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
   }
 
+  function isNumber(n) {
+    return !isNaN(parseFloat(n)) && isFinite(n);
+  }
+
   return {
     setters: [function (_appPluginsSdk) {
       MetricsPanelCtrl = _appPluginsSdk.MetricsPanelCtrl;
@@ -308,24 +312,24 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
         }, {
           key: "getContrastingColor",
           value: function getContrastingColor(hexcolor) {
-            var match = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hexcolor);
+            var match = /^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d+)?))?\)$/i.exec(hexcolor);
             if (match) {
-              var r = parseInt(match[1], 16);
-              var g = parseInt(match[2], 16);
-              var b = parseInt(match[3], 16);
+              var r = parseInt(match[1]);
+              var g = parseInt(match[2]);
+              var b = parseInt(match[3]);
 
               var brightness = 0.2126 * r + 0.7152 * g + 0.0722 * b;
               var contrastingColor = brightness < 128 ? '#ffffff' : '#000000';
               return contrastingColor;
             }
 
-            match = /^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d+)?))?\)$/i.exec(hexcolor);
+            match = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hexcolor);
             if (match) {
-              var _r = parseInt(match[1]);
-              var _g = parseInt(match[2]);
-              var _b = parseInt(match[3]);
+              var r1 = parseInt(match[1], 16);
+              var g1 = parseInt(match[2], 16);
+              var b1 = parseInt(match[3], 16);
 
-              var _brightness = 0.2126 * _r + 0.7152 * _g + 0.0722 * _b;
+              var _brightness = 0.2126 * r1 + 0.7152 * g1 + 0.0722 * b1;
               var _contrastingColor = _brightness < 128 ? '#ffffff' : '#000000';
               return _contrastingColor;
             }
@@ -645,7 +649,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
 
               this.buildDateHtml(dateTimeCol);
 
-              var labelMargin = $.isNumeric(this.panel.LabelMargin) && this.panel.LabelMargin >= 0 ? this.panel.LabelMargin : null;
+              var labelMargin = isNumber(this.panel.LabelMargin) && this.panel.LabelMargin >= 0 ? this.panel.LabelMargin : null;
               var lowSideMargin = this.panel.LowSideMargin >= 0 ? this.panel.LowSideMargin : 0;
               var highSideMargin = this.panel.HighSideMargin >= 0 ? this.panel.HighSideMargin : 0;
 
@@ -700,7 +704,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                 }
                 return min * ScaleFactor;
               });
-              if ($.isNumeric(minLineValue) == false) minLineValue = minValue;
+              if (isNumber(minLineValue) == false) minLineValue = minValue;
 
               var maxValue = SelectedValues.length && d3.max(this.rows, function (d) {
                 var max = Number(d[SelectedValues[0].Col]);
@@ -711,17 +715,17 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                 }
                 return max * ScaleFactor;
               });
-              if ($.isNumeric(maxLineValue) == false) maxLineValue = maxValue;
+              if (isNumber(maxLineValue) == false) maxLineValue = maxValue;
 
-              if ($.isNumeric(baseLineValue) == false) baseLineValue = 0;
+              if (isNumber(baseLineValue) == false) baseLineValue = 0;
 
               if (minLineValue > baseLineValue) minLineValue = baseLineValue;
 
-              if ($.isNumeric(lowLimitValue) && minLineValue > lowLimitValue) minLineValue = lowLimitValue;
+              if (isNumber(lowLimitValue) && minLineValue > lowLimitValue) minLineValue = lowLimitValue;
 
               if (maxLineValue < baseLineValue) maxLineValue = baseLineValue;
 
-              if ($.isNumeric(highLimitValue) && maxLineValue < highLimitValue) maxLineValue = highLimitValue;
+              if (isNumber(highLimitValue) && maxLineValue < highLimitValue) maxLineValue = highLimitValue;
 
               $("#" + tooltipDivID).remove();
 
@@ -732,7 +736,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                     var xx = x[sortCol];
                     var yy = y[sortCol];
 
-                    if ($.isNumeric(xx) && $.isNumeric(yy)) return ascending ? xx - yy : yy - xx;else return ascending ? xx.localeCompare(yy) : yy.localeCompare(xx);
+                    if (isNumber(xx) && isNumber(yy)) return ascending ? xx - yy : yy - xx;else return ascending ? xx.localeCompare(yy) : yy.localeCompare(xx);
                   });
                 }
               };
@@ -779,7 +783,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                         var cc = cols[i];
                         var dd = d[i];
 
-                        if (cc == DateTimeColName) dd = moment(dd).add(TZOffsetHours, "h").format(TooltipDateFormat);else if (cc == ValueColName && $.isNumeric(dd)) dd = Number(dd).toFixed(ValueDecimals);
+                        if (cc == DateTimeColName) dd = moment(dd).add(TZOffsetHours, "h").format(TooltipDateFormat);else if (cc == ValueColName && isNumber(dd)) dd = Number(dd).toFixed(ValueDecimals);
 
                         html += "<tr><td>" + cc + "</td><td>" + dd + "</td></tr>";
                       }
@@ -911,6 +915,12 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                 return value > baseLineValue ? valueDef.HighBarColor : valueDef.LowBarColor;
               };
 
+              var getValueColor = function getValueColor(d, valueDef) {
+                var barColor = getBarColor(d, valueDef);
+                var valueColor = CTRL.getContrastingColor(barColor);
+                return valueColor;
+              };
+
               if (this.panel.Horizontal) {
                 var plotGroupHorizontal = function plotGroupHorizontal(panel, svg, data, numRows, groupName, groupNameOffset, left, w, hh, dh) {
                   // Draw border rectangle
@@ -1022,7 +1032,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                       maxLabelWidth = d3.max([maxLabelWidth, thisWidth]);
                     });
 
-                    if ($.isNumeric(labelMargin)) {
+                    if (isNumber(labelMargin)) {
                       left += labelMargin;
                       w -= labelMargin;
                     } else {
@@ -1146,7 +1156,9 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                           }
                         }).attr("y", function (d, i) {
                           return labelScale(d[labelCol]) + height / 2 + (height + gap) * index;
-                        }).attr("font-family", "sans-serif").attr("font-size", panel.ValueFontSize).attr("fill", panel.ValueColor).attr("text-anchor", function (d) {
+                        }).attr("font-family", "sans-serif").attr("font-size", panel.ValueFontSize).attr("fill", function (d) {
+                          return getValueColor(d, valueDef);
+                        }).attr("text-anchor", function (d) {
                           if (panel.ValuePosition == "bar base") return d[valueCol] * ScaleFactor > baseLineValue ? "start" : "end";
                           // "bar end"
                           else return d[valueCol] * ScaleFactor > baseLineValue ? "end" : "start";
@@ -1332,7 +1344,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                       var thisHeight = b;
                       maxLabelHeight = d3.max([maxLabelHeight, thisHeight]);
                     });
-                    if ($.isNumeric(labelMargin)) {
+                    if (isNumber(labelMargin)) {
                       dh -= labelMargin;
                     } else {
                       dh -= maxLabelHeight;
@@ -1531,7 +1543,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
               var pulseHigh = function pulseHigh(svg) {
                 var highFlashRects = svg.selectAll("rect.michaeldmoore-multistat-panel-bar.highflash");
 
-                if ($.isNumeric(HighLimitBarFlashTimeout) && highFlashRects._groups.length > 0 && highFlashRects._groups[0].length > 0) {
+                if (isNumber(HighLimitBarFlashTimeout) && highFlashRects._groups.length > 0 && highFlashRects._groups[0].length > 0) {
                   highFlashRects.transition().on("start", function highRepeat() {
                     d3.active(this).style("fill", HighLimitBarFlashColor).duration(HighLimitBarFlashTimeout).transition().style("fill", HighLimitBarColor).duration(HighLimitBarFlashTimeout).transition().on("start", highRepeat);
                   });
@@ -1540,7 +1552,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
 
               var pulseLow = function pulseLow(svg) {
                 var lowFlashRects = svg.selectAll("rect.michaeldmoore-multistat-panel-bar.lowflash");
-                if ($.isNumeric(LowLimitBarFlashTimeout) && lowFlashRects._groups.length > 0 && lowFlashRects._groups[0].length > 0) {
+                if (isNumber(LowLimitBarFlashTimeout) && lowFlashRects._groups.length > 0 && lowFlashRects._groups[0].length > 0) {
                   lowFlashRects.transition().on("start", function lowRepeat() {
                     d3.active(this).style("fill", LowLimitBarFlashColor).duration(LowLimitBarFlashTimeout).transition().style("fill", LowLimitBarColor).duration(LowLimitBarFlashTimeout).transition().on("start", lowRepeat);
                   });

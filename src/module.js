@@ -13,6 +13,10 @@ import { PanelEvents } from "@grafana/data";
 
 const templateSrv = getTemplateSrv();
 
+function isNumber(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+}
+
 class MultistatPanelCtrl extends MetricsPanelCtrl {
   /** @ngInject */
   constructor($scope, $injector) {
@@ -297,27 +301,27 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
   }
 
   getContrastingColor(hexcolor) {
-    let match = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hexcolor);
+    let match = /^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d+)?))?\)$/i.exec(hexcolor);
     if (match) {
-      let r = parseInt(match[1], 16);
-      let g = parseInt(match[2], 16);
-      let b = parseInt(match[3], 16);
+      let r = parseInt(match[1]);
+      let g = parseInt(match[2]);
+      let b = parseInt(match[3]);
       
       let brightness = (0.2126 * r + 0.7152 * g + 0.0722 * b);
       let contrastingColor = brightness < 128 ? '#ffffff' : '#000000';
       return contrastingColor;
     } 
-
-  match = /^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d+)?))?\)$/i.exec(hexcolor);
-  if (match) {
-    let r = parseInt(match[1]);
-    let g = parseInt(match[2]);
-    let b = parseInt(match[3]);
-    
-    let brightness = (0.2126 * r + 0.7152 * g + 0.0722 * b);
-    let contrastingColor = brightness < 128 ? '#ffffff' : '#000000';
-    return contrastingColor;
-  } 
+  
+    match = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hexcolor);
+    if (match) {
+      let r1 = parseInt(match[1], 16);
+      let g1 = parseInt(match[2], 16);
+      let b1 = parseInt(match[3], 16);
+      
+      let brightness = (0.2126 * r1 + 0.7152 * g1 + 0.0722 * b1);
+      let contrastingColor = brightness < 128 ? '#ffffff' : '#000000';
+      return contrastingColor;
+    } 
 
   return this.panel.ValueColor;
 }
@@ -727,7 +731,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
       this.buildDateHtml(dateTimeCol);
 
       var labelMargin =
-        $.isNumeric(this.panel.LabelMargin) && this.panel.LabelMargin >= 0
+        isNumber(this.panel.LabelMargin) && this.panel.LabelMargin >= 0
           ? this.panel.LabelMargin
           : null;
       var lowSideMargin =
@@ -792,7 +796,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
           }
           return min * ScaleFactor;
         });
-      if ($.isNumeric(minLineValue) == false) minLineValue = minValue;
+      if (isNumber(minLineValue) == false) minLineValue = minValue;
 
       var maxValue =
         SelectedValues.length &&
@@ -805,18 +809,18 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
           }
           return max * ScaleFactor;
         });
-      if ($.isNumeric(maxLineValue) == false) maxLineValue = maxValue;
+      if (isNumber(maxLineValue) == false) maxLineValue = maxValue;
 
-      if ($.isNumeric(baseLineValue) == false) baseLineValue = 0;
+      if (isNumber(baseLineValue) == false) baseLineValue = 0;
 
       if (minLineValue > baseLineValue) minLineValue = baseLineValue;
 
-      if ($.isNumeric(lowLimitValue) && minLineValue > lowLimitValue)
+      if (isNumber(lowLimitValue) && minLineValue > lowLimitValue)
         minLineValue = lowLimitValue;
 
       if (maxLineValue < baseLineValue) maxLineValue = baseLineValue;
 
-      if ($.isNumeric(highLimitValue) && maxLineValue < highLimitValue)
+      if (isNumber(highLimitValue) && maxLineValue < highLimitValue)
         maxLineValue = highLimitValue;
 
       $("#" + tooltipDivID).remove();
@@ -828,7 +832,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
             let xx = x[sortCol];
             let yy = y[sortCol];
 
-            if ($.isNumeric(xx) && $.isNumeric(yy))
+            if (isNumber(xx) && isNumber(yy))
               return ascending ? xx - yy : yy - xx;
             else return ascending ? xx.localeCompare(yy) : yy.localeCompare(xx);
           });
@@ -888,7 +892,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
                   dd = moment(dd)
                     .add(TZOffsetHours, "h")
                     .format(TooltipDateFormat);
-                else if (cc == ValueColName && $.isNumeric(dd))
+                else if (cc == ValueColName && isNumber(dd))
                   dd = Number(dd).toFixed(ValueDecimals);
 
                 html += "<tr><td>" + cc + "</td><td>" + dd + "</td></tr>";
@@ -1057,6 +1061,12 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
         return value > baseLineValue
           ? valueDef.HighBarColor
           : valueDef.LowBarColor;
+      };
+
+      var getValueColor = function (d, valueDef) {
+        let barColor = getBarColor(d, valueDef);
+        let valueColor = CTRL.getContrastingColor(barColor);
+        return valueColor;
       };
 
       if (this.panel.Horizontal) {
@@ -1251,7 +1261,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
                 maxLabelWidth = d3.max([maxLabelWidth, thisWidth]);
               });
 
-            if ($.isNumeric(labelMargin)) {
+            if (isNumber(labelMargin)) {
               left += labelMargin;
               w -= labelMargin;
             } else {
@@ -1474,7 +1484,9 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
                   })
                   .attr("font-family", "sans-serif")
                   .attr("font-size", panel.ValueFontSize)
-                  .attr("fill", panel.ValueColor)
+                  .attr("fill", function(d) {
+                    return getValueColor(d, valueDef);
+                  })
                   .attr("text-anchor", function (d) {
                     if (panel.ValuePosition == "bar base")
                       return d[valueCol] * ScaleFactor > baseLineValue
@@ -1818,7 +1830,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
                 var thisHeight = b;
                 maxLabelHeight = d3.max([maxLabelHeight, thisHeight]);
               });
-            if ($.isNumeric(labelMargin)) {
+            if (isNumber(labelMargin)) {
               dh -= labelMargin;
             } else {
               dh -= maxLabelHeight;
@@ -2208,7 +2220,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
         );
 
         if (
-          $.isNumeric(HighLimitBarFlashTimeout) &&
+          isNumber(HighLimitBarFlashTimeout) &&
           highFlashRects._groups.length > 0 &&
           highFlashRects._groups[0].length > 0
         ) {
@@ -2230,7 +2242,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
           "rect.michaeldmoore-multistat-panel-bar.lowflash"
         );
         if (
-          $.isNumeric(LowLimitBarFlashTimeout) &&
+          isNumber(LowLimitBarFlashTimeout) &&
           lowFlashRects._groups.length > 0 &&
           lowFlashRects._groups[0].length > 0
         ) {
