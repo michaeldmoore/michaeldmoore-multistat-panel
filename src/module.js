@@ -2050,7 +2050,9 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
                   })
                   .attr("font-family", "sans-serif")
                   .attr("font-size", panel.ValueFontSize)
-                  .attr("fill", panel.ValueColor)
+                  .attr("fill", function(d) {
+                    return getValueColor(d, valueDef);
+                  })
                   .attr("text-anchor", "middle")
                   .attr("dominant-baseline", function (d) {
                     if (ValuePosition == "bar base")

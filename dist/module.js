@@ -1465,7 +1465,9 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                             var val = scaleAndClipValue(d[valueCol]);
                             return valueScale(val);
                           }
-                        }).attr("font-family", "sans-serif").attr("font-size", panel.ValueFontSize).attr("fill", panel.ValueColor).attr("text-anchor", "middle").attr("dominant-baseline", function (d) {
+                        }).attr("font-family", "sans-serif").attr("font-size", panel.ValueFontSize).attr("fill", function (d) {
+                          return getValueColor(d, valueDef);
+                        }).attr("text-anchor", "middle").attr("dominant-baseline", function (d) {
                           if (ValuePosition == "bar base") return d[valueCol] * ScaleFactor > baseLineValue ? "text-after-edge" : "text-before-edge";else return d[valueCol] * ScaleFactor > baseLineValue ? "text-before-edge" : "text-after-edge";
                         });
                       }
