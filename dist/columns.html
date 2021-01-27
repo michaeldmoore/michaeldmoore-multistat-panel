@@ -9,6 +9,40 @@
         </div>
       </div>
     </div>
+
+    <div class="gf-form michaeldmoore-multistat-panel-w10">
+      <label class="gf-form-label">Label Renaming Rules</label>
+      <button class="btn btn-inverse"
+        ng-click="ctrl.panel.LabelRenamingRules.push({from:'', to:'', enabled:false})">
+        <i class="fa fa-plus"></i>
+      </button>
+    </div>
+
+    <div class="gf-form" ng-repeat="rule in ctrl.panel.LabelRenamingRules">
+      <div class="gf-form">
+        <span class="gf-form-label">
+          <i class="fa fa-trash pointer" ng-click="ctrl.panel.LabelRenamingRules.splice($index,1); ctrl.render();"></i>
+        </span>
+        <gf-form-switch class="gf-form" checked="rule.enabled" on-change="ctrl.render()"></gf-form-switch>
+        <span class="gf-form-label">
+          <i class="fa fa-arrow-up pointer" ng-click="ctrl.onReorderLabelRenamingRules($index,1); ctrl.render();"></i>
+        </span>
+        <span class="gf-form-label">
+          <i class="fa fa-arrow-down pointer" ng-click="ctrl.onReorderLabelRenamingRules($index,0); ctrl.render();"></i>
+        </span>
+
+        <label class="gf-form-label">Rule {{$index + 1}}</label>
+
+        <input type="string" class="gf-form-input michaeldmoore-multistat-panel-w18" ng-model="rule.from"
+          ng-change="ctrl.render()" />
+
+        <label class="gf-form-label">-></label>
+
+        <input type="string" class="gf-form-input michaeldmoore-multistat-panel-w8" ng-model="rule.to"
+          ng-change="ctrl.render()" />
+        </div>
+    </div>
+
     <div class="gf-form">
       <label class="gf-form-label width-6">Label Filter</label>
       <input type="string" class="gf-form-input width-27" data-placement="right"
@@ -50,6 +84,10 @@
 
     <div class="gf-form" ng-repeat="value in ctrl.panel.Values">
       <span class="gf-form-label">
+        <i class="fa fa-trash pointer" ng-click="ctrl.panel.Values.splice($index,1); ctrl.render();"></i>
+      </span>
+      <span class="michaeldmoore-multistat-panel-w2"></span>
+      <span class="gf-form-label">
         <i class="fa fa-arrow-up pointer" ng-click="ctrl.onReorderValues($index,1)"></i>
       </span>
       <span class="gf-form-label">
@@ -71,10 +109,6 @@
 
       <gf-form-switch class="gf-form" label-class="michaeldmoore-multistat-panel-w4" label="Select"
         checked="value.Selected" on-change="ctrl.render();"></gf-form-switch>
-
-      <span class="gf-form-label" ng-if="ctrl.panel.Values.length > 1">
-        <i class="fa fa-trash pointer" ng-click="ctrl.panel.Values.splice($index,1); ctrl.render();"></i>
-      </span>
     </div>
 
     <div class="gf-form-button-row">
@@ -154,6 +188,14 @@ Setting the format string to the reserved keyword "ELAPSED" displays the time as
             ng-options="f for f in ctrl.cols0" ng-change="ctrl.render()"></select>
         </div>
       </div>
+    </div>
+
+    <div class="gf-form" ng-if="ctrl.cols.includes(ctrl.panel.RecolorColName)">
+      <label class="gf-form-label width-6">Recolor Rules</label>
+      <button class="btn btn-inverse"
+        ng-click="ctrl.panel.RecolorRules.push({pattern:'', matchType:'exact', color:'#777777'})">
+        <i class="fa fa-plus"></i>
+      </button>
     </div>
 
     <div class="gf-form" ng-if="ctrl.cols.includes(ctrl.panel.RecolorColName)"

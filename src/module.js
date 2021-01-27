@@ -53,8 +53,10 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
       OutOfRangeLabelColor: "#ffffff",
       GroupLabelColor: "#ffffff",
       LabelFontSize: "100%",
+      GroupRenamingRules: [],
       GroupLabelFontSize: "200%",
       GroupGap: 5,
+      LabelRenamingRules: [],
       LabelMargin: null,
       Legend: false,
       Links: [],
@@ -368,6 +370,50 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
     this.render();
   }
 
+
+  onReorderGroupRenamingRules(index, up) {
+    const GroupRenamingRules = this.ctrl.panel.GroupRenamingRules;
+    if (up) {
+      if (index)
+        GroupRenamingRules[index] = GroupRenamingRules.splice(
+          index - 1,
+          1,
+          GroupRenamingRules[index]
+        )[0];
+    } else {
+      if (index + 1 < GroupRenamingRules.length)
+        GroupRenamingRules[index] = GroupRenamingRules.splice(
+          index + 1,
+          1,
+          GroupRenamingRules[index]
+        )[0];
+    }
+
+    this.render();
+  }
+
+
+  onReorderLabelRenamingRules(index, up) {
+    const LabelRenamingRules = this.ctrl.panel.GroupRenamingRules;
+    if (up) {
+      if (index)
+        GroupRenamingRules[index] = GroupRenamingRules.splice(
+          index - 1,
+          1,
+          GroupRenamingRules[index]
+        )[0];
+    } else {
+      if (index + 1 < GroupRenamingRules.length)
+        GroupRenamingRules[index] = GroupRenamingRules.splice(
+          index + 1,
+          1,
+          GroupRenamingRules[index]
+        )[0];
+    }
+
+    this.render();
+  }
+
   onReorderLinks(index, up) {
     const Links = this.ctrl.panel.Links;
     if (up) {
@@ -414,6 +460,17 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
     );
   }
 
+  processRenamingRules(rules, name) {
+    let newName = name;
+    rules.forEach((rule) => {
+      if (rule.enabled) {
+        let regex = new RegExp(rule.from, "ig");
+        newName = newName.replaceAll(regex, rule.to);
+      }
+    });
+    return newName;
+  }
+
   onRender() {
     if (this.data != null && this.data.rows && this.data.rows.length) {
       var cols = this.cols;
@@ -449,6 +506,18 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
       //console.log('onRender: this.data.rows\n'+JSON.stringify(this.data.rows));
 
+      // process renaming rules (if any) on all group and label column data
+      let renamedRows = this.data.rows;
+      if (this.panel.LabelRenamingRules.length || (groupCol != -1 && this.panel.GroupRenamingRules.length)) {
+        renamedRows = this.data.rows.map((row) => {
+          let renamedRow = [...row];
+          renamedRow[labelCol] = this.processRenamingRules(this.panel.LabelRenamingRules, renamedRow[labelCol]);
+          if (groupCol != -1)
+            renamedRow[groupCol] = this.processRenamingRules(this.panel.GroupRenamingRules, renamedRow[groupCol]);
+          return renamedRow;
+        });
+      }
+
       const groupedLabelFunc = function (obj) {
         if (groupCol != -1) return obj[groupCol] + ":" + obj[labelCol];
         else return obj[labelCol];
@@ -457,9 +526,9 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
       if (this.panel.LabelNameFilter.length > 0 && labelCol != -1) {
         var regex = new RegExp(this.panel.LabelNameFilter, "");
         this.matchingRows = [];
-        for (let i = 0; i < this.data.rows.length; i++) {
-          var dd = this.data.rows[i];
-          var label = dd[labelCol];
+        for (let i = 0; i < renamedRows.length; i++) {
+          let dd = renamedRows[i];
+          let label = dd[labelCol];
           if (label.match(regex) != null) this.matchingRows.push(dd);
         }
 
@@ -468,12 +537,12 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
             "No data.  Regex filter '" +
             this.panel.LabelNameFilter +
             "' eliminated all " +
-            this.data.rows.length +
+            renamedRows.length +
             " rows from current query"
           );
           return;
         }
-      } else this.matchingRows = this.data.rows;
+      } else this.matchingRows = renamedRows;
 
       if (
         this.panel.Aggregate != "all" &&

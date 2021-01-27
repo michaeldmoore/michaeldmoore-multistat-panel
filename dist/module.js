@@ -128,8 +128,10 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
             OutOfRangeLabelColor: "#ffffff",
             GroupLabelColor: "#ffffff",
             LabelFontSize: "100%",
+            GroupRenamingRules: [],
             GroupLabelFontSize: "200%",
             GroupGap: 5,
+            LabelRenamingRules: [],
             LabelMargin: null,
             Legend: false,
             Links: [],
@@ -371,6 +373,30 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
             this.render();
           }
         }, {
+          key: "onReorderGroupRenamingRules",
+          value: function onReorderGroupRenamingRules(index, up) {
+            var GroupRenamingRules = this.ctrl.panel.GroupRenamingRules;
+            if (up) {
+              if (index) GroupRenamingRules[index] = GroupRenamingRules.splice(index - 1, 1, GroupRenamingRules[index])[0];
+            } else {
+              if (index + 1 < GroupRenamingRules.length) GroupRenamingRules[index] = GroupRenamingRules.splice(index + 1, 1, GroupRenamingRules[index])[0];
+            }
+
+            this.render();
+          }
+        }, {
+          key: "onReorderLabelRenamingRules",
+          value: function onReorderLabelRenamingRules(index, up) {
+            var LabelRenamingRules = this.ctrl.panel.GroupRenamingRules;
+            if (up) {
+              if (index) GroupRenamingRules[index] = GroupRenamingRules.splice(index - 1, 1, GroupRenamingRules[index])[0];
+            } else {
+              if (index + 1 < GroupRenamingRules.length) GroupRenamingRules[index] = GroupRenamingRules.splice(index + 1, 1, GroupRenamingRules[index])[0];
+            }
+
+            this.render();
+          }
+        }, {
           key: "onReorderLinks",
           value: function onReorderLinks(index, up) {
             var Links = this.ctrl.panel.Links;
@@ -406,6 +432,18 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
           key: "displayStatusMessage",
           value: function displayStatusMessage(msg) {
             this.elem.html("<div class='michaeldmoore-multistat-panel-statusmessage'>" + msg + "</div>");
+          }
+        }, {
+          key: "processRenamingRules",
+          value: function processRenamingRules(rules, name) {
+            var newName = name;
+            rules.forEach(function (rule) {
+              if (rule.enabled) {
+                var regex = new RegExp(rule.from, "ig");
+                newName = newName.replaceAll(regex, rule.to);
+              }
+            });
+            return newName;
           }
         }, {
           key: "onRender",
@@ -446,6 +484,17 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
 
               //console.log('onRender: this.data.rows\n'+JSON.stringify(this.data.rows));
 
+              // process renaming rules (if any) on all group and label column data
+              var renamedRows = this.data.rows;
+              if (this.panel.LabelRenamingRules.length || groupCol != -1 && this.panel.GroupRenamingRules.length) {
+                renamedRows = this.data.rows.map(function (row) {
+                  var renamedRow = [].concat(_toConsumableArray(row));
+                  renamedRow[labelCol] = _this2.processRenamingRules(_this2.panel.LabelRenamingRules, renamedRow[labelCol]);
+                  if (groupCol != -1) renamedRow[groupCol] = _this2.processRenamingRules(_this2.panel.GroupRenamingRules, renamedRow[groupCol]);
+                  return renamedRow;
+                });
+              }
+
               var groupedLabelFunc = function groupedLabelFunc(obj) {
                 if (groupCol != -1) return obj[groupCol] + ":" + obj[labelCol];else return obj[labelCol];
               };
@@ -453,17 +502,17 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
               if (this.panel.LabelNameFilter.length > 0 && labelCol != -1) {
                 var regex = new RegExp(this.panel.LabelNameFilter, "");
                 this.matchingRows = [];
-                for (var i = 0; i < this.data.rows.length; i++) {
-                  var dd = this.data.rows[i];
+                for (var i = 0; i < renamedRows.length; i++) {
+                  var dd = renamedRows[i];
                   var label = dd[labelCol];
                   if (label.match(regex) != null) this.matchingRows.push(dd);
                 }
 
                 if (this.matchingRows.length == 0) {
-                  this.displayStatusMessage("No data.  Regex filter '" + this.panel.LabelNameFilter + "' eliminated all " + this.data.rows.length + " rows from current query");
+                  this.displayStatusMessage("No data.  Regex filter '" + this.panel.LabelNameFilter + "' eliminated all " + renamedRows.length + " rows from current query");
                   return;
                 }
-              } else this.matchingRows = this.data.rows;
+              } else this.matchingRows = renamedRows;
 
               if (this.panel.Aggregate != "all" && labelCol != -1 && SelectedValues.length > 0) {
                 var oo = [];

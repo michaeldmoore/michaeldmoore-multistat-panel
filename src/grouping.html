@@ -2,7 +2,7 @@
   <div class="section gf-form-group">
     <div class="gf-form">
       <div class="gf-form-inline">
-        <label class="gf-form-label michaeldmoore-multistat-panel-w9">Group col</label>
+        <label class="gf-form-label michaeldmoore-multistat-panel-w10">Group col</label>
         <div class="gf-form-select-wrapper">
           <select class="gf-form-input michaeldmoore-multistat-panel-w12" ng-model="ctrl.panel.GroupColName"
             ng-options="f for f in ctrl.cols0" ng-change="ctrl.render()"></select>
@@ -10,7 +10,7 @@
       </div>
     </div>
     <div class="gf-form" ng-if="ctrl.cols.includes(ctrl.panel.GroupColName)">
-      <label class="gf-form-label michaeldmoore-multistat-panel-w9">Columns Per Row</label>
+      <label class="gf-form-label michaeldmoore-multistat-panel-w10">Columns Per Row</label>
       <input type="number" class="gf-form-input michaeldmoore-multistat-panel-w4" placeholder="0" data-placement="right"
         bs-tooltip="'Set to value > 0 to break display into multiple row/columns'" ng-model="ctrl.panel.GroupCols"
         ng-change="ctrl.render()" ng-model-onblur />
@@ -21,20 +21,54 @@
           ng-model-onchange />
       </div>
     </div>
+
+    <div class="gf-form michaeldmoore-multistat-panel-w10">
+      <label class="gf-form-label">Group Renaming Rules</label>
+      <button class="btn btn-inverse"
+        ng-click="ctrl.panel.GroupRenamingRules.push({from:'', to:'', enabled:false})">
+        <i class="fa fa-plus"></i>
+      </button>
+    </div>
+
+    <div class="gf-form" ng-repeat="rule in ctrl.panel.GroupRenamingRules">
+      <div class="gf-form">
+        <span class="gf-form-label">
+          <i class="fa fa-trash pointer" ng-click="ctrl.panel.GroupRenamingRules.splice($index,1); ctrl.render();"></i>
+        </span>
+        <gf-form-switch class="gf-form" checked="rule.enabled" on-change="ctrl.render()"></gf-form-switch>
+        <span class="gf-form-label">
+          <i class="fa fa-arrow-up pointer" ng-click="ctrl.onReorderGroupRenamingRules($index,1); ctrl.render();"></i>
+        </span>
+        <span class="gf-form-label">
+          <i class="fa fa-arrow-down pointer" ng-click="ctrl.onReorderGroupRenamingRules($index,0); ctrl.render();"></i>
+        </span>
+
+        <label class="gf-form-label">Rule {{$index + 1}}</label>
+
+        <input type="string" class="gf-form-input michaeldmoore-multistat-panel-w18" ng-model="rule.from"
+          ng-change="ctrl.render()" />
+
+        <label class="gf-form-label">-></label>
+
+        <input type="string" class="gf-form-input michaeldmoore-multistat-panel-w8" ng-model="rule.to"
+          ng-change="ctrl.render()" />
+        </div>
+    </div>
+
     <div class="gf-form" ng-if="ctrl.cols.includes(ctrl.panel.GroupColName)">
-      <label class="gf-form-label michaeldmoore-multistat-panel-w9">Group Name Filter</label>
+      <label class="gf-form-label michaeldmoore-multistat-panel-w10">Group Name Filter</label>
       <input type="string" class="gf-form-input width-22" data-placement="right"
         bs-tooltip="'RegEX pattern for filtering groups by name - leave blank for no filtering\ne.g. use partial string matches seperated by pipe (|) chars.'"
         ng-model="ctrl.panel.GroupNameFilter" ng-change="ctrl.render()" ng-model-onchange />
     </div>
     <div class="gf-form" ng-if="ctrl.cols.includes(ctrl.panel.GroupColName)">
-      <label class="gf-form-label michaeldmoore-multistat-panel-w9">Group Sort Order</label>
+      <label class="gf-form-label michaeldmoore-multistat-panel-w10">Group Sort Order</label>
       <input type="string" class="gf-form-input width-22" data-placement="right"
         bs-tooltip="'Comma seperated group name order - e.g. North,South,East,West'"
         ng-model="ctrl.panel.GroupSortString" ng-change="ctrl.render()" ng-model-onchange />
     </div>
     <div class="gf-form" ng-if="ctrl.cols.includes(ctrl.panel.GroupColName)">
-      <gf-form-switch class="gf-form" label-class="michaeldmoore-multistat-panel-w9" label="Show Group Labels"
+      <gf-form-switch class="gf-form" label-class="michaeldmoore-multistat-panel-w10" label="Show Group Labels"
         checked="ctrl.panel.ShowGroupLabels" on-change="ctrl.render()"></gf-form-switch>
       <div class="gf-form-inline" ng-if="ctrl.panel.ShowGroupLabels">
         <label class="gf-form-label michaeldmoore-multistat-panel-w6">Font size</label>
