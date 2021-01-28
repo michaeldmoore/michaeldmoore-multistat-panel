@@ -486,10 +486,26 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
 
               // process renaming rules (if any) on all group and label column data
               var renamedRows = this.data.rows;
-              if (this.panel.LabelRenamingRules.length || groupCol != -1 && this.panel.GroupRenamingRules.length) {
+              if (dateTimeCol != -1 && this.panel.DateFormat.length || this.panel.LabelRenamingRules.length || groupCol != -1 && this.panel.GroupRenamingRules.length) {
                 renamedRows = this.data.rows.map(function (row) {
                   var renamedRow = [].concat(_toConsumableArray(row));
+
+                  if (dateTimeCol != -1 && _this2.panel.DateFormat.length) {
+                    var parsedDateTime = moment(renamedRow[dateTimeCol]);
+
+                    if (!parsedDateTime._isValid) {
+                      var timeStamp = Number(renamedRow[dateTimeCol]);
+
+                      if (timeStamp <= 4102444800) // 2100-01-01 in seconds
+                        parsedDateTime = moment.unix(timeStamp).utc(); // try parsing timestamp as unix timestamp (in seconds)
+                      else parsedDateTime = moment(timeStamp).utc(); // try parsing timestamp as unix timestamp (in milli-seconds)
+                    }
+
+                    renamedRow[dateTimeCol] = parsedDateTime.add(_this2.panel.TZOffsetHours, "h").format(_this2.panel.DateFormat);
+                  }
+
                   renamedRow[labelCol] = _this2.processRenamingRules(_this2.panel.LabelRenamingRules, renamedRow[labelCol]);
+
                   if (groupCol != -1) renamedRow[groupCol] = _this2.processRenamingRules(_this2.panel.GroupRenamingRules, renamedRow[groupCol]);
                   return renamedRow;
                 });
@@ -832,7 +848,9 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                         var cc = cols[i];
                         var dd = d[i];
 
-                        if (cc == DateTimeColName) dd = moment(dd).add(TZOffsetHours, "h").format(TooltipDateFormat);else if (cc == ValueColName && isNumber(dd)) dd = Number(dd).toFixed(ValueDecimals);
+                        if (cc == DateTimeColName) dd = TooltipDateFormat.length ? moment(dd)
+                        //                    .add(TZOffsetHours, "h")
+                        .format(TooltipDateFormat) : dd;else if (cc == ValueColName && isNumber(dd)) dd = Number(dd).toFixed(ValueDecimals);
 
                         html += "<tr><td>" + cc + "</td><td>" + dd + "</td></tr>";
                       }

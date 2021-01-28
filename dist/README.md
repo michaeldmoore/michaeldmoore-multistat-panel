@@ -6,6 +6,8 @@
 
 *New Version (1.6.0) - Now with support for multiple value columns per label!*
 
+*New Version (1.7.0) - Now with support for label/group renaming and date formatting!*
+
 (Documentation for these changes is covered in the sections at the very end of this readme file)
 
 ## Custom multistat panel for Grafana, inspired by the built-in SingleStat panel
@@ -303,6 +305,88 @@ Any number of bar-links can be defined, using the Bar Links section of the panel
 ## Multi-Column support
 
 (New feature added with version 1.6.0)
+
+Previously, Multistat was only able to display values for one numeric field at a time.  In this version, the value column selector has been changed to support any number of fields, each appearing as a differently colored bar.  Consider this simple table-formatted data set as an example:
+
+`Shop                 Region     Food        Beverages   Other`
+`Fred's Shop          North     12000        3847        6363`
+`Mary's Shop          North      6583        1466        7463`
+`Bob's Shop           North      5343        9686        17632`
+`Ted's Shop           South      5342        5325        7653`
+`Bill's Shop          South      4252        2234        2426`
+`Jill's Shop          South      5000        1600        2000`
+
+This can now be displayed in a single Multistat panel like this:
+
+![image](https://user-images.githubusercontent.com/3724718/106139475-c5099080-616d-11eb-93e5-e1e3ce0735ef.png)
+
+Of course, all the other configuration features are still supported, such as bar orientation, grouping, threshold flashing etc. etc.
+
+The value column configuration menu has been changed to support these added fields.  Pressing the plus sign next to Values Cols adds a new (empty) row to the value fields table where the bar color for positive and negative bars can be defined.  The select switch reflects whether or not this field is visible (The optional legend supports mouse clicks to dynamically set or reset this visibility too, mimicking the action on Grafana graph panel)
+
+![image](https://user-images.githubusercontent.com/3724718/106139941-64c71e80-616e-11eb-824e-befaa7e70b4a.png)
+
+
+
+
+
+## Label/Group renaming, plus date reformatting support
+
+(New feature added with version 1.7.0)
+
+### Label field renaming
+
+In previous versions of Multistat, the contents of the labels (and groups) were taken directly from the strings in the data received by the current query.  In some cases, this results in unnecessarily long or confusing bar labels (and groups).
+
+Using the data set above as a trivial example, suppose users which to simplify the display by removing redundant "'s shop" from each of the labels.  The Columns configuration section has a new items for Label Renaming Rules.  pressing the '+' button opens a new renaming rule definition where we can enter the text to be replaced and the replacement.  in this case, the string "'s Shop" and the empty replacement.
+
+![image](https://user-images.githubusercontent.com/3724718/106141824-fe8fcb00-6170-11eb-8102-4fdce0de423c.png)
+
+
+
+![image](https://user-images.githubusercontent.com/3724718/106141965-27b05b80-6171-11eb-9988-3b592da9a363.png)
+
+
+
+Technically, the selection text is treated as a regular expression, with the 'ig' options, making it case insensitive.
+
+Any number of rules can be defined, each operating sequentially, making this a very flexible way of pre-processing the data before display.  Note, however, that every row of data is transformed by each and every renaming rule, so this does have the potential of slowing down the dashboard performance, especially when processing large data sets.
+
+### Group field renaming
+
+A similar set of renaming rules is defined in the Grouping configuration setting, applying - obviously - to the grouping column, if any is defined.
+
+These renaming rule sets are applied to the data set before sorting, grouping and filtering etc.
+
+### Date field reformatting
+
+Multistat has provided some support for an optional date/time field.  Time series data sets require date fields, while the table formatted data sets such as used by Multistats do not.  When present, date/time fields are natively treated as numbers or strings - as defined in the data query.  That is, unix timestamps will appear as very large numbers (seconds or milliseconds since 1970-01-01), others may appear in any number of string formats, such as "2019-04-21 22:00:00" etc.  Multistat does it's best to try and automatically parse any identified data/time field - most significantly, to sort data so that the 'first' and 'last' aggregation settings can select the appropriate record for display.  This behaviour has been standard in Multistat since the beginning.  Optionally, Multistat could be set to add a formatted date/time label to the panel's title string.
+
+In this version of Multistat, the optional date format field is used to parse and reformat the contents of such a date/time field in place, so these can be used in labels groups.  This reformatting is done on the data received immediately before the earlier mentioned label and group renaming rules are applied.  This has the potential of all sorts of data manipulation, pivot table-like.
+
+
+
+For example, with a simple data set like this:
+
+`Date       Region     Sales`
+
+`2019-01-01 Canada     134980`
+`2019-01-01 Mexico     138300`
+`2019-01-01 USA        231231`
+`2019-02-01 Canada     222849`
+`2019-02-01 Mexico     104779`
+`2019-02-01 USA        342929`
+`2019-03-01 Canada     273626`
+`2019-03-01 Mexico     144882`
+`2019-03-01 USA        348373`
+
+
+
+And setting the date time format string to `qQ-MMM` and selecting the Date column as the label field, with a 'sum' aggregation type, we can get this:
+
+![image](https://user-images.githubusercontent.com/3724718/106149161-38b19a80-617a-11eb-82ab-fdbe33807943.png)
+
+
 
 ## Conclusion
 

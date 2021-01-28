@@ -508,10 +508,29 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
       // process renaming rules (if any) on all group and label column data
       let renamedRows = this.data.rows;
-      if (this.panel.LabelRenamingRules.length || (groupCol != -1 && this.panel.GroupRenamingRules.length)) {
-        renamedRows = this.data.rows.map((row) => {
-          let renamedRow = [...row];
+      if ((dateTimeCol != -1 && this.panel.DateFormat.length) || 
+          this.panel.LabelRenamingRules.length || 
+          (groupCol != -1 && this.panel.GroupRenamingRules.length)) {
+          renamedRows = this.data.rows.map((row) => {
+            let renamedRow = [...row];
+
+          if (dateTimeCol != -1 && this.panel.DateFormat.length){
+            let parsedDateTime = moment(renamedRow[dateTimeCol]);
+
+            if(!parsedDateTime._isValid) {
+              let timeStamp = Number(renamedRow[dateTimeCol]);
+
+              if (timeStamp <= 4102444800) // 2100-01-01 in seconds
+                parsedDateTime = moment.unix(timeStamp).utc(); // try parsing timestamp as unix timestamp (in seconds)
+              else
+                parsedDateTime = moment(timeStamp).utc();  // try parsing timestamp as unix timestamp (in milli-seconds)
+            }
+  
+            renamedRow[dateTimeCol] = parsedDateTime.add(this.panel.TZOffsetHours, "h").format(this.panel.DateFormat);
+          }
+
           renamedRow[labelCol] = this.processRenamingRules(this.panel.LabelRenamingRules, renamedRow[labelCol]);
+
           if (groupCol != -1)
             renamedRow[groupCol] = this.processRenamingRules(this.panel.GroupRenamingRules, renamedRow[groupCol]);
           return renamedRow;
@@ -529,7 +548,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
         for (let i = 0; i < renamedRows.length; i++) {
           let dd = renamedRows[i];
           let label = dd[labelCol];
-          if (label.match(regex) != null) this.matchingRows.push(dd);
+          if (label.match(regex) != null) 
+            this.matchingRows.push(dd);
         }
 
         if (this.matchingRows.length == 0) {
@@ -958,9 +978,9 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
                 var dd = d[i];
 
                 if (cc == DateTimeColName)
-                  dd = moment(dd)
-                    .add(TZOffsetHours, "h")
-                    .format(TooltipDateFormat);
+                  dd = TooltipDateFormat.length ? moment(dd)
+//                    .add(TZOffsetHours, "h")
+                    .format(TooltipDateFormat) : dd;
                 else if (cc == ValueColName && isNumber(dd))
                   dd = Number(dd).toFixed(ValueDecimals);
 

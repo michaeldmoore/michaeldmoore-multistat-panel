@@ -139,8 +139,8 @@
     </div>
     <div class="gf-form" ng-if="ctrl.cols.includes(ctrl.panel.DateTimeColName)">
       <div class="gf-form-inline">
-        <div class="gf-form" ng-if="ctrl.panel.ShowDate">
-          <label class="gf-form-label width-6">'As of' Format</label>
+        <div class="gf-form">
+          <label class="gf-form-label width-6">Date Format</label>
           <input type="string" class="gf-form-input width-18" data-placement="right"
             bs-tooltip="'Date formatting string - e.g. MMMM Do YYYY, h:mm:ss a'" ng-model="ctrl.panel.DateFormat"
             ng-change="ctrl.render()" ng-model-onblur />
