@@ -15,9 +15,13 @@
         bs-tooltip="'Set to value > 0 to break display into multiple row/columns'" ng-model="ctrl.panel.GroupCols"
         ng-change="ctrl.render()" ng-model-onblur />
       <div class="gf-form" ng-if="ctrl.cols.includes(ctrl.panel.GroupColName)">
-        <label class="gf-form-label michaeldmoore-multistat-panel-w6">Group Gap</label>
+        <label class="gf-form-label michaeldmoore-multistat-panel-w6">Hor. Gap</label>
         <input type="number" class="gf-form-input width-4" data-placement="right"
           bs-tooltip="'Horizontal gap between groups'" ng-model="ctrl.panel.GroupGap" ng-change="ctrl.render()"
+          ng-model-onchange />
+        <label class="gf-form-label michaeldmoore-multistat-panel-w6">Vert. Gap</label>
+        <input type="number" class="gf-form-input width-4" data-placement="right"
+          bs-tooltip="'Vertical gap between groups'" ng-model="ctrl.panel.VGroupGap" ng-change="ctrl.render()"
           ng-model-onchange />
       </div>
     </div>

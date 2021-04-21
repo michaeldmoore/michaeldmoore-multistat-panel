@@ -56,6 +56,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
       GroupRenamingRules: [],
       GroupLabelFontSize: "200%",
       GroupGap: 5,
+      VGroupGap: 5,
       LabelRenamingRules: [],
       LabelMargin: null,
       Legend: false,
@@ -868,6 +869,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
       var TZOffsetHours = this.panel.TZOffsetHours;
       var GroupCols = this.panel.GroupCols;
       var GroupGap = this.panel.GroupGap;
+      var VGroupGap = this.panel.VGroupGap;
       var ScaleFactor = Number(this.panel.ScaleFactor);
       var ValuePosition = this.panel.ValuePosition;
 
@@ -1689,14 +1691,15 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
             groupNameOffset +
             this.panel.LowSideMargin +
             this.panel.HighSideMargin;
+
           var rowHeight =
-            (h - pointsPerRow.length * rowOverheadHeight) / totalPoints;
+            (h - (pointsPerRow.length * rowOverheadHeight) - ((pointsPerRow.length - 1) * VGroupGap)) / totalPoints;
 
           var numRows = Math.ceil(this.groupedRows.length / gcols);
           var hh = 0;
           for (var rr = 0; rr < numRows; rr++) {
             var nn = pointsPerRow[rr];
-            var dh = rowOverheadHeight + nn * rowHeight;
+            var dh = rowOverheadHeight + (nn * rowHeight);
             hh += dh;
             for (var cc = 0; cc < gcols; cc++) {
               var ii = cc + rr * gcols;
@@ -1715,6 +1718,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
                 );
               }
             }
+            hh += VGroupGap;
           }
         } else {
           plotGroupHorizontal(
@@ -2263,7 +2267,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
             (w - pointsPerCol.length * colOverheadWidth) / totalPoints;
 
           let numRows = Math.ceil(this.groupedRows.length / gcols);
-          let dh = h / numRows;
+          let dh = (h - ((numRows - 1) * VGroupGap)) / numRows;
           let hh = dh;
           for (let rr = 0; rr < numRows; rr++) {
             let ww = 0;
@@ -2287,7 +2291,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
                 ww += dw;
               }
             }
-            hh += dh;
+            hh += dh + VGroupGap;
           }
         } else {
           plotGroupVertical(

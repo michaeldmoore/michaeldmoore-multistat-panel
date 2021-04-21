@@ -131,6 +131,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
             GroupRenamingRules: [],
             GroupLabelFontSize: "200%",
             GroupGap: 5,
+            VGroupGap: 5,
             LabelRenamingRules: [],
             LabelMargin: null,
             Legend: false,
@@ -754,6 +755,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
               var TZOffsetHours = this.panel.TZOffsetHours;
               var GroupCols = this.panel.GroupCols;
               var GroupGap = this.panel.GroupGap;
+              var VGroupGap = this.panel.VGroupGap;
               var ScaleFactor = Number(this.panel.ScaleFactor);
               var ValuePosition = this.panel.ValuePosition;
 
@@ -1285,7 +1287,8 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                   for (var _i4 = 0; _i4 < pointsPerRow.length; _i4++) {
                     totalPoints += pointsPerRow[_i4];
                   }var rowOverheadHeight = groupNameOffset + this.panel.LowSideMargin + this.panel.HighSideMargin;
-                  var rowHeight = (h - pointsPerRow.length * rowOverheadHeight) / totalPoints;
+
+                  var rowHeight = (h - pointsPerRow.length * rowOverheadHeight - (pointsPerRow.length - 1) * VGroupGap) / totalPoints;
 
                   var numRows = Math.ceil(this.groupedRows.length / gcols);
                   var hh = 0;
@@ -1299,6 +1302,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                         plotGroupHorizontal(this.panel, this.svg, this.groupedRows[ii].values, nn, this.groupedRows[ii].key, groupNameOffset, cc * dw, dw - GroupGap, hh - dh, dh);
                       }
                     }
+                    hh += VGroupGap;
                   }
                 } else {
                   plotGroupHorizontal(this.panel, this.svg, this.rows, this.rows.length, "", 0, 0, w, 0, h);
@@ -1589,7 +1593,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                   var colWidth = (w - pointsPerCol.length * colOverheadWidth) / _totalPoints;
 
                   var _numRows = Math.ceil(this.groupedRows.length / _gcols);
-                  var _dh = h / _numRows;
+                  var _dh = (h - (_numRows - 1) * VGroupGap) / _numRows;
                   var _hh = _dh;
                   for (var _rr2 = 0; _rr2 < _numRows; _rr2++) {
                     var ww = 0;
@@ -1602,7 +1606,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                         ww += _dw;
                       }
                     }
-                    _hh += _dh;
+                    _hh += _dh + VGroupGap;
                   }
                 } else {
                   plotGroupVertical(this.panel, this.svg, this.rows, this.rows.length, "", 0, 0, w, 0, h);
