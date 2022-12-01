@@ -223,7 +223,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
             });
           }
 
-          console.log('this.dashboardVariables=' + JSON.stringify(_this.dashboardVariables, null, 2));
+          //console.log('this.dashboardVariables='+JSON.stringify(this.dashboardVariables, null, 2));
 
           _this.events.on(PanelEvents.dataReceived, _this.onDataReceived.bind(_this), $scope);
 
