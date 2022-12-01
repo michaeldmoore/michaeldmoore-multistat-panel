@@ -150,7 +150,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
       });
     }
 
-    console.log('this.dashboardVariables='+JSON.stringify(this.dashboardVariables, null, 2));
+    //console.log('this.dashboardVariables='+JSON.stringify(this.dashboardVariables, null, 2));
 
     this.events.on(
       PanelEvents.dataReceived,
@@ -754,6 +754,10 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
         this.groupedRows = null;
       }
 
+      // In edit mode with grafana > vesion 7, the svg element is hidden, not removed.
+      // this kludge revoves it, if it already exists so we don't end up adding svg content to the wrong (hidden) element.
+      d3.select("." + this.className).remove();
+
       this.elem.html(
         "<div class='" +
         this.className +
@@ -763,6 +767,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
       var $container = this.elem.find("div");
 
+      // Now add, or re-add, the svg element and content
       this.svg = d3
         .select("." + this.className)
         .append("svg")

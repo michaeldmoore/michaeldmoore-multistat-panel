@@ -665,10 +665,15 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                 this.groupedRows = null;
               }
 
+              // In edit mode with grafana > vesion 7, the svg element is hidden, not removed.
+              // this kludge revoves it, if it already exists so we don't end up adding svg content to the wrong (hidden) element.
+              d3.select("." + this.className).remove();
+
               this.elem.html("<div class='" + this.className + "' style='display: flex; flex-direction: column; height:100%; width:100%'>" + "</div>");
 
               var $container = this.elem.find("div");
 
+              // Now add, or re-add, the svg element and content
               this.svg = d3.select("." + this.className).append("svg").attr("height", "100%");
 
               if (this.panel.Legend) {
