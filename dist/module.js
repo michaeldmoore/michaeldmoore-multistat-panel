@@ -346,7 +346,8 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
               Name: '',
               HighBarColor: this.randomColor(),
               LowBarColor: this.randomColor(),
-              Selected: true });
+              Selected: true
+            });
             this.ctrl.render();
           }
         }, {
@@ -518,132 +519,178 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
 
               if (this.panel.LabelNameFilter.length > 0 && labelCol != -1) {
                 var regex = new RegExp(this.panel.LabelNameFilter, "");
-                this.matchingRows = [];
+                //this.matchingRows = [];
+                this.rows = [];
                 for (var i = 0; i < renamedRows.length; i++) {
                   var dd = renamedRows[i];
                   var label = dd[labelCol];
-                  if (label.match(regex) != null) this.matchingRows.push(dd);
+                  if (label.match(regex) != null)
+                    //this.matchingRows.push(dd);
+                    this.rows.push(dd);
                 }
 
-                if (this.matchingRows.length == 0) {
+                //if (this.matchingRows.length == 0) {
+                if (this.rows.length == 0) {
                   this.displayStatusMessage("No data.  Regex filter '" + this.panel.LabelNameFilter + "' eliminated all " + renamedRows.length + " rows from current query");
                   return;
                 }
-              } else this.matchingRows = renamedRows;
-
-              if (this.panel.Aggregate != "all" && labelCol != -1 && SelectedValues.length > 0) {
-                var oo = [];
-                this.rows = [];
-                switch (this.panel.Aggregate) {
-                  case "first":
-                    this.rows = d3.nest().key(groupedLabelFunc).rollup(function (d) {
-                      return d[0];
-                    }).entries(this.matchingRows).forEach(function (x) {
-                      oo.push(x.value);
-                    });
-                    this.rows = oo;
-                    break;
-
-                  case "last":
-                    this.rows = d3.nest().key(groupedLabelFunc).rollup(function (d) {
-                      return d[d.length - 1];
-                    }).entries(this.matchingRows).forEach(function (x) {
-                      oo.push(x.value);
-                    });
-                    this.rows = oo;
-                    break;
-
-                  case "sum":
-                    this.rows = d3.nest().key(groupedLabelFunc).rollup(function (d) {
-                      var dd = Object.values(Object.assign({}, d[d.length - 1]));
-                      SelectedValues.forEach(function (value) {
-                        dd[value.Col] = d3.sum(d, function (d) {
-                          return d[value.Col];
-                        });
-                      });
-                      return dd;
-                    }).entries(this.matchingRows).forEach(function (x) {
-                      oo.push(x.value);
-                    });
-                    this.rows = Array.from(oo);
-                    break;
-
-                  case "mean":
-                    this.rows = d3.nest().key(groupedLabelFunc).rollup(function (d) {
-                      var dd = Object.values(Object.assign({}, d[d.length - 1]));
-                      SelectedValues.forEach(function (value) {
-                        dd[value.Col] = d3.mean(d, function (d) {
-                          return d[value.Col];
-                        });
-                      });
-                      return dd;
-                    }).entries(this.matchingRows).forEach(function (x) {
-                      oo.push(x.value);
-                    });
-                    this.rows = Array.from(oo);
-                    break;
-
-                  case "mean":
-                    this.rows = d3.nest().key(groupedLabelFunc).rollup(function (d) {
-                      var dd = Object.values(Object.assign({}, d[d.length - 1]));
-                      dd[valueCol] = d3.mean(d, function (d) {
-                        return d[valueCol];
-                      });
-                      return dd;
-                    }).entries(this.matchingRows).forEach(function (x) {
-                      oo.push(x.value);
-                    });
-                    this.rows = Array.from(oo);
-                    break;
-
-                  case "max":
-                    this.rows = d3.nest().key(groupedLabelFunc).rollup(function (d) {
-                      var dd = Object.values(Object.assign({}, d[d.length - 1]));
-                      SelectedValues.forEach(function (value) {
-                        dd[value.Col] = d3.max(d, function (d) {
-                          return d[value.Col];
-                        });
-                      });
-                      return dd;
-                    }).entries(this.matchingRows).forEach(function (x) {
-                      oo.push(x.value);
-                    });
-                    this.rows = Array.from(oo);
-                    break;
-
-                  case "min":
-                    this.rows = d3.nest().key(groupedLabelFunc).rollup(function (d) {
-                      var dd = Object.values(Object.assign({}, d[d.length - 1]));
-                      SelectedValues.forEach(function (value) {
-                        dd[value.Col] = d3.min(d, function (d) {
-                          return d[value.Col];
-                        });
-                      });
-                      return dd;
-                    }).entries(this.matchingRows).forEach(function (x) {
-                      oo.push(x.value);
-                    });
-                    this.rows = Array.from(oo);
-                    break;
-                }
               } else {
-                this.rows = this.matchingRows;
+                //this.matchingRows = renamedRows;
+                this.rows = renamedRows;
               }
-
-              //console.log('after aggregation('+this.panel.Aggregate+') this.rows:\n'+JSON.stringify(this.rows));
+              /*
+                    if (
+                      this.panel.Aggregate != "all" &&
+                      labelCol != -1 &&
+                      SelectedValues.length > 0
+                    ) {
+                      var oo = [];
+                      this.rows = [];
+                      switch (this.panel.Aggregate) {
+                        case "first":
+                          this.rows = d3
+                            .nest()
+                            .key(groupedLabelFunc)
+                            .rollup(function (d) {
+                              return d[0];
+                            })
+                            .entries(this.matchingRows)
+                            .forEach(function (x) {
+                              oo.push(x.value);
+                            });
+                          this.rows = oo;
+                          break;
+              
+                        case "last":
+                          this.rows = d3
+                            .nest()
+                            .key(groupedLabelFunc)
+                            .rollup(function (d) {
+                              return d[d.length - 1];
+                            })
+                            .entries(this.matchingRows)
+                            .forEach(function (x) {
+                              oo.push(x.value);
+                            });
+                          this.rows = oo;
+                          break;
+              
+                        case "sum":
+                          this.rows = d3
+                            .nest()
+                            .key(groupedLabelFunc)
+                            .rollup(function (d) {
+                              var dd = Object.values(Object.assign({}, d[d.length - 1]));
+                              SelectedValues.forEach((value) => {
+                                dd[value.Col] = d3.sum(d, function (d) {
+                                  return d[value.Col];
+                                });
+                              });
+                              return dd;
+                            })
+                            .entries(this.matchingRows)
+                            .forEach(function (x) {
+                              oo.push(x.value);
+                            });
+                          this.rows = Array.from(oo);
+                          break;
+              
+                        case "mean":
+                          this.rows = d3
+                            .nest()
+                            .key(groupedLabelFunc)
+                            .rollup(function (d) {
+                              var dd = Object.values(Object.assign({}, d[d.length - 1]));
+                              SelectedValues.forEach((value) => {
+                                dd[value.Col] = d3.mean(d, function (d) {
+                                  return d[value.Col];
+                                });
+                              });
+                              return dd;
+                            })
+                            .entries(this.matchingRows)
+                            .forEach(function (x) {
+                              oo.push(x.value);
+                            });
+                          this.rows = Array.from(oo);
+                          break;
+              
+                          case "mean":
+                            this.rows = d3
+                              .nest()
+                              .key(groupedLabelFunc)
+                              .rollup(function (d) {
+                                var dd = Object.values(Object.assign({}, d[d.length - 1]));
+                                dd[valueCol] = d3.mean(d, function (d) {
+                                  return d[valueCol];
+                                });
+                                return dd;
+                              })
+                              .entries(this.matchingRows)
+                              .forEach(function (x) {
+                                oo.push(x.value);
+                              });
+                            this.rows = Array.from(oo);
+                            break;
+                
+                          case "max":
+                          this.rows = d3
+                            .nest()
+                            .key(groupedLabelFunc)
+                            .rollup(function (d) {
+                              var dd = Object.values(Object.assign({}, d[d.length - 1]));
+                              SelectedValues.forEach((value) => {
+                                dd[value.Col] = d3.max(d, function (d) {
+                                  return d[value.Col];
+                                });
+                              });
+                              return dd;
+                            })
+                            .entries(this.matchingRows)
+                            .forEach(function (x) {
+                              oo.push(x.value);
+                            });
+                          this.rows = Array.from(oo);
+                          break;
+              
+                        case "min":
+                          this.rows = d3
+                            .nest()
+                            .key(groupedLabelFunc)
+                            .rollup(function (d) {
+                              var dd = Object.values(Object.assign({}, d[d.length - 1]));
+                              SelectedValues.forEach((value) => {
+                                dd[value.Col] = d3.min(d, function (d) {
+                                  return d[value.Col];
+                                });
+                              });
+                              return dd;
+                            })
+                            .entries(this.matchingRows)
+                            .forEach(function (x) {
+                              oo.push(x.value);
+                            });
+                          this.rows = Array.from(oo);
+                          break;
+                      }
+                    } else {
+                      this.rows = this.matchingRows;
+                    }
+                    //console.log('after aggregation('+this.panel.Aggregate+') this.rows:\n'+JSON.stringify(this.rows));
+              */
 
               var groupNameOffset = this.panel.ShowGroupLabels ? Number(this.panel.GroupLabelFontSize.replace("%", "")) * 0.15 : 0;
 
               if (groupCol >= 0) {
-                this.groupedRows = d3.nest().key(function (d) {
+                this.groupedRows = Array.from(d3.group(this.rows, function (d) {
                   return d[groupCol];
-                }).entries(this.rows);
+                }));
 
                 if (this.panel.GroupNameFilter.length > 0) {
                   var regexGroupRows = new RegExp(this.panel.GroupNameFilter, "");
                   var matchingGroups = [];
                   for (var _i = 0; _i < this.groupedRows.length; _i++) {
-                    var groupName = this.groupedRows[_i].key;
+                    var groupName = this.groupedRows[_i][0];
                     if (groupName.match(regexGroupRows) != null) matchingGroups.push(this.groupedRows[_i]);
                   }
 
@@ -656,10 +703,10 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                 var groupSortString = this.panel.GroupSortString;
 
                 this.groupedRows.sort(function (a, b) {
-                  var aPos = groupSortString.search(a.key);
-                  var bPos = groupSortString.search(b.key);
+                  var aPos = groupSortString.search(a[0]);
+                  var bPos = groupSortString.search(b[0]);
 
-                  if (aPos == bPos) return a.key.localeCompare(b.key);else if (aPos == -1) return 1;else if (bPos == -1) return -1;else return aPos - bPos;
+                  if (aPos == bPos) return a[0].localeCompare(b[0]);else if (aPos == -1) return 1;else if (bPos == -1) return -1;else return aPos - bPos;
                 });
               } else {
                 this.groupedRows = null;
@@ -667,7 +714,9 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
 
               // In edit mode with grafana > vesion 7, the svg element is hidden, not removed.
               // this kludge revoves it, if it already exists so we don't end up adding svg content to the wrong (hidden) element.
-              d3.select("." + this.className).remove();
+              //d3.select("." + this.className).remove();
+              var x$ = d3.select("." + this.className);
+              x$.remove();
 
               this.elem.html("<div class='" + this.className + "' style='display: flex; flex-direction: column; height:100%; width:100%'>" + "</div>");
 
@@ -813,6 +862,82 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                 }
               };
 
+              var aggregateData = function aggregateData(data, aggregate) {
+                //        console.log('aggregateData(' + aggregate + ') ' + JSON.stringify(data));
+                var rows = [];
+                switch (aggregate) {
+                  case "first":
+                    d3.group(data, groupedLabelFunc).forEach(function (x) {
+                      //                console.log(' adding ' + JSON.stringify(x[0]));
+                      rows.push(x[0]);
+                    });
+                    break;
+                  case "last":
+                    d3.group(data, groupedLabelFunc).forEach(function (x) {
+                      //                console.log(' adding ' + JSON.stringify(x[x.length - 1]));
+                      rows.push(x[x.length - 1]);
+                    });
+                    break;
+
+                  case "sum":
+                    d3.group(data, groupedLabelFunc).forEach(function (x) {
+                      var dd = Object.values(Object.assign({}, x[0]));
+                      SelectedValues.forEach(function (value) {
+                        dd[value.Col] = d3.sum(x, function (x) {
+                          return x[value.Col];
+                        });
+                      });
+
+                      //                console.log(' adding ' + JSON.stringify(dd));
+                      rows.push(dd);
+                    });
+                    break;
+
+                  case "mean":
+                    d3.group(data, groupedLabelFunc).forEach(function (x) {
+                      var dd = Object.values(Object.assign({}, x[0]));
+                      SelectedValues.forEach(function (value) {
+                        dd[value.Col] = d3.mean(x, function (x) {
+                          return x[value.Col];
+                        });
+                      });
+
+                      //                console.log(' adding ' + JSON.stringify(dd));
+                      rows.push(dd);
+                    });
+                    break;
+
+                  case "max":
+                    d3.group(data, groupedLabelFunc).forEach(function (x) {
+                      var dd = Object.values(Object.assign({}, x[0]));
+                      SelectedValues.forEach(function (value) {
+                        dd[value.Col] = d3.max(x, function (x) {
+                          return x[value.Col];
+                        });
+                      });
+
+                      //                console.log(' adding ' + JSON.stringify(dd));
+                      rows.push(dd);
+                    });
+                    break;
+
+                  case "min":
+                    d3.group(data, groupedLabelFunc).forEach(function (x) {
+                      var dd = Object.values(Object.assign({}, x[0]));
+                      SelectedValues.forEach(function (value) {
+                        dd[value.Col] = d3.min(x, function (x) {
+                          return x[value.Col];
+                        });
+                      });
+
+                      //                console.log(' adding ' + JSON.stringify(dd));
+                      rows.push(dd);
+                    });
+                    break;
+                }
+                return rows;
+              };
+
               var translateValues = function translateValues(s, d) {
                 // lookup column index corresponding to the substitution tokens and replace with this bar's value
                 var s1 = s;
@@ -855,9 +980,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                         var cc = cols[i];
                         var dd = d[i];
 
-                        if (cc == DateTimeColName) dd = TooltipDateFormat.length ? moment(dd)
-                        //                    .add(TZOffsetHours, "h")
-                        .format(TooltipDateFormat) : dd;else if (cc == ValueColName && isNumber(dd)) dd = Number(dd).toFixed(ValueDecimals);
+                        if (cc == DateTimeColName) dd = TooltipDateFormat.length ? moment(dd).format(TooltipDateFormat) : dd;else if (cc == ValueColName && isNumber(dd)) dd = Number(dd).toFixed(ValueDecimals);
 
                         html += "<tr><td>" + cc + "</td><td>" + dd + "</td></tr>";
                       }
@@ -884,7 +1007,6 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
               var tooltipShow = function tooltipShow(d) {
                 if ($("#" + tooltipDivID).length == 0) {
                   $panel = $("." + panelID);
-                  //          $panelContent = this.elem.closest(".panel-content");
                   $panelContent = $panel.parent().parent().parent().parent();
                   panelContent = d3.selectAll($panelContent);
                   panelContent.append("div").attr("id", tooltipDivID).style("opacity", 0);
@@ -999,13 +1121,19 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                 var plotGroupHorizontal = function plotGroupHorizontal(panel, svg, data, numRows, groupName, groupNameOffset, left, w, hh, dh) {
                   // Draw border rectangle
                   /*svg.append("rect")
-                  .attr("width", w)
-                  .attr("height", dh)
-                  .attr("x", left)
-                  .attr("y", hh)
-                  .attr("stroke", "yellow");*/
+                            .attr("width", w)
+                            .attr("height", dh)
+                            .attr("x", left)
+                            .attr("y", hh)
+                            .attr("stroke", "yellow");*/
 
                   sortData(data, panel.SortDirection);
+
+                  if (panel.Aggregate != "all" && labelCol != -1 && SelectedValues.length > 0) {
+                    //            console.log('data(in) = ' +JSON.stringify(data));
+                    data = aggregateData(data, panel.Aggregate);
+                  }
+                  //          console.log('data = ' + JSON.stringify(data));
 
                   // Add Above-High Side Group Names
                   if (groupName != "" && panel.ShowGroupLabels) {
@@ -1017,11 +1145,11 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
 
                   // Draw border rectangle
                   /*svg.append("rect")
-                  .attr("width", w)
-                  .attr("height", dh)
-                  .attr("x", left)
-                  .attr("y", hh)
-                  .attr("stroke", "#ffffff");*/
+                            .attr("width", w)
+                            .attr("height", dh)
+                            .attr("x", left)
+                            .attr("y", hh)
+                            .attr("stroke", "#ffffff");*/
 
                   var labels = data.map(function (d) {
                     return d[labelCol];
@@ -1284,7 +1412,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                     pointsPerRow.push(0);
                   }for (var _i3 = 0; _i3 < this.groupedRows.length; _i3++) {
                     var _rr = Math.floor(_i3 / gcols);
-                    var u = this.groupedRows[_i3].values.length;
+                    var u = this.groupedRows[_i3] /*.values*/[1].length;
                     if (pointsPerRow[_rr] < u) pointsPerRow[_rr] = u;
                   }
 
@@ -1304,7 +1432,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                     for (var cc = 0; cc < gcols; cc++) {
                       var ii = cc + rr * gcols;
                       if (ii < this.groupedRows.length) {
-                        plotGroupHorizontal(this.panel, this.svg, this.groupedRows[ii].values, nn, this.groupedRows[ii].key, groupNameOffset, cc * dw, dw - GroupGap, hh - dh, dh);
+                        plotGroupHorizontal(this.panel, this.svg, this.groupedRows[ii][1], nn, this.groupedRows[ii][0], groupNameOffset, cc * dw, dw - GroupGap, hh - dh, dh);
                       }
                     }
                     hh += VGroupGap;
@@ -1316,13 +1444,19 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                 var plotGroupVertical = function plotGroupVertical(panel, svg, data, numRows, groupName, groupNameOffset, left, w, hh, dh) {
                   // Draw border rectangle
                   /*svg.append("rect")
-                  .attr("width", w)
-                  .attr("height", dh)
-                  .attr("x", left)
-                  .attr("y", hh)
-                  .attr("stroke", "yellow");*/
+                    .attr("width", w)
+                    .attr("height", dh)
+                    .attr("x", left)
+                    .attr("y", hh)
+                    .attr("stroke", "yellow");*/
 
                   sortData(data, panel.SortDirection);
+
+                  if (panel.Aggregate != "all" && labelCol != -1 && SelectedValues.length > 0) {
+                    //            console.log('data(in) = ' +JSON.stringify(data));
+                    data = aggregateData(data, panel.Aggregate);
+                  }
+                  //          console.log('data = ' + JSON.stringify(data));
 
                   // Add Above-High Side Group Names
                   if (groupName != "" && panel.ShowGroupLabels) {
@@ -1334,11 +1468,11 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
 
                   // Draw border rectangle
                   /*svg.append("rect")
-                  .attr("width", w)
-                  .attr("height", dh)
-                  .attr("x", left)
-                  .attr("y", hh)
-                  .attr("stroke", "#ffffff");*/
+                            .attr("width", w)
+                            .attr("height", dh)
+                            .attr("x", left)
+                            .attr("y", hh)
+                            .attr("stroke", "#ffffff");*/
 
                   var labels = data.map(function (d) {
                     return d[labelCol];
@@ -1393,7 +1527,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                       return d[labelCol];
                     }).attr("font-family", "sans-serif").attr("font-size", panel.LabelFontSize).attr("fill", function (d, i) {
                       if (SelectedValues.length) {
-                        // This should check ALL the SelectedValues, bot just [0]///////////////////////////////////////////////
+                        // This should check ALL the SelectedValues, not just [0]///////////////////////////////////////////////
                         var minvalue = d[SelectedValues[0].Col] * ScaleFactor;
                         var maxvalue = minvalue;
 
@@ -1587,7 +1721,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
                     pointsPerCol.push(0);
                   }for (var _i6 = 0; _i6 < this.groupedRows.length; _i6++) {
                     var _cc = _i6 % _gcols;
-                    var _u = this.groupedRows[_i6].values.length;
+                    var _u = this.groupedRows[_i6] /*.values*/[1].length;
                     if (pointsPerCol[_cc] < _u) pointsPerCol[_cc] = _u;
                   }
 
@@ -1607,7 +1741,7 @@ System.register(["app/plugins/sdk", "jquery", "jquery.flot", "lodash", "moment",
 
                       var _ii = _cc2 + _rr2 * _gcols;
                       if (_ii < this.groupedRows.length) {
-                        plotGroupVertical(this.panel, this.svg, this.groupedRows[_ii].values, _nn, this.groupedRows[_ii].key, _groupNameOffset, ww, _dw - GroupGap, _hh - _dh, _dh);
+                        plotGroupVertical(this.panel, this.svg, this.groupedRows[_ii][1], _nn, this.groupedRows[_ii][0], _groupNameOffset, ww, _dw - GroupGap, _hh - _dh, _dh);
                         ww += _dw;
                       }
                     }

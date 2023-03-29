@@ -1,6 +1,6 @@
 {
   "name": "michaeldmoore-multistat-panel",
-  "version": "1.7.3",
+  "version": "1.7.4",
   "description": "Multistat panel for Grafana",
   "main": "README.md",
   "scripts": {
@@ -48,6 +48,7 @@
     "@grafana/toolkit": "^7.3.7",
     "d3": "^5.16.0",
     "eslint-plugin-jsx-a11y": "^6.4.1",
+    "grunt-execute": "^0.2.2",
     "lodash": "^4.17.19"
   }
 }

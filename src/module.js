@@ -139,13 +139,13 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
     this.dashboardVariables = [];
     //console.log('Listing variables');
-    if (templateSrv){
-      templateSrv.getVariables().forEach((v) => {      
+    if (templateSrv) {
+      templateSrv.getVariables().forEach((v) => {
         //console.log(JSON.stringify(v, null, 2));
-        if (v.current){
+        if (v.current) {
           //console.log("dashboard variable[" + v.name + "]=" + v.current.value);
           //this.updateNamedValue(this.panel, v.name.split("_"), v.current.value);   ////// WHAT WAS THIS FOR?????
-          this.dashboardVariables.push({name:v.name, value:v.current.value});
+          this.dashboardVariables.push({ name: v.name, value: v.current.value });
         }
       });
     }
@@ -159,22 +159,22 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
     );
 
     this.events.on(
-	  PanelEvents.dataError, 
-	  this.onDataError.bind(this), 
-	  $scope
-	);
+      PanelEvents.dataError,
+      this.onDataError.bind(this),
+      $scope
+    );
 
     this.events.on(
-	  PanelEvents.render, 
-	  this.onRender.bind(this)
-	);
+      PanelEvents.render,
+      this.onRender.bind(this)
+    );
 
     this.events.on(
       PanelEvents.dataSnapshotLoad,
       this.onDataSnapshotLoad.bind(this)
     );
-    
-	this.events.on(
+
+    this.events.on(
       PanelEvents.editModeInitialized,
       this.onInitEditMode.bind(this)
     );
@@ -272,7 +272,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
   onDataReceived(data) {
     this.cols = [];
-     //console.log('onDataReceived(' + JSON.stringify(data, null, 2) + ')');
+    //console.log('onDataReceived(' + JSON.stringify(data, null, 2) + ')');
     if (data.length == 0 || data[0].rows.length == 0) {
       this.displayStatusMessage("No data to show");
       this.data = data;
@@ -297,7 +297,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
   randomColor() {
     var letters = '456789ABCDE'.split('');
     var color = '#';
-    for (var i = 0; i < 6; i++ ) {
+    for (var i = 0; i < 6; i++) {
       color += letters[Math.floor(Math.random() * letters.length)];
     }
     return color;
@@ -309,32 +309,33 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
       let r = parseInt(match[1]);
       let g = parseInt(match[2]);
       let b = parseInt(match[3]);
-      
+
       let brightness = (0.2126 * r + 0.7152 * g + 0.0722 * b);
       let contrastingColor = brightness < 128 ? '#ffffff' : '#000000';
       return contrastingColor;
-    } 
-  
+    }
+
     match = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hexcolor);
     if (match) {
       let r1 = parseInt(match[1], 16);
       let g1 = parseInt(match[2], 16);
       let b1 = parseInt(match[3], 16);
-      
+
       let brightness = (0.2126 * r1 + 0.7152 * g1 + 0.0722 * b1);
       let contrastingColor = brightness < 128 ? '#ffffff' : '#000000';
       return contrastingColor;
-    } 
+    }
 
-  return this.panel.ValueColor;
-}
+    return this.panel.ValueColor;
+  }
 
   onValueAdd() {
     this.ctrl.panel.Values.push({
-      Name:'', 
-      HighBarColor:this.randomColor(), 
-      LowBarColor:this.randomColor(), 
-      Selected: true});
+      Name: '',
+      HighBarColor: this.randomColor(),
+      LowBarColor: this.randomColor(),
+      Selected: true
+    });
     this.ctrl.render();
   }
 
@@ -484,8 +485,8 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
       // clone dashboard variables array
       var dashboardVariables = [...this.dashboardVariables];
       let range = this.timeSrv.timeRangeForUrl();
-      dashboardVariables.push({name:"from", value:range.from});
-      dashboardVariables.push({name:"to", value:range.to});
+      dashboardVariables.push({ name: "from", value: range.from });
+      dashboardVariables.push({ name: "to", value: range.to });
 
       cols.forEach((colName, i) => {
         if (colName == this.panel.DateTimeColName) dateTimeCol = i;
@@ -509,16 +510,16 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
       // process renaming rules (if any) on all group and label column data
       let renamedRows = this.data.rows;
-      if ((dateTimeCol != -1 && this.panel.DateFormat.length) || 
-          this.panel.LabelRenamingRules.length || 
-          (groupCol != -1 && this.panel.GroupRenamingRules.length)) {
-          renamedRows = this.data.rows.map((row) => {
-            let renamedRow = [...row];
+      if ((dateTimeCol != -1 && this.panel.DateFormat.length) ||
+        this.panel.LabelRenamingRules.length ||
+        (groupCol != -1 && this.panel.GroupRenamingRules.length)) {
+        renamedRows = this.data.rows.map((row) => {
+          let renamedRow = [...row];
 
-          if (dateTimeCol != -1 && this.panel.DateFormat.length){
+          if (dateTimeCol != -1 && this.panel.DateFormat.length) {
             let parsedDateTime = moment(renamedRow[dateTimeCol]);
 
-            if(!parsedDateTime._isValid) {
+            if (!parsedDateTime._isValid) {
               let timeStamp = Number(renamedRow[dateTimeCol]);
 
               if (timeStamp <= 4102444800) // 2100-01-01 in seconds
@@ -526,7 +527,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
               else
                 parsedDateTime = moment(timeStamp).utc();  // try parsing timestamp as unix timestamp (in milli-seconds)
             }
-  
+
             renamedRow[dateTimeCol] = parsedDateTime.add(this.panel.TZOffsetHours, "h").format(this.panel.DateFormat);
           }
 
@@ -545,15 +546,18 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
       if (this.panel.LabelNameFilter.length > 0 && labelCol != -1) {
         var regex = new RegExp(this.panel.LabelNameFilter, "");
-        this.matchingRows = [];
+        //this.matchingRows = [];
+        this.rows = [];
         for (let i = 0; i < renamedRows.length; i++) {
           let dd = renamedRows[i];
           let label = dd[labelCol];
-          if (label.match(regex) != null) 
-            this.matchingRows.push(dd);
+          if (label.match(regex) != null)
+            //this.matchingRows.push(dd);
+            this.rows.push(dd);
         }
 
-        if (this.matchingRows.length == 0) {
+        //if (this.matchingRows.length == 0) {
+        if (this.rows.length == 0) {
           this.displayStatusMessage(
             "No data.  Regex filter '" +
             this.panel.LabelNameFilter +
@@ -563,165 +567,164 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
           );
           return;
         }
-      } else this.matchingRows = renamedRows;
-
-      if (
-        this.panel.Aggregate != "all" &&
-        labelCol != -1 &&
-        SelectedValues.length > 0
-      ) {
-        var oo = [];
-        this.rows = [];
-        switch (this.panel.Aggregate) {
-          case "first":
-            this.rows = d3
-              .nest()
-              .key(groupedLabelFunc)
-              .rollup(function (d) {
-                return d[0];
-              })
-              .entries(this.matchingRows)
-              .forEach(function (x) {
-                oo.push(x.value);
-              });
-            this.rows = oo;
-            break;
-
-          case "last":
-            this.rows = d3
-              .nest()
-              .key(groupedLabelFunc)
-              .rollup(function (d) {
-                return d[d.length - 1];
-              })
-              .entries(this.matchingRows)
-              .forEach(function (x) {
-                oo.push(x.value);
-              });
-            this.rows = oo;
-            break;
-
-          case "sum":
-            this.rows = d3
-              .nest()
-              .key(groupedLabelFunc)
-              .rollup(function (d) {
-                var dd = Object.values(Object.assign({}, d[d.length - 1]));
-                SelectedValues.forEach((value) => {
-                  dd[value.Col] = d3.sum(d, function (d) {
-                    return d[value.Col];
-                  });
-                });
-                return dd;
-              })
-              .entries(this.matchingRows)
-              .forEach(function (x) {
-                oo.push(x.value);
-              });
-            this.rows = Array.from(oo);
-            break;
-
-          case "mean":
-            this.rows = d3
-              .nest()
-              .key(groupedLabelFunc)
-              .rollup(function (d) {
-                var dd = Object.values(Object.assign({}, d[d.length - 1]));
-                SelectedValues.forEach((value) => {
-                  dd[value.Col] = d3.mean(d, function (d) {
-                    return d[value.Col];
-                  });
-                });
-                return dd;
-              })
-              .entries(this.matchingRows)
-              .forEach(function (x) {
-                oo.push(x.value);
-              });
-            this.rows = Array.from(oo);
-            break;
-
-            case "mean":
-              this.rows = d3
-                .nest()
-                .key(groupedLabelFunc)
-                .rollup(function (d) {
-                  var dd = Object.values(Object.assign({}, d[d.length - 1]));
-                  dd[valueCol] = d3.mean(d, function (d) {
-                    return d[valueCol];
-                  });
-                  return dd;
-                })
-                .entries(this.matchingRows)
-                .forEach(function (x) {
-                  oo.push(x.value);
-                });
-              this.rows = Array.from(oo);
-              break;
-  
-            case "max":
-            this.rows = d3
-              .nest()
-              .key(groupedLabelFunc)
-              .rollup(function (d) {
-                var dd = Object.values(Object.assign({}, d[d.length - 1]));
-                SelectedValues.forEach((value) => {
-                  dd[value.Col] = d3.max(d, function (d) {
-                    return d[value.Col];
-                  });
-                });
-                return dd;
-              })
-              .entries(this.matchingRows)
-              .forEach(function (x) {
-                oo.push(x.value);
-              });
-            this.rows = Array.from(oo);
-            break;
-
-          case "min":
-            this.rows = d3
-              .nest()
-              .key(groupedLabelFunc)
-              .rollup(function (d) {
-                var dd = Object.values(Object.assign({}, d[d.length - 1]));
-                SelectedValues.forEach((value) => {
-                  dd[value.Col] = d3.min(d, function (d) {
-                    return d[value.Col];
-                  });
-                });
-                return dd;
-              })
-              .entries(this.matchingRows)
-              .forEach(function (x) {
-                oo.push(x.value);
-              });
-            this.rows = Array.from(oo);
-            break;
-        }
       } else {
-        this.rows = this.matchingRows;
+        //this.matchingRows = renamedRows;
+        this.rows = renamedRows;
       }
-
-      //console.log('after aggregation('+this.panel.Aggregate+') this.rows:\n'+JSON.stringify(this.rows));
+      /*
+            if (
+              this.panel.Aggregate != "all" &&
+              labelCol != -1 &&
+              SelectedValues.length > 0
+            ) {
+              var oo = [];
+              this.rows = [];
+              switch (this.panel.Aggregate) {
+                case "first":
+                  this.rows = d3
+                    .nest()
+                    .key(groupedLabelFunc)
+                    .rollup(function (d) {
+                      return d[0];
+                    })
+                    .entries(this.matchingRows)
+                    .forEach(function (x) {
+                      oo.push(x.value);
+                    });
+                  this.rows = oo;
+                  break;
+      
+                case "last":
+                  this.rows = d3
+                    .nest()
+                    .key(groupedLabelFunc)
+                    .rollup(function (d) {
+                      return d[d.length - 1];
+                    })
+                    .entries(this.matchingRows)
+                    .forEach(function (x) {
+                      oo.push(x.value);
+                    });
+                  this.rows = oo;
+                  break;
+      
+                case "sum":
+                  this.rows = d3
+                    .nest()
+                    .key(groupedLabelFunc)
+                    .rollup(function (d) {
+                      var dd = Object.values(Object.assign({}, d[d.length - 1]));
+                      SelectedValues.forEach((value) => {
+                        dd[value.Col] = d3.sum(d, function (d) {
+                          return d[value.Col];
+                        });
+                      });
+                      return dd;
+                    })
+                    .entries(this.matchingRows)
+                    .forEach(function (x) {
+                      oo.push(x.value);
+                    });
+                  this.rows = Array.from(oo);
+                  break;
+      
+                case "mean":
+                  this.rows = d3
+                    .nest()
+                    .key(groupedLabelFunc)
+                    .rollup(function (d) {
+                      var dd = Object.values(Object.assign({}, d[d.length - 1]));
+                      SelectedValues.forEach((value) => {
+                        dd[value.Col] = d3.mean(d, function (d) {
+                          return d[value.Col];
+                        });
+                      });
+                      return dd;
+                    })
+                    .entries(this.matchingRows)
+                    .forEach(function (x) {
+                      oo.push(x.value);
+                    });
+                  this.rows = Array.from(oo);
+                  break;
+      
+                  case "mean":
+                    this.rows = d3
+                      .nest()
+                      .key(groupedLabelFunc)
+                      .rollup(function (d) {
+                        var dd = Object.values(Object.assign({}, d[d.length - 1]));
+                        dd[valueCol] = d3.mean(d, function (d) {
+                          return d[valueCol];
+                        });
+                        return dd;
+                      })
+                      .entries(this.matchingRows)
+                      .forEach(function (x) {
+                        oo.push(x.value);
+                      });
+                    this.rows = Array.from(oo);
+                    break;
+        
+                  case "max":
+                  this.rows = d3
+                    .nest()
+                    .key(groupedLabelFunc)
+                    .rollup(function (d) {
+                      var dd = Object.values(Object.assign({}, d[d.length - 1]));
+                      SelectedValues.forEach((value) => {
+                        dd[value.Col] = d3.max(d, function (d) {
+                          return d[value.Col];
+                        });
+                      });
+                      return dd;
+                    })
+                    .entries(this.matchingRows)
+                    .forEach(function (x) {
+                      oo.push(x.value);
+                    });
+                  this.rows = Array.from(oo);
+                  break;
+      
+                case "min":
+                  this.rows = d3
+                    .nest()
+                    .key(groupedLabelFunc)
+                    .rollup(function (d) {
+                      var dd = Object.values(Object.assign({}, d[d.length - 1]));
+                      SelectedValues.forEach((value) => {
+                        dd[value.Col] = d3.min(d, function (d) {
+                          return d[value.Col];
+                        });
+                      });
+                      return dd;
+                    })
+                    .entries(this.matchingRows)
+                    .forEach(function (x) {
+                      oo.push(x.value);
+                    });
+                  this.rows = Array.from(oo);
+                  break;
+              }
+            } else {
+              this.rows = this.matchingRows;
+            }
+            //console.log('after aggregation('+this.panel.Aggregate+') this.rows:\n'+JSON.stringify(this.rows));
+      */
 
       var groupNameOffset = this.panel.ShowGroupLabels
         ? Number(this.panel.GroupLabelFontSize.replace("%", "")) * 0.15
         : 0;
 
       if (groupCol >= 0) {
-        this.groupedRows = d3
-          .nest()
-          .key(function (d) {
-            return d[groupCol];
-          })
-          .entries(this.rows);
+        this.groupedRows = Array.from(d3
+          .group(this.rows, d => d[groupCol]));
 
         if (this.panel.GroupNameFilter.length > 0) {
           var regexGroupRows = new RegExp(this.panel.GroupNameFilter, "");
           let matchingGroups = [];
           for (let i = 0; i < this.groupedRows.length; i++) {
-            let groupName = this.groupedRows[i].key;
+            let groupName = this.groupedRows[i][0];
             if (groupName.match(regexGroupRows) != null)
               matchingGroups.push(this.groupedRows[i]);
           }
@@ -742,10 +745,10 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
         let groupSortString = this.panel.GroupSortString;
 
         this.groupedRows.sort(function (a, b) {
-          var aPos = groupSortString.search(a.key);
-          var bPos = groupSortString.search(b.key);
+          var aPos = groupSortString.search(a[0]);
+          var bPos = groupSortString.search(b[0]);
 
-          if (aPos == bPos) return a.key.localeCompare(b.key);
+          if (aPos == bPos) return a[0].localeCompare(b[0]);
           else if (aPos == -1) return 1;
           else if (bPos == -1) return -1;
           else return aPos - bPos;
@@ -756,7 +759,9 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
       // In edit mode with grafana > vesion 7, the svg element is hidden, not removed.
       // this kludge revoves it, if it already exists so we don't end up adding svg content to the wrong (hidden) element.
-      d3.select("." + this.className).remove();
+      //d3.select("." + this.className).remove();
+      let x$ = d3.select("." + this.className);
+      x$.remove();
 
       this.elem.html(
         "<div class='" +
@@ -935,6 +940,95 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
         }
       };
 
+      var aggregateData = function (data, aggregate) {
+//        console.log('aggregateData(' + aggregate + ') ' + JSON.stringify(data));
+        var rows = [];
+        switch (aggregate) {
+          case "first":
+            d3
+              .group(data, groupedLabelFunc)
+              .forEach(function (x) {
+//                console.log(' adding ' + JSON.stringify(x[0]));
+                rows.push(x[0]);
+              });
+            break;
+          case "last":
+            d3
+              .group(data, groupedLabelFunc)
+              .forEach(function (x) {
+//                console.log(' adding ' + JSON.stringify(x[x.length - 1]));
+                rows.push(x[x.length - 1]);
+              });
+            break;
+
+          case "sum":
+            d3
+              .group(data, groupedLabelFunc)
+              .forEach(function (x) {
+                var dd = Object.values(Object.assign({}, x[0]));
+                SelectedValues.forEach((value) => {
+                  dd[value.Col] = d3.sum(x, function (x) {
+                    return x[value.Col];
+                  });
+                });
+
+//                console.log(' adding ' + JSON.stringify(dd));
+                rows.push(dd);
+              });
+            break;
+
+
+          case "mean":
+            d3
+              .group(data, groupedLabelFunc)
+              .forEach(function (x) {
+                var dd = Object.values(Object.assign({}, x[0]));
+                SelectedValues.forEach((value) => {
+                  dd[value.Col] = d3.mean(x, function (x) {
+                    return x[value.Col];
+                  });
+                });
+
+//                console.log(' adding ' + JSON.stringify(dd));
+                rows.push(dd);
+              });
+            break;
+
+          case "max":
+            d3
+              .group(data, groupedLabelFunc)
+              .forEach(function (x) {
+                var dd = Object.values(Object.assign({}, x[0]));
+                SelectedValues.forEach((value) => {
+                  dd[value.Col] = d3.max(x, function (x) {
+                    return x[value.Col];
+                  });
+                });
+
+//                console.log(' adding ' + JSON.stringify(dd));
+                rows.push(dd);
+              });
+            break;
+
+          case "min":
+            d3
+              .group(data, groupedLabelFunc)
+              .forEach(function (x) {
+                var dd = Object.values(Object.assign({}, x[0]));
+                SelectedValues.forEach((value) => {
+                  dd[value.Col] = d3.min(x, function (x) {
+                    return x[value.Col];
+                  });
+                });
+
+//                console.log(' adding ' + JSON.stringify(dd));
+                rows.push(dd);
+              });
+            break;
+        }
+        return rows;
+      };
+
       var translateValues = function (s, d) {
         // lookup column index corresponding to the substitution tokens and replace with this bar's value
         let s1 = s;
@@ -952,12 +1046,12 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
           // do the same thing with dashboard variables...
           for (var j = 0; j < dashboardVariables.length; j++) {
             let dv = dashboardVariables[j];
-            if (g == "{" + dv.name + "}"){
+            if (g == "{" + dv.name + "}") {
               //console.log("dashboard variable[" + dv.name + "]=" + dv.value);
               s1 = s1.replace(g, dv.value);
               break;
             }
-          }      
+          }
 
           g = re.exec(s);
         }
@@ -986,7 +1080,6 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
                 if (cc == DateTimeColName)
                   dd = TooltipDateFormat.length ? moment(dd)
-//                    .add(TZOffsetHours, "h")
                     .format(TooltipDateFormat) : dd;
                 else if (cc == ValueColName && isNumber(dd))
                   dd = Number(dd).toFixed(ValueDecimals);
@@ -1022,7 +1115,6 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
       var tooltipShow = function (d) {
         if ($("#" + tooltipDivID).length == 0) {
           $panel = $("." + panelID);
-          //          $panelContent = this.elem.closest(".panel-content");
           $panelContent = $panel.parent().parent().parent().parent();
           panelContent = d3.selectAll($panelContent);
           panelContent
@@ -1034,50 +1126,50 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
         const tooltipDiv = d3.selectAll("#" + tooltipDivID);
 
         let tooltipHtml = getTooltipContent(d);
-        if (tooltipHtml.length){
+        if (tooltipHtml.length) {
           tooltipDiv
-          .classed(
-            "michaeldmoore-multistat-panel-" + tooltipType + "-tooltip",
-            true
-          )
-          .html(tooltipHtml)
-          .on("mouseover", function () {
-            if (!isInTooltip) {
-              isInTooltip = true;
-              tooltipHide(true);
-            }
-          })
-          .on("mouseleave", function () {
-            isInTooltip = false;
-            tooltipHide(false);
-          });
+            .classed(
+              "michaeldmoore-multistat-panel-" + tooltipType + "-tooltip",
+              true
+            )
+            .html(tooltipHtml)
+            .on("mouseover", function () {
+              if (!isInTooltip) {
+                isInTooltip = true;
+                tooltipHide(true);
+              }
+            })
+            .on("mouseleave", function () {
+              isInTooltip = false;
+              tooltipHide(false);
+            });
 
-        const $tooltipDiv = $("#" + tooltipDivID);
-        const tooltipWidth = $tooltipDiv.width();
-        const tooltipHeight = $tooltipDiv.height();
-        const minTop = 28;
+          const $tooltipDiv = $("#" + tooltipDivID);
+          const tooltipWidth = $tooltipDiv.width();
+          const tooltipHeight = $tooltipDiv.height();
+          const minTop = 28;
 
-        const mouseCoordinates = d3.mouse(panelContent.node());
-        let Left = mouseCoordinates[0] - tooltipWidth / 2;
-        let Top = mouseCoordinates[1] + minTop - tooltipHeight / 2;
+          const mouseCoordinates = d3.mouse(panelContent.node());
+          let Left = mouseCoordinates[0] - tooltipWidth / 2;
+          let Top = mouseCoordinates[1] + minTop - tooltipHeight / 2;
 
-        let panelWidth = $panel.width();
-        let panelHeight = $panel.height();
+          let panelWidth = $panel.width();
+          let panelHeight = $panel.height();
 
-        if (Left < 0) Left = 0;
-        else if (Left > panelWidth - tooltipWidth)
-          Left = panelWidth - tooltipWidth;
+          if (Left < 0) Left = 0;
+          else if (Left > panelWidth - tooltipWidth)
+            Left = panelWidth - tooltipWidth;
 
-        if (Top < 0) Top = 0;
-        else if (Top > panelHeight + minTop - tooltipHeight)
-          Top = panelHeight + minTop - tooltipHeight;
+          if (Top < 0) Top = 0;
+          else if (Top > panelHeight + minTop - tooltipHeight)
+            Top = panelHeight + minTop - tooltipHeight;
 
-        tooltipDiv
-          .transition()
-          .duration(200)
-          .style("opacity", 1.0)
-          .style("left", Left + "px")
-          .style("top", Top + "px");
+          tooltipDiv
+            .transition()
+            .duration(200)
+            .style("opacity", 1.0)
+            .style("left", Left + "px")
+            .style("top", Top + "px");
         }
       };
 
@@ -1180,13 +1272,23 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
         ) {
           // Draw border rectangle
           /*svg.append("rect")
-										.attr("width", w)
-										.attr("height", dh)
-										.attr("x", left)
-										.attr("y", hh)
-										.attr("stroke", "yellow");*/
+                    .attr("width", w)
+                    .attr("height", dh)
+                    .attr("x", left)
+                    .attr("y", hh)
+                    .attr("stroke", "yellow");*/
 
           sortData(data, panel.SortDirection);
+
+          if (
+            panel.Aggregate != "all" &&
+            labelCol != -1 &&
+            SelectedValues.length > 0
+          ) {
+            //            console.log('data(in) = ' +JSON.stringify(data));
+            data = aggregateData(data, panel.Aggregate);
+          }
+//          console.log('data = ' + JSON.stringify(data));
 
           // Add Above-High Side Group Names
           if (groupName != "" && panel.ShowGroupLabels) {
@@ -1208,11 +1310,11 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
           // Draw border rectangle
           /*svg.append("rect")
-										.attr("width", w)
-										.attr("height", dh)
-										.attr("x", left)
-										.attr("y", hh)
-										.attr("stroke", "#ffffff");*/
+                    .attr("width", w)
+                    .attr("height", dh)
+                    .attr("x", left)
+                    .attr("y", hh)
+                    .attr("stroke", "#ffffff");*/
 
           var labels = data.map(function (d) {
             return d[labelCol];
@@ -1580,7 +1682,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
                   })
                   .attr("font-family", "sans-serif")
                   .attr("font-size", panel.ValueFontSize)
-                  .attr("fill", function(d) {
+                  .attr("fill", function (d) {
                     return getValueColor(d, valueDef);
                   })
                   .attr("text-anchor", function (d) {
@@ -1684,7 +1786,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
             pointsPerRow.push(0);
           for (let i = 0; i < this.groupedRows.length; i++) {
             let rr = Math.floor(i / gcols);
-            let u = this.groupedRows[i].values.length;
+            let u = this.groupedRows[i]/*.values*/[1].length;
             if (pointsPerRow[rr] < u) pointsPerRow[rr] = u;
           }
 
@@ -1712,9 +1814,9 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
                 plotGroupHorizontal(
                   this.panel,
                   this.svg,
-                  this.groupedRows[ii].values,
+                  this.groupedRows[ii][1],
                   nn,
-                  this.groupedRows[ii].key,
+                  this.groupedRows[ii][0],
                   groupNameOffset,
                   cc * dw,
                   dw - GroupGap,
@@ -1754,13 +1856,23 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
         ) {
           // Draw border rectangle
           /*svg.append("rect")
-			.attr("width", w)
-			.attr("height", dh)
-			.attr("x", left)
-			.attr("y", hh)
-			.attr("stroke", "yellow");*/
+            .attr("width", w)
+            .attr("height", dh)
+            .attr("x", left)
+            .attr("y", hh)
+            .attr("stroke", "yellow");*/
 
           sortData(data, panel.SortDirection);
+
+          if (
+            panel.Aggregate != "all" &&
+            labelCol != -1 &&
+            SelectedValues.length > 0
+          ) {
+            //            console.log('data(in) = ' +JSON.stringify(data));
+            data = aggregateData(data, panel.Aggregate);
+          }
+//          console.log('data = ' + JSON.stringify(data));
 
           // Add Above-High Side Group Names
           if (groupName != "" && panel.ShowGroupLabels) {
@@ -1782,11 +1894,11 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
           // Draw border rectangle
           /*svg.append("rect")
-										.attr("width", w)
-										.attr("height", dh)
-										.attr("x", left)
-										.attr("y", hh)
-										.attr("stroke", "#ffffff");*/
+                    .attr("width", w)
+                    .attr("height", dh)
+                    .attr("x", left)
+                    .attr("y", hh)
+                    .attr("stroke", "#ffffff");*/
 
           var labels = data.map(function (d) {
             return d[labelCol];
@@ -1894,7 +2006,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
               .attr("font-size", panel.LabelFontSize)
               .attr("fill", function (d, i) {
                 if (SelectedValues.length) {
-                  // This should check ALL the SelectedValues, bot just [0]///////////////////////////////////////////////
+                  // This should check ALL the SelectedValues, not just [0]///////////////////////////////////////////////
                   let minvalue = d[SelectedValues[0].Col] * ScaleFactor;
                   let maxvalue = minvalue;
 
@@ -2148,7 +2260,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
                   })
                   .attr("font-family", "sans-serif")
                   .attr("font-size", panel.ValueFontSize)
-                  .attr("fill", function(d) {
+                  .attr("fill", function (d) {
                     return getValueColor(d, valueDef);
                   })
                   .attr("text-anchor", "middle")
@@ -2258,7 +2370,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
           for (let i = 0; i < gcols; i++) pointsPerCol.push(0);
           for (let i = 0; i < this.groupedRows.length; i++) {
             let cc = i % gcols;
-            let u = this.groupedRows[i].values.length;
+            let u = this.groupedRows[i]/*.values*/[1].length;
             if (pointsPerCol[cc] < u) pointsPerCol[cc] = u;
           }
 
@@ -2284,9 +2396,9 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
                 plotGroupVertical(
                   this.panel,
                   this.svg,
-                  this.groupedRows[ii].values,
+                  this.groupedRows[ii][1],
                   nn,
-                  this.groupedRows[ii].key,
+                  this.groupedRows[ii][0],
                   groupNameOffset,
                   ww,
                   dw - GroupGap,
