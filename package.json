@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/michaeldmoore/michaeldmoore-multistat-panel#readme",
   "engines": {
-    "node": "16.x"
+    "node": "12.x"
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
