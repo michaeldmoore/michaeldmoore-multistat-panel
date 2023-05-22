@@ -8,7 +8,12 @@
 
 *New Version (1.7.0) - Now with support for label/group renaming and date formatting!*
 
+*New Version (1.7.4) - Now working with Grafana 9.x.x (the version of d3.js library dropped support for the original grouping functions, causing the plugin to fail.  Thisiis now fixed!*
+
 (Documentation for these changes is covered in the sections at the very end of this readme file)
+
+# NOTE - This plugin is built using the original Angular framework which is expected to be dropped in future versions of Grafana.  Once this happens, the plugin will no longer be supported..
+
 
 ## Custom multistat panel for Grafana, inspired by the built-in SingleStat panel
 
