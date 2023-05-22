@@ -506,8 +506,6 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
         (value) => value.Col >= 0 && value.Selected
       );
 
-      //console.log('onRender: this.data.rows\n'+JSON.stringify(this.data.rows));
-
       // process renaming rules (if any) on all group and label column data
       let renamedRows = this.data.rows;
       if ((dateTimeCol != -1 && this.panel.DateFormat.length) ||
@@ -546,18 +544,15 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
 
       if (this.panel.LabelNameFilter.length > 0 && labelCol != -1) {
         var regex = new RegExp(this.panel.LabelNameFilter, "");
-        //this.matchingRows = [];
-        this.rows = [];
+        this.matchingRows = [];
         for (let i = 0; i < renamedRows.length; i++) {
           let dd = renamedRows[i];
           let label = dd[labelCol];
           if (label.match(regex) != null)
-            //this.matchingRows.push(dd);
-            this.rows.push(dd);
+            this.matchingRows.push(dd);
         }
 
-        //if (this.matchingRows.length == 0) {
-        if (this.rows.length == 0) {
+        if (this.matchingRows.length == 0) {
           this.displayStatusMessage(
             "No data.  Regex filter '" +
             this.panel.LabelNameFilter +
@@ -567,150 +562,69 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
           );
           return;
         }
+      } else this.matchingRows = renamedRows;
+
+      if (
+        this.panel.Aggregate != "all" &&
+        labelCol != -1 &&
+        SelectedValues.length > 0
+      ) {
+        var oo = [];
+        this.rows = [];
+        switch (this.panel.Aggregate) {
+          case "first":
+            Array
+              .from(d3.group(this.matchingRows, groupedLabelFunc))
+              .map(d => {
+                let key = d[0];
+                let values = d[1];
+                return { key: key, value: values[0] };
+              })
+              .forEach(x => oo.push(x.value));
+            this.rows = oo;
+            break;
+
+          case "last":
+            Array
+              .from(d3.group(this.matchingRows, groupedLabelFunc))
+              .map(d => {
+                let key = d[0];
+                let values = d[1];
+                return { key: key, value: values[values.length - 1] };
+              })
+              .forEach(x => oo.push(x.value));
+            this.rows = oo;
+            break;
+
+          case "sum":
+          case "mean":
+          case "max":
+          case "min":
+            Array
+              .from(d3.group(this.matchingRows, groupedLabelFunc))
+              .map(d => {
+                let key = d[0];
+                let values = d[1];
+                let dd = Object.values(Object.assign({}, values[0]));
+                SelectedValues.forEach((val) => {
+                  let colVals = [];
+                  values.forEach(v => colVals.push(v[val.Col]));
+                  switch (this.panel.Aggregate) {
+                    case "sum": dd[val.Col] = d3.sum(colVals); break;
+                    case "mean": dd[val.Col] = d3.mean(colVals); break;
+                    case "max": dd[val.Col] = d3.max(colVals); break;
+                    case "min": dd[val.Col] = d3.min(colVals); break;
+                  }
+                });
+                return { key: key, value: dd };
+              })
+              .forEach(x => oo.push(x.value));
+            this.rows = oo;
+            break;
+        }
       } else {
-        //this.matchingRows = renamedRows;
-        this.rows = renamedRows;
+        this.rows = this.matchingRows;
       }
-      /*
-            if (
-              this.panel.Aggregate != "all" &&
-              labelCol != -1 &&
-              SelectedValues.length > 0
-            ) {
-              var oo = [];
-              this.rows = [];
-              switch (this.panel.Aggregate) {
-                case "first":
-                  this.rows = d3
-                    .nest()
-                    .key(groupedLabelFunc)
-                    .rollup(function (d) {
-                      return d[0];
-                    })
-                    .entries(this.matchingRows)
-                    .forEach(function (x) {
-                      oo.push(x.value);
-                    });
-                  this.rows = oo;
-                  break;
-      
-                case "last":
-                  this.rows = d3
-                    .nest()
-                    .key(groupedLabelFunc)
-                    .rollup(function (d) {
-                      return d[d.length - 1];
-                    })
-                    .entries(this.matchingRows)
-                    .forEach(function (x) {
-                      oo.push(x.value);
-                    });
-                  this.rows = oo;
-                  break;
-      
-                case "sum":
-                  this.rows = d3
-                    .nest()
-                    .key(groupedLabelFunc)
-                    .rollup(function (d) {
-                      var dd = Object.values(Object.assign({}, d[d.length - 1]));
-                      SelectedValues.forEach((value) => {
-                        dd[value.Col] = d3.sum(d, function (d) {
-                          return d[value.Col];
-                        });
-                      });
-                      return dd;
-                    })
-                    .entries(this.matchingRows)
-                    .forEach(function (x) {
-                      oo.push(x.value);
-                    });
-                  this.rows = Array.from(oo);
-                  break;
-      
-                case "mean":
-                  this.rows = d3
-                    .nest()
-                    .key(groupedLabelFunc)
-                    .rollup(function (d) {
-                      var dd = Object.values(Object.assign({}, d[d.length - 1]));
-                      SelectedValues.forEach((value) => {
-                        dd[value.Col] = d3.mean(d, function (d) {
-                          return d[value.Col];
-                        });
-                      });
-                      return dd;
-                    })
-                    .entries(this.matchingRows)
-                    .forEach(function (x) {
-                      oo.push(x.value);
-                    });
-                  this.rows = Array.from(oo);
-                  break;
-      
-                  case "mean":
-                    this.rows = d3
-                      .nest()
-                      .key(groupedLabelFunc)
-                      .rollup(function (d) {
-                        var dd = Object.values(Object.assign({}, d[d.length - 1]));
-                        dd[valueCol] = d3.mean(d, function (d) {
-                          return d[valueCol];
-                        });
-                        return dd;
-                      })
-                      .entries(this.matchingRows)
-                      .forEach(function (x) {
-                        oo.push(x.value);
-                      });
-                    this.rows = Array.from(oo);
-                    break;
-        
-                  case "max":
-                  this.rows = d3
-                    .nest()
-                    .key(groupedLabelFunc)
-                    .rollup(function (d) {
-                      var dd = Object.values(Object.assign({}, d[d.length - 1]));
-                      SelectedValues.forEach((value) => {
-                        dd[value.Col] = d3.max(d, function (d) {
-                          return d[value.Col];
-                        });
-                      });
-                      return dd;
-                    })
-                    .entries(this.matchingRows)
-                    .forEach(function (x) {
-                      oo.push(x.value);
-                    });
-                  this.rows = Array.from(oo);
-                  break;
-      
-                case "min":
-                  this.rows = d3
-                    .nest()
-                    .key(groupedLabelFunc)
-                    .rollup(function (d) {
-                      var dd = Object.values(Object.assign({}, d[d.length - 1]));
-                      SelectedValues.forEach((value) => {
-                        dd[value.Col] = d3.min(d, function (d) {
-                          return d[value.Col];
-                        });
-                      });
-                      return dd;
-                    })
-                    .entries(this.matchingRows)
-                    .forEach(function (x) {
-                      oo.push(x.value);
-                    });
-                  this.rows = Array.from(oo);
-                  break;
-              }
-            } else {
-              this.rows = this.matchingRows;
-            }
-            //console.log('after aggregation('+this.panel.Aggregate+') this.rows:\n'+JSON.stringify(this.rows));
-      */
 
       var groupNameOffset = this.panel.ShowGroupLabels
         ? Number(this.panel.GroupLabelFontSize.replace("%", "")) * 0.15
@@ -941,14 +855,14 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
       };
 
       var aggregateData = function (data, aggregate) {
-//        console.log('aggregateData(' + aggregate + ') ' + JSON.stringify(data));
+        //        console.log('aggregateData(' + aggregate + ') ' + JSON.stringify(data));
         var rows = [];
         switch (aggregate) {
           case "first":
             d3
               .group(data, groupedLabelFunc)
               .forEach(function (x) {
-//                console.log(' adding ' + JSON.stringify(x[0]));
+                //                console.log(' adding ' + JSON.stringify(x[0]));
                 rows.push(x[0]);
               });
             break;
@@ -956,7 +870,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
             d3
               .group(data, groupedLabelFunc)
               .forEach(function (x) {
-//                console.log(' adding ' + JSON.stringify(x[x.length - 1]));
+                //                console.log(' adding ' + JSON.stringify(x[x.length - 1]));
                 rows.push(x[x.length - 1]);
               });
             break;
@@ -972,7 +886,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
                   });
                 });
 
-//                console.log(' adding ' + JSON.stringify(dd));
+                //                console.log(' adding ' + JSON.stringify(dd));
                 rows.push(dd);
               });
             break;
@@ -989,7 +903,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
                   });
                 });
 
-//                console.log(' adding ' + JSON.stringify(dd));
+                //                console.log(' adding ' + JSON.stringify(dd));
                 rows.push(dd);
               });
             break;
@@ -1005,7 +919,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
                   });
                 });
 
-//                console.log(' adding ' + JSON.stringify(dd));
+                //                console.log(' adding ' + JSON.stringify(dd));
                 rows.push(dd);
               });
             break;
@@ -1021,7 +935,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
                   });
                 });
 
-//                console.log(' adding ' + JSON.stringify(dd));
+                //                console.log(' adding ' + JSON.stringify(dd));
                 rows.push(dd);
               });
             break;
@@ -1288,7 +1202,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
             //            console.log('data(in) = ' +JSON.stringify(data));
             data = aggregateData(data, panel.Aggregate);
           }
-//          console.log('data = ' + JSON.stringify(data));
+          //          console.log('data = ' + JSON.stringify(data));
 
           // Add Above-High Side Group Names
           if (groupName != "" && panel.ShowGroupLabels) {
@@ -1872,7 +1786,7 @@ class MultistatPanelCtrl extends MetricsPanelCtrl {
             //            console.log('data(in) = ' +JSON.stringify(data));
             data = aggregateData(data, panel.Aggregate);
           }
-//          console.log('data = ' + JSON.stringify(data));
+          //          console.log('data = ' + JSON.stringify(data));
 
           // Add Above-High Side Group Names
           if (groupName != "" && panel.ShowGroupLabels) {
